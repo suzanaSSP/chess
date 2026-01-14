@@ -1,16 +1,14 @@
-package chess;
+package chess.PieceCalculators;
+
+import chess.ChessBoard;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 
 import java.util.Collection;
 import java.util.List;
 
-public class PieceMoveCalculator{
-    public ChessPosition position;
-
-    public PieceMoveCalculator(ChessPosition current_position) {
-        this.position = current_position;
-    }
-}
-class BishopMovesCalculator extends  PieceMoveCalculator{
+public class BishopMovesCalculator extends  PieceMoveCalculator{
     public ChessPosition position;
     public BishopMovesCalculator(ChessPosition current_position){
         super(current_position);
@@ -130,14 +128,4 @@ class BishopMovesCalculator extends  PieceMoveCalculator{
         return bishop_moves;
     }
 
-    public Boolean valid_position(ChessBoard board, ChessMove move) {
-        ChessPosition position = move.getEndPosition();
-        if (position.getRow() >= 1 && position.getRow() <= 8 &&
-                position.getColumn() >= 1 && position.getColumn() <= 8) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 }
-
