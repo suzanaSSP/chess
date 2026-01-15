@@ -40,14 +40,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        return pieceColor;
+        return this.pieceColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        return type;
+        return this.type;
     }
 
     /**
@@ -67,7 +67,8 @@ public class ChessPiece {
         }
         else if (piece.getPieceType() == PieceType.KING) {
             KingMovesCalculator king = new KingMovesCalculator(myPosition);
-            Collection<ChessMove> king_moves = king.king_moves(board);
+            Collection<ChessMove> king_moves;
+            king_moves = king.king_moves(board);
             return king_moves;
         }
         else{
