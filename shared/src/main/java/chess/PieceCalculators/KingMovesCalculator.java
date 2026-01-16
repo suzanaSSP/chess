@@ -12,13 +12,14 @@ import java.util.List;
 
 public class KingMovesCalculator extends PieceMoveCalculator {
     public ChessPosition position;
-    public KingMovesCalculator(ChessPosition current_postion) {
-        super(current_postion);
+    public ChessBoard board;
+    public KingMovesCalculator(ChessPosition current_postion, ChessBoard board) {
+        super(current_postion, board);
         this.position = current_postion;
-
+        this.board = board;
     }
 
-    public Collection<ChessMove> king_moves (ChessBoard board) {
+    public Collection<ChessMove> king_moves () {
         Collection<ChessMove> kingmoves = new ArrayList<>();
         //right up
         ChessPosition new_position = new ChessPosition(this.position.getRow()+1, this.position.getColumn()+1);

@@ -2,9 +2,12 @@ package chess;
 
 import chess.PieceCalculators.BishopMovesCalculator;
 import chess.PieceCalculators.KingMovesCalculator;
+import chess.PieceCalculators.QueenMovesCalculator;
+import chess.PieceCalculators.RookMoveCalculator;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -22,6 +25,20 @@ public class ChessPiece {
         this.pieceColor = pieceColor;
         this.type = type;
         ChessPosition position;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
     }
 
     /**
@@ -61,15 +78,25 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
         if (piece.getPieceType() == PieceType.BISHOP) {
-            BishopMovesCalculator bishop = new BishopMovesCalculator(myPosition);
-            Collection<ChessMove> bishop_moves = bishop.bishop_moves_calculator(board);
+            BishopMovesCalculator bishop = new BishopMovesCalculator(myPosition, board);
+            Collection<ChessMove> bishop_moves = bishop.bishop_moves_calculator();
             return bishop_moves;
         }
         else if (piece.getPieceType() == PieceType.KING) {
-            KingMovesCalculator king = new KingMovesCalculator(myPosition);
+            KingMovesCalculator king = new KingMovesCalculator(myPosition, board);
             Collection<ChessMove> king_moves;
-            king_moves = king.king_moves(board);
+            king_moves = king.king_moves();
             return king_moves;
+        }
+        else if (piece.getPieceType() == PieceType.ROOK) {
+            RookMoveCalculator rook = new RookMoveCalculator(myPosition, board);
+            Collection<ChessMove> rook_moves = rook.rook_moves();
+            return rook_moves;
+        }
+        else if (piece.getPieceType() == PieceType.QUEEN) {
+            QueenMovesCalculator queen = new QueenMovesCalculator(myPosition, board);
+                Collection<ChessMove> queen_moves = queen.queen_moves();
+                return queen_moves;
         }
         else{
             return List.of();
