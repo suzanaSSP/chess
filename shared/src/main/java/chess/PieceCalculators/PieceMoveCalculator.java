@@ -18,8 +18,7 @@ public class PieceMoveCalculator {
         this.position = current_position;
     }
 
-    public Boolean valid_position(ChessMove current_move) {
-        ChessPosition position = current_move.getEndPosition();
+    public Boolean valid_position(ChessPosition position) {
         if (position.getRow() >= 1 && position.getRow() <= 8 && position.getColumn() >= 1 && position.getColumn() <= 8) {
             return true;
         }
@@ -33,7 +32,7 @@ public class PieceMoveCalculator {
         for (int i = 1; i <= 8; i++) {
             ChessPosition new_position = new ChessPosition(this.position.getRow() + i, this.position.getColumn());
             ChessMove move = new ChessMove(this.position, new_position, null);
-            if (valid_position(move)) {
+            if (valid_position(new_position)) {
                 if (this.board.getPiece(new_position) != null) {
                     ChessPiece own_piece = this.board.getPiece(this.position);
                     if (this.board.getPiece(new_position).getTeamColor() == own_piece.getTeamColor()) {
@@ -57,7 +56,7 @@ public class PieceMoveCalculator {
         for (int i = 1; i <= 8; i++) {
             ChessPosition new_position = new ChessPosition(this.position.getRow() - i, this.position.getColumn());
             ChessMove move = new ChessMove(this.position, new_position, null);
-            if (valid_position(move)) {
+            if (valid_position(new_position)) {
                 if (this.board.getPiece(new_position) != null) {
                     ChessPiece own_piece = this.board.getPiece(this.position);
                     if (this.board.getPiece(new_position).getTeamColor() == own_piece.getTeamColor()) {
@@ -81,7 +80,7 @@ public class PieceMoveCalculator {
         for (int i = 1; i <= 8; i++) {
             ChessPosition new_position = new ChessPosition(this.position.getRow(), this.position.getColumn() - i);
             ChessMove move = new ChessMove(this.position, new_position, null);
-            if (valid_position(move)) {
+            if (valid_position(new_position)) {
                 if (this.board.getPiece(new_position) != null) {
                     ChessPiece own_piece = this.board.getPiece(this.position);
                     if (this.board.getPiece(new_position).getTeamColor() == own_piece.getTeamColor()) {
@@ -105,7 +104,7 @@ public class PieceMoveCalculator {
         for (int i = 1; i <= 8; i++) {
             ChessPosition new_position = new ChessPosition(this.position.getRow(), this.position.getColumn() + i);
             ChessMove move = new ChessMove(this.position, new_position, null);
-            if (valid_position(move)) {
+            if (valid_position(new_position)) {
                 if (this.board.getPiece(new_position) != null) {
                     ChessPiece own_piece = this.board.getPiece(this.position);
                     if (this.board.getPiece(new_position).getTeamColor() == own_piece.getTeamColor()) {
@@ -129,7 +128,7 @@ public class PieceMoveCalculator {
             ChessPosition new_position = new ChessPosition(this.position.getRow() + i, this.position.getColumn() + i);
             ChessMove move = new ChessMove(new ChessPosition(this.position.getRow(), this.position.getColumn()),
                     new_position, null);
-            if (valid_position(move)) {
+            if (valid_position(new_position)) {
                 if (this.board.getPiece(new_position) != null) {
                     ChessPiece own_piece = this.board.getPiece(this.position);
                     if (this.board.getPiece(new_position).getTeamColor() == own_piece.getTeamColor()) {
@@ -153,7 +152,7 @@ public class PieceMoveCalculator {
             ChessPosition new_position = new ChessPosition(this.position.getRow() + i, this.position.getColumn() - i);
             ChessMove move = new ChessMove(new ChessPosition(this.position.getRow(), this.position.getColumn()),
                     new_position, null);
-            if (valid_position(move)) {
+            if (valid_position(new_position)) {
                 if (this.board.getPiece(new_position) != null) {
                     ChessPiece own_piece = this.board.getPiece(this.position);
                     if (this.board.getPiece(new_position).getTeamColor() == own_piece.getTeamColor()) {
@@ -177,20 +176,19 @@ public class PieceMoveCalculator {
             ChessPosition new_position = new ChessPosition(this.position.getRow() - i, this.position.getColumn() + i);
             ChessMove move = new ChessMove(new ChessPosition(this.position.getRow(), this.position.getColumn()),
                     new_position, null);
-            if (valid_position(move)) {
-                if (valid_position(move)) {
-                    if (this.board.getPiece(new_position) != null) {
-                        ChessPiece own_piece = this.board.getPiece(this.position);
-                        if (this.board.getPiece(new_position).getTeamColor() == own_piece.getTeamColor()) {
-                            break;
-                        } else {
-                            bishop_moves.add(move);
-                            break;
-                        }
+            if (valid_position(new_position)) {
+                if (this.board.getPiece(new_position) != null) {
+                    ChessPiece own_piece = this.board.getPiece(this.position);
+                    if (this.board.getPiece(new_position).getTeamColor() == own_piece.getTeamColor()) {
+                        break;
                     } else {
                         bishop_moves.add(move);
+                        break;
                     }
+                } else {
+                    bishop_moves.add(move);
                 }
+
             }
             else {break;}
         }
@@ -202,7 +200,7 @@ public class PieceMoveCalculator {
             for (int i = 1; i <= 8; i++) {
                 ChessPosition new_position = new ChessPosition(this.position.getRow() - i, this.position.getColumn() - i);
                 ChessMove move = new ChessMove(new ChessPosition(this.position.getRow(), this.position.getColumn()), new_position, null);
-                if (valid_position(move)) {
+                if (valid_position(new_position)) {
                     if (this.board.getPiece(new_position) != null) {
                         ChessPiece own_piece = this.board.getPiece(this.position);
                         if (this.board.getPiece(new_position).getTeamColor() == own_piece.getTeamColor()) {
