@@ -101,6 +101,11 @@ public class ChessPiece {
             Set<ChessMove> knight_moves = knight.knight_moves();
             return knight_moves;
         }
+        else if (piece.getPieceType() == PieceType.PAWN) {
+            PawnMovesCalculator pawn = new PawnMovesCalculator(myPosition, board);
+            Set<ChessMove> pawn_moves = pawn.pawn_moves();
+            return pawn_moves;
+        }
         else{
             return List.of();
         }
