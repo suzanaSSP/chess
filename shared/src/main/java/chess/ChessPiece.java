@@ -26,6 +26,11 @@ public class ChessPiece {
     }
 
     @Override
+    public String toString() {
+        return "{" + pieceColor + type +'}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
@@ -110,4 +115,5 @@ public class ChessPiece {
             return List.of();
         }
     }
+
 }

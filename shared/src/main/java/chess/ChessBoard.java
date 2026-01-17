@@ -26,6 +26,15 @@ public class ChessBoard {
         squares[position.getRow()-1][position.getColumn()-1] = piece;
     }
 
+    // adds all the start pieces in a resetted board
+    public void addStartPieces() {
+        // pawns
+        for (int i=1; i<=8;i++) {
+            ChessPosition white_new_pos = new ChessPosition(2, i);
+            ChessPiece new_white_pawn = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+            squares[white_new_pos.getRow()][white_new_pos.getColumn()] = new_white_pawn;
+        }
+    }
     /**
      * Gets a chess piece on the chessboard
      *
@@ -48,7 +57,10 @@ public class ChessBoard {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
+        if (this.squares == o) {
+            return true;
+        }
+        if (o == null || this.squares.getClass() != o.getClass()) {
             return false;
         }
         ChessBoard that = (ChessBoard) o;
@@ -58,5 +70,27 @@ public class ChessBoard {
     @Override
     public int hashCode() {
         return Arrays.deepHashCode(squares);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder board = new StringBuilder();
+
+        for (int i=0; i<8; i++) {
+            StringBuilder row = new StringBuilder();
+            for (int j=0; j<8; j++) {
+                if (squares[i][j] == null) {
+                    String square = "[.]";
+                    row.append(square);
+                }
+                else {
+                    String square = "[" + squares[i][j].toString() + "]";
+                    row.append(square);
+                }
+            }
+            row.append('\n');
+            board.append(row);
+        }
+        return board.toString();
     }
 }

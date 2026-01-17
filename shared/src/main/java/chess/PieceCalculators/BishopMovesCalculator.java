@@ -11,6 +11,7 @@ import java.util.List;
 public class BishopMovesCalculator extends  PieceMoveCalculator{
     public ChessPosition position;
     public ChessBoard board;
+
     public BishopMovesCalculator(ChessPosition current_postion, ChessBoard board) {
         super(current_postion, board);
         this.position = current_postion;
@@ -27,4 +28,19 @@ public class BishopMovesCalculator extends  PieceMoveCalculator{
     }
 
 
+    public ChessPosition getWhite_bishop_left_pos() {
+        return new ChessPosition(1, 3);
+    }
+
+    public ChessPosition getWhite_bishop_right_pos() {
+        return new ChessPosition(1, 6);
+    }
+
+    public ChessPosition getBlack_bishop_left_pos() {
+        return new ChessPosition(8, 3);
+    }
+
+    public ChessPosition getBlack_bishop_right_pos() {
+        return new ChessPosition(8, 6);
+    }
 }
