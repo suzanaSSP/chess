@@ -12,7 +12,17 @@ public class PawnMovesCalculator extends PieceMoveCalculator{
         this.position = current_position;
         this.board = board;
     }
-
+    
+    public Set<ChessMove> pawn_moves () {
+        Set<ChessMove> all_moves = new HashSet<>();
+        if (board.getPiece(this.position).getTeamColor() == ChessGame.TeamColor.WHITE) {
+            all_moves = white_pawn_moves();
+        }
+        else {
+            all_moves = black_pawn_moves();
+        }
+        return all_moves;
+    }
 
     public Set<ChessMove> white_pawn_moves() {
         Set<ChessMove> all_moves = new HashSet<>();
@@ -103,17 +113,6 @@ public class PawnMovesCalculator extends PieceMoveCalculator{
                     all_moves.add(move);
                 }
             }
-        }
-        return all_moves;
-    }
-
-    public Set<ChessMove> pawn_moves () {
-        Set<ChessMove> all_moves = new HashSet<>();
-        if (board.getPiece(this.position).getTeamColor() == ChessGame.TeamColor.WHITE) {
-            all_moves = white_pawn_moves();
-        }
-        else {
-            all_moves = black_pawn_moves();
         }
         return all_moves;
     }

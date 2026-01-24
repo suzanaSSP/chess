@@ -93,8 +93,7 @@ public class ChessPiece {
         }
         else if (piece.getPieceType() == PieceType.ROOK) {
             RookMoveCalculator rook = new RookMoveCalculator(myPosition, board);
-            Collection<ChessMove> rook_moves = rook.rook_moves();
-            return rook_moves;
+            return rook.rook_moves();
         }
         else if (piece.getPieceType() == PieceType.QUEEN) {
             QueenMovesCalculator queen = new QueenMovesCalculator(myPosition, board);
