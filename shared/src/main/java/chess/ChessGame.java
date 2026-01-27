@@ -11,7 +11,9 @@ import java.util.Collection;
 public class ChessGame {
 
     public ChessGame.TeamColor team_playing;
-    public ChessBoard current_board;
+    public ChessBoard current_board = new ChessBoard();
+    ChessPosition white_king = new ChessPosition(0, 4);
+    ChessPosition black_king = new ChessPosition(7, 4);
 
     public ChessGame() {
 
@@ -69,6 +71,15 @@ public class ChessGame {
             ChessPiece piece = current_board.getPiece(move.startPosition);
             current_board.addPiece(move.endPosition, piece);
             current_board.removePiece(move.startPosition);
+            if (piece.type == ChessPiece.PieceType.KING) {
+                if (piece.pieceColor == TeamColor.WHITE) {
+                    white_king = move.endPosition;
+                }
+                else {
+                    black_king = move.endPosition;
+                }
+            }
+
         }
     }
 
@@ -79,9 +90,36 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        //Up, down, right, left, diagonal right up, diagonal left up, diagonal right down, diagonal left down
+        int[][] directions = {{1,0}, {-1,0},{0,1}, {0,-1}, {1,1},{1,-1}, {-1, 1}, {-1,-1}};
+
+        if (teamColor == TeamColor.WHITE) {
+            for (int[] d : directions) {
+                int r = white_king.getRow() + d[0];
+                int c = white_king.getColumn() + d[1];
+
+                while (isInsideBoard(r, c)) {
+                    ChessPosition possible_enemy = new ChessPosition(r, c);
+                    if (current_board.getPiece(possible_enemy) != null) {
+                        ChessPiece maybe_enemy = current_board.getPiece(possible_enemy);
+                        if (maybe_enemy.pieceColor != TeamColor.WHITE && (maybe_enemy.type == ChessPiece.PieceType.ROOK
+                                || maybe_enemy.type == ChessPiece.PieceType.QUEEN
+                        || maybe_enemy.type == ChessPiece.PieceType.BISHOP)){
+                            return true;
+                        }
+                    }
+                    r += d[0];
+                    c += d[1];
+                }
+            }
+        }
+        return false;
+
     }
 
+    public boolean isInsideBoard(int row, int col) {
+        return row >=1 && row <=8 && col >=1 &&  col <=8;
+    }
     /**
      * Determines if the given team is in checkmate
      *
