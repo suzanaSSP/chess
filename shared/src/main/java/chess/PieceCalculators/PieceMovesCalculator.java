@@ -7,7 +7,7 @@ import chess.ChessPosition;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public abstract class PieceMovesCalculator {
+public class PieceMovesCalculator {
     public ChessPosition position;
     public ChessBoard board;
     public boolean just_killed = false;
