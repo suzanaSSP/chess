@@ -17,7 +17,7 @@ public class ChessGame {
     ChessPosition black_king = new ChessPosition(8, 5);
 
     public ChessGame() {
-
+        current_board.add_start_pieces();
     }
 
     //DEEP COPY
