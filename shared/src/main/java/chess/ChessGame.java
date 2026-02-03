@@ -62,9 +62,13 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece curr_piece = current_board.getPiece(startPosition);
+        if (curr_piece == null) {
+            return null;
+        }
         // all moves piece can make
         Collection<ChessMove> possible_moves = curr_piece.pieceMoves(current_board, startPosition);
         Collection<ChessMove> approved_moves = new ArrayList<>();
+
         //clone board
         for (ChessMove move : possible_moves) {
             ChessGame game_copy = new ChessGame(this);
@@ -75,11 +79,7 @@ public class ChessGame {
             }
         }
 
-        if (approved_moves.isEmpty()) {
-            return null;
-        } else {
-            return approved_moves;
-        }
+        return approved_moves;
     }
 
     /**
@@ -89,12 +89,16 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if (validMoves(move.startPosition) == null || !validMoves(move.startPosition).contains(move)) {
+        if (validMoves(move.startPosition) == null || !validMoves(move.startPosition).contains(move) ||
+        validMoves(move.startPosition).isEmpty()|| getTeamTurn() != current_board.getPiece(move.startPosition).getTeamColor()) {
             throw new InvalidMoveException();
         } else {
             ChessPiece piece = current_board.getPiece(move.startPosition);
             current_board.addPiece(move.endPosition, piece);
             current_board.removePiece(move.startPosition);
+            if (move.promotionPiece != null) {
+                piece.type = move.promotionPiece;
+            }
             if (getTeamTurn() == TeamColor.WHITE) {
                 setTeamTurn(TeamColor.BLACK);
             } else {
@@ -111,13 +115,13 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        Collection<ChessPosition> enemy_moves = all_possible_moves(teamColor);
+        Collection<ChessPosition> enemy_moves = all_possible_enemy_moves(teamColor);
         ChessPosition king_pos = find_king_pos(teamColor);
         return enemy_moves.contains(king_pos); // returning wrong king position in move [3,7]
 
     }
 
-    public Collection<ChessPosition> all_possible_moves(TeamColor teamColor) {
+    public Collection<ChessPosition> all_possible_enemy_moves(TeamColor teamColor) {
         //For position
         Collection<ChessPosition> moves = new ArrayList<>();
         for (int i = 1; i <= 8; i++) {
@@ -164,7 +168,42 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        /**Check for checkmate:
+         * King can't move
+         * Pieces can't kill
+         * Pieces can't go in front
+         */
+
+        if (!isInCheck(teamColor)){
+            return false;
+        }
+        Collection<ChessMove> myTeamMoves = own_pieces_moves(teamColor);
+        for (ChessMove move : myTeamMoves){
+            ChessPiece curr_piece = current_board.getPiece(move.startPosition);
+            ChessGame game_copy = new ChessGame(this);
+            game_copy.current_board.addPiece(move.endPosition, curr_piece);
+            game_copy.current_board.removePiece(move.startPosition);
+            if (!game_copy.isInCheck(curr_piece.getTeamColor())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public Collection<ChessMove> own_pieces_moves(TeamColor teamColor){
+        Collection<ChessMove> moves = new ArrayList<>();
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                ChessPiece current_piece = current_board.getPiece(new ChessPosition(i, j));
+                if (current_piece != null) {
+                    if (current_piece.pieceColor == teamColor) {
+                        Collection<ChessMove> pieceMoves = current_piece.pieceMoves(current_board, new ChessPosition(i, j));
+                        moves.addAll(pieceMoves);
+                    }
+                }
+            }
+        }
+        return moves;
     }
 
     /**
