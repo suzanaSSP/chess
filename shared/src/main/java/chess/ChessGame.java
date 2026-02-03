@@ -12,6 +12,7 @@ public class ChessGame {
 
     public ChessGame.TeamColor team_playing = TeamColor.WHITE;
     public ChessBoard current_board = new ChessBoard();
+
     ChessPosition white_king = new ChessPosition(1, 5);
     ChessPosition black_king = new ChessPosition(8, 5);
 
@@ -214,7 +215,21 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (isInCheck(teamColor)){
+            return false;
+        }
+
+        Collection<ChessMove> myTeamMoves = own_pieces_moves(teamColor);
+        for (ChessMove move : myTeamMoves){
+            ChessPiece curr_piece = current_board.getPiece(move.startPosition);
+            ChessGame game_copy = new ChessGame(this);
+            game_copy.current_board.addPiece(move.endPosition, curr_piece);
+            game_copy.current_board.removePiece(move.startPosition);
+            if (!game_copy.isInCheck(curr_piece.getTeamColor())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
