@@ -1,26 +1,38 @@
 package dataaccess;
 import dataaccess.interfaces.UserDAO;
+import io.javalin.http.UnauthorizedResponse;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.channels.AlreadyBoundException;
+import java.util.*;
 
 public class MemoryUserDAO implements UserDAO {
     Map<String, UserData> user_database = new HashMap<>();
 
     public void clear(){
-        System.out.println("Clearing");
+        user_database = new HashMap<>();
     }
 
-    public UserData getUser(String username){
+    public UserData getUser(String username)  {
+        System.out.println(user_database);
         UserData user = user_database.get(username);
-        return user;
+        if (user != null) {
+            return user;
+        } else {
+            throw new UnauthorizedResponse("User not found");
+        }
     }
 
     public UserData createUser(String username, String password, String email){
-        UserData user = new UserData(username, password, email);
-        user_database.put(user.username(), user);
-        return user;
+        System.out.println(user_database);
+        UserData user_test = user_database.get(username);
+        if (user_test != null) {
+            throw new AlreadyBoundException();
+        }
+        else {
+            UserData user = new UserData(username, password, email);
+            user_database.put(user.username(), user);
+            System.out.println(user_database);
+            return user;
+        }
     }
 }

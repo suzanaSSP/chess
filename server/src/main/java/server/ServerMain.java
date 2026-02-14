@@ -1,8 +1,6 @@
 package server;
 
 import chess.*;
-import io.javalin.Javalin;
-import server.handlers.RegisterHandler;
 
 public class ServerMain {
     public static void main(String[] args) {
