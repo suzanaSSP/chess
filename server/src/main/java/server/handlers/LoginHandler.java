@@ -15,11 +15,17 @@ import services.UserService;
 import io.javalin.http.Handler;
 
 public class LoginHandler implements Handler {
+    UserService userService;
+
+    public LoginHandler(UserService service){
+        userService = service;
+    }
+
     public void handle(Context ctx) {
         // Get information from request
         LoginRequest request = ctx.bodyAsClass(LoginRequest.class);
         //Get result
-        LoginResult result = new UserService().login_service(request);
+        LoginResult result = userService.login_service(request);
         // Turn to JSON file
         ctx.json(result);
     }

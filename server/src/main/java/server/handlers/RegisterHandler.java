@@ -1,23 +1,24 @@
 package server.handlers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.gson.Gson;
-
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import server.handlers.requests_and_results.RegisterRequest;
 import server.handlers.requests_and_results.RegisterResult;
 import services.UserService;
 
 public class RegisterHandler implements Handler {
+    UserService userService;
+
+    public RegisterHandler(UserService service){
+        userService = service;
+    }
     public void handle(Context context ){
+        System.out.println("I'm in the register handler");
         // Put context in request object
         RegisterRequest request = context.bodyAsClass(RegisterRequest.class);
 
         // Call service and store result in result class
-        UserService user_service = new UserService();
-        RegisterResult result = user_service.register(request);
+        RegisterResult result = userService.register(request);
 
         //Turn to JSON file
         context.json(result);

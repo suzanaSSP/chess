@@ -1,7 +1,7 @@
 package dataaccess.interfaces;
 
 public interface AuthDAO {
-    String createAuth();
-    String getAuth();
-    void deleteAuth();
+    String createAuth(String username);
+    String getAuth(String username);
+    void deleteAuth(String username);
 }

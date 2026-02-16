@@ -7,6 +7,7 @@ import java.util.*;
 
 public class MemoryUserDAO implements UserDAO {
     Map<String, UserData> user_database = new HashMap<>();
+    // <username, UserData>
 
     public void clear(){
         user_database = new HashMap<>();

@@ -1,16 +1,22 @@
 package services;
 
 import dataaccess.MemoryAuthDAO;
+import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
+import io.javalin.http.UnauthorizedResponse;
 import model.UserData;
-import server.handlers.requests_and_results.LoginRequest;
-import server.handlers.requests_and_results.LoginResult;
-import server.handlers.requests_and_results.RegisterRequest;
-import server.handlers.requests_and_results.RegisterResult;
+import server.handlers.requests_and_results.*;
 
 public class UserService {
-    MemoryAuthDAO auth = new MemoryAuthDAO();
-    MemoryUserDAO dataaccess = new MemoryUserDAO();
+    MemoryAuthDAO auth;
+    MemoryUserDAO dataaccess;
+    MemoryGameDAO game;
+
+    public UserService(MemoryUserDAO userDataBase, MemoryAuthDAO authDataBase, MemoryGameDAO g){
+        auth = authDataBase;
+        dataaccess = userDataBase;
+        game = g;
+    }
 
     public RegisterResult register(RegisterRequest registerRequest) {
 
@@ -19,7 +25,7 @@ public class UserService {
                 registerRequest.email());
 
         // Create Token
-        String new_token = auth.createAuth();
+        String new_token = auth.createAuth(new_user.username());
 
         RegisterResult result = new RegisterResult(new_user.username(), new_token);
         return result;
@@ -31,9 +37,25 @@ public class UserService {
 
     public LoginResult login_service(LoginRequest request) {
         UserData user = dataaccess.getUser(request.username());
-        String new_token = auth.createAuth();
+        String new_token = auth.createAuth(user.username());
 
         LoginResult result = new LoginResult(user.username(), new_token);
         return result;
+    }
+
+    public void logout_service(String token) {
+        try {
+            auth.deleteAuth(token);
+        } catch (UnauthorizedResponse e) {
+            throw e;
+        }
+    }
+
+    public void authenticateToken(String token) {
+        try {
+            String test = auth.getAuth(token);
+        } catch (Exception e) {
+            throw new UnauthorizedResponse("User not found");
+        }
     }
 }

@@ -6,9 +6,13 @@ import services.UserService;
 
 
 public class ClearHandler implements Handler {
+    UserService userService;
+
+    public ClearHandler(UserService service){
+        userService = service;
+    }
     public void handle(Context context) {
-        UserService service = new UserService();
-        service.clear_service();
+        userService.clear_service();
         String json = "{}";
         context.result(json);
     }
