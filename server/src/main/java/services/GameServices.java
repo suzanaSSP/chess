@@ -3,6 +3,9 @@ package services;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
+import model.GameData;
+
+import java.util.Collection;
 
 public class GameServices {
     MemoryAuthDAO auth;
@@ -19,4 +22,7 @@ public class GameServices {
         return game.createGame(gameName);
     }
 
+    public Collection<GameData> listGamesService(){
+        return game.listGames();
+    }
 }

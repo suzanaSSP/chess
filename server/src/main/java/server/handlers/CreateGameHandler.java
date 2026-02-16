@@ -19,11 +19,8 @@ public class CreateGameHandler implements Handler {
     }
 
     public void handle(Context ctx) {
-        System.out.println("I'm in the handler");
         String authToken = ctx.header("authorization");
         CreateGameRequest request = ctx.bodyAsClass(CreateGameRequest.class);
-        System.out.println(authToken);
-        System.out.println(request);
 
         // Authenticate token
         try {
