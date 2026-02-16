@@ -3,6 +3,8 @@ package dataaccess;
 import chess.ChessGame;
 import dataaccess.interfaces.GameDAO;
 import model.GameData;
+
+import java.nio.channels.AlreadyBoundException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,14 +29,43 @@ public class MemoryGameDAO implements GameDAO {
         return new_ID;
     }
 
-    public ChessGame getGame(){
-        ChessGame test = new ChessGame();
-        return test;
-    }
     public Collection<GameData> listGames(){
         return game_database.values();
     }
-    public void updateGame(){
-        System.out.println("Hi");
+
+    public GameData createNewGameData(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game){
+        return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
     }
+
+    public void updateGame(String username_, String player_color, int gameID){
+        GameData game = game_database.get(gameID);
+
+        switch (player_color) {
+            case "WHITE":
+                if (game.whiteUsername() != null) {
+                throw new AlreadyBoundException();
+                }
+                GameData white_game = createNewGameData(gameID, username_, game.blackUsername(), game.gameName(), game.game());
+                game_database.replace(gameID, white_game);
+
+            case "BLACK":
+                if (game.blackUsername() != null) {
+                    throw new AlreadyBoundException();
+                }
+                GameData black_game = createNewGameData(gameID, game.whiteUsername(), username_, game.gameName(), game.game());
+                game_database.replace(gameID, black_game);
+
+            case "WHITE/BLACK":
+                if (game.whiteUsername() == null) {
+                    GameData new_game = createNewGameData(gameID, username_, game.blackUsername(), game.gameName(), game.game());
+                    game_database.replace(gameID, new_game);
+                }
+                else if (game.blackUsername() == null) {
+                    GameData new_game = createNewGameData(gameID, game.whiteUsername(), username_, game.gameName(), game.game());
+                    game_database.replace(gameID, new_game);
+                }
+        }
+
+    }
+
 }

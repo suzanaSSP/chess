@@ -29,7 +29,8 @@ public class Server {
                 .post("/session", (ctx) -> new LoginHandler(service_user).handle(ctx))
                 .delete("/session", (ctx)-> new LogoutHandler(service_user).handle(ctx))
                 .post("/game", (ctx) -> new CreateGameHandler(service_user,service_game).handle(ctx))
-                .get("/game", (ctx)-> new ListGamesHandler(service_user, service_game).handle(ctx));
+                .get("/game", (ctx)-> new ListGamesHandler(service_user, service_game).handle(ctx))
+                .put("/game", (ctx) -> new JoinGameHandler(service_user, service_game).handle(ctx));
 
         //Exception handling for username already in use when registering
         javalin.exception(AlreadyBoundException.class, (e, ctx) -> {

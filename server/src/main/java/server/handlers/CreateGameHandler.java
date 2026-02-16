@@ -31,9 +31,7 @@ public class CreateGameHandler implements Handler {
 
         // Everything passes, create game
         int game_id = game_service.createGameServices(request.gameName());
-        System.out.println(game_id);
         CreateGameResult result = new CreateGameResult(game_id);
-        System.out.println(result);
         ctx.json(result);
     }
 }

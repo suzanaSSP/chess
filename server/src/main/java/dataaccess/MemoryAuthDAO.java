@@ -24,9 +24,7 @@ public class MemoryAuthDAO implements AuthDAO {
         return new_auth.toString();
     }
     public AuthData getAuth(String authToken){
-        System.out.println(authToken);
         AuthData authorization = auth_database.get(authToken);
-        System.out.println(authorization);
         if (authorization != null) {
             return authorization;
         }
@@ -36,7 +34,6 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     public void deleteAuth(String authtoken){
-        System.out.println(auth_database);
         AuthData current_auth = getAuth(authtoken);
         auth_database.remove(authtoken, current_auth);
     }

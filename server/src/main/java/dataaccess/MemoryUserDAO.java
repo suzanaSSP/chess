@@ -14,7 +14,6 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     public UserData getUser(String username)  {
-        System.out.println(user_database);
         UserData user = user_database.get(username);
         if (user != null) {
             return user;

@@ -25,4 +25,9 @@ public class GameServices {
     public Collection<GameData> listGamesService(){
         return game.listGames();
     }
+
+    public void joinGameService(String username, String player_color, int gameId) {
+        game.updateGame(username, player_color, gameId);
+    }
+
 }

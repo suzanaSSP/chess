@@ -47,7 +47,6 @@ public class UserService {
 
     public void logout_service(String token) {
         auth.deleteAuth(token);
-
     }
 
     public void authenticateToken(String token) {
@@ -56,5 +55,9 @@ public class UserService {
         } catch (Exception e) {
             throw new UnauthorizedResponse("User not found");
         }
+    }
+
+    public String getUser_withAuth(String token) {
+        return auth.getAuth(token).username();
     }
 }
