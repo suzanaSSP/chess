@@ -14,6 +14,7 @@ public class MemoryGameDAO implements GameDAO {
     Map<Integer, GameData> game_database = new HashMap<>();
     // <gameID, GameData object>
 
+    public void clear(){game_database = new HashMap<>();}
     public int createGame(String gameName){
         // Create ID
         Random rand = new Random();

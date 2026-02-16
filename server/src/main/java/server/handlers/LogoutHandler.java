@@ -13,7 +13,7 @@ public class LogoutHandler implements Handler {
     }
 
     public void handle(Context ctx) {
-        String authToken = ctx.header("Auth Token");
+        String authToken = ctx.header("authorization");
         try {
             userService.logout_service(authToken);
             ctx.json("{}");

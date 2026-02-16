@@ -13,7 +13,6 @@ public class RegisterHandler implements Handler {
         userService = service;
     }
     public void handle(Context context ){
-        System.out.println("I'm in the register handler");
         // Put context in request object
         RegisterRequest request = context.bodyAsClass(RegisterRequest.class);
 

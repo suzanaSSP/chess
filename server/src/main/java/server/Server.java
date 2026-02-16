@@ -9,7 +9,7 @@ import server.handlers.*;
 import services.GameServices;
 import services.UserService;
 
-import java.rmi.AlreadyBoundException;
+import java.nio.channels.AlreadyBoundException;
 import java.util.Map;
 
 public class Server {
@@ -28,20 +28,20 @@ public class Server {
                 .delete("/db", (ctx)-> new ClearHandler(service_user).handle(ctx))
                 .post("/session", (ctx) -> new LoginHandler(service_user).handle(ctx))
                 .delete("/session", (ctx)-> new LogoutHandler(service_user).handle(ctx))
-                .post("/game", (ctx) -> new CreateGameHandler(service_user,service_game));
+                .post("/game", (ctx) -> new CreateGameHandler(service_user,service_game).handle(ctx));
+
+        //Exception handling for username already in use when registering
+        javalin.exception(AlreadyBoundException.class, (e, ctx) -> {
+            ctx.status(403);
+            ctx.json(Map.of("message", "Username already used, pick a different one",
+                    "error", "Already Taken"));
+        });
 
         // Exception handling for user not found
         javalin.exception(UnauthorizedResponse.class, (e, ctx)-> {
             ctx.status(401);
             ctx.json(Map.of("error", "unauthorized",
                              "message", "User not found"));
-        });
-
-        //Exception handling for username already in use when registering
-        javalin.exception(AlreadyBoundException.class, (e, ctx) -> {
-            ctx.status(403);
-            ctx.json(Map.of("message", "Username already used, pick a different one",
-                           "error", "Already Taken"));
         });
     }
 

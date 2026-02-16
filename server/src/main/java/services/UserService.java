@@ -4,6 +4,7 @@ import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import io.javalin.http.UnauthorizedResponse;
+import model.AuthData;
 import model.UserData;
 import server.handlers.requests_and_results.*;
 
@@ -19,7 +20,6 @@ public class UserService {
     }
 
     public RegisterResult register(RegisterRequest registerRequest) {
-
         // Create User
         UserData new_user = dataaccess.createUser(registerRequest.username(), registerRequest.password(),
                 registerRequest.email());
@@ -32,6 +32,8 @@ public class UserService {
     }
 
     public void clear_service(){
+        auth.clear();
+        game.clear();
         dataaccess.clear();
     }
 
@@ -44,16 +46,13 @@ public class UserService {
     }
 
     public void logout_service(String token) {
-        try {
-            auth.deleteAuth(token);
-        } catch (UnauthorizedResponse e) {
-            throw e;
-        }
+        auth.deleteAuth(token);
+
     }
 
     public void authenticateToken(String token) {
         try {
-            String test = auth.getAuth(token);
+            AuthData test = auth.getAuth(token);
         } catch (Exception e) {
             throw new UnauthorizedResponse("User not found");
         }
