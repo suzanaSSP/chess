@@ -6,7 +6,6 @@ import io.javalin.http.Handler;
 import io.javalin.http.UnauthorizedResponse;
 import server.handlers.requests_and_results.CreateGameRequest;
 import server.handlers.requests_and_results.CreateGameResult;
-import server.handlers.requests_and_results.RegisterResult;
 import services.GameServices;
 import services.UserService;
 
