@@ -7,6 +7,7 @@ import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import io.javalin.http.BadRequestResponse;
 import model.GameData;
+import server.handlers.requests_and_results.AlternativeGameData;
 
 import java.util.Collection;
 
@@ -25,7 +26,7 @@ public class GameServices {
         return game.createGame(gameName);
     }
 
-    public Collection<GameData> listGamesService(){
+    public Collection<AlternativeGameData> listGamesService(){
         return game.listGames();
     }
 
