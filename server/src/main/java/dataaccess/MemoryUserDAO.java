@@ -23,16 +23,14 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     public UserData createUser(String username, String password, String email){
-        System.out.println(user_database);
         UserData user_test = user_database.get(username);
-        if (user_test != null) {
-            throw new AlreadyBoundException();
-        }
-        else {
+        if (user_test == null) {
             UserData user = new UserData(username, password, email);
             user_database.put(user.username(), user);
-            System.out.println(user_database);
             return user;
+        }
+        else {
+            throw new AlreadyBoundException();
         }
     }
 }

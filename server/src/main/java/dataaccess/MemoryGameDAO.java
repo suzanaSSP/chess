@@ -2,6 +2,7 @@ package dataaccess;
 
 import chess.ChessGame;
 import dataaccess.interfaces.GameDAO;
+import io.javalin.http.BadRequestResponse;
 import model.GameData;
 
 import java.nio.channels.AlreadyBoundException;
@@ -25,7 +26,6 @@ public class MemoryGameDAO implements GameDAO {
         //Add to database
         GameData new_game = new GameData(new_ID, null, null, gameName, game);
         game_database.put(new_ID, new_game);
-        System.out.println(game_database);
         return new_ID;
     }
 
@@ -37,8 +37,16 @@ public class MemoryGameDAO implements GameDAO {
         return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
     }
 
-    public void updateGame(String username_, String player_color, int gameID){
+    public GameData getGame(int gameID)  {
         GameData game = game_database.get(gameID);
+        if (game == null) {
+            throw new BadRequestResponse();
+        }
+        return game;
+    }
+
+    public void updateGame(String username_, String player_color, int gameID) {
+        GameData game = getGame(gameID);
 
         switch (player_color) {
             case "WHITE":
@@ -47,6 +55,7 @@ public class MemoryGameDAO implements GameDAO {
                 }
                 GameData white_game = createNewGameData(gameID, username_, game.blackUsername(), game.gameName(), game.game());
                 game_database.replace(gameID, white_game);
+                return;
 
             case "BLACK":
                 if (game.blackUsername() != null) {
@@ -54,6 +63,7 @@ public class MemoryGameDAO implements GameDAO {
                 }
                 GameData black_game = createNewGameData(gameID, game.whiteUsername(), username_, game.gameName(), game.game());
                 game_database.replace(gameID, black_game);
+                return;
 
             case "WHITE/BLACK":
                 if (game.whiteUsername() == null) {

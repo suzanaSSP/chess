@@ -39,10 +39,15 @@ public class UserService {
 
     public LoginResult login_service(LoginRequest request) {
         UserData user = dataaccess.getUser(request.username());
-        String new_token = auth.createAuth(user.username());
+        if (user.username().equals(request.username()) && user.password().equals(request.password())) {
+            String new_token = auth.createAuth(user.username());
 
-        LoginResult result = new LoginResult(user.username(), new_token);
-        return result;
+            LoginResult result = new LoginResult(user.username(), new_token);
+            return result;
+        }
+        else {
+            throw new UnauthorizedResponse();
+        }
     }
 
     public void logout_service(String token) {

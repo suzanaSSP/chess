@@ -1,5 +1,7 @@
 package server.handlers;
 
+import com.google.gson.Gson;
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import server.handlers.requests_and_results.RegisterRequest;
@@ -15,6 +17,11 @@ public class RegisterHandler implements Handler {
     public void handle(Context context ){
         // Put context in request object
         RegisterRequest request = context.bodyAsClass(RegisterRequest.class);
+
+        // Bad request
+        if (request.username() == null || request.password() == null || request.email() == null){
+            throw new BadRequestResponse();
+        }
 
         // Call service and store result in result class
         RegisterResult result = userService.register(request);

@@ -1,5 +1,6 @@
 package server.handlers;
 
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import io.javalin.http.UnauthorizedResponse;
@@ -21,6 +22,11 @@ public class CreateGameHandler implements Handler {
     public void handle(Context ctx) {
         String authToken = ctx.header("authorization");
         CreateGameRequest request = ctx.bodyAsClass(CreateGameRequest.class);
+
+        // Bad request
+        if (request.gameName() == null) {
+            throw new BadRequestResponse();
+        }
 
         // Authenticate token
         try {

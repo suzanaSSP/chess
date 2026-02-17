@@ -1,8 +1,10 @@
 package services;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
+import io.javalin.http.BadRequestResponse;
 import model.GameData;
 
 import java.util.Collection;
@@ -28,6 +30,8 @@ public class GameServices {
 
     public void joinGameService(String username, String player_color, int gameId) {
         game.updateGame(username, player_color, gameId);
+
+
     }
 
 }

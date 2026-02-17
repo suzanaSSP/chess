@@ -1,9 +1,11 @@
 package server;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import io.javalin.*;
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.UnauthorizedResponse;
 import server.handlers.*;
 import services.GameServices;
@@ -11,6 +13,7 @@ import services.UserService;
 
 import java.nio.channels.AlreadyBoundException;
 import java.util.Map;
+
 
 public class Server {
 
@@ -35,15 +38,19 @@ public class Server {
         //Exception handling for username already in use when registering
         javalin.exception(AlreadyBoundException.class, (e, ctx) -> {
             ctx.status(403);
-            ctx.json(Map.of("message", "Username already used, pick a different one",
-                    "error", "Already Taken"));
+            ctx.json(Map.of("message", "Error: Already Taken"));
         });
 
         // Exception handling for user not found
         javalin.exception(UnauthorizedResponse.class, (e, ctx)-> {
             ctx.status(401);
-            ctx.json(Map.of("error", "unauthorized",
-                             "message", "User not found"));
+            ctx.json(Map.of("message","Error: unauthorized"));
+        });
+
+        // 400 bad request
+        javalin.exception(BadRequestResponse.class, (e, ctx) -> {
+            ctx.status(400);
+            ctx.json(Map.of("message", "Error: bad request"));
         });
     }
 

@@ -1,5 +1,7 @@
 package server.handlers;
 
+import dataaccess.DataAccessException;
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import io.javalin.http.UnauthorizedResponse;
@@ -17,9 +19,13 @@ public class JoinGameHandler implements Handler {
         user_service = u;
         game_service = g;
     }
-    public void handle(Context ctx){
+    public void handle(Context ctx)  {
         String token = ctx.header("authorization");
         JoinGameRequest request = ctx.bodyAsClass(JoinGameRequest.class);
+
+        if (request.playerColor() == null) {
+            throw new BadRequestResponse();
+        }
 
         // Authenticate token
         try {
@@ -33,12 +39,9 @@ public class JoinGameHandler implements Handler {
             throw e;
         } catch (AlreadyBoundException e) {
             throw e;
+        } catch (BadRequestResponse e) {
+            throw e;
         }
-
-
-
-
-
     }
 
 }
