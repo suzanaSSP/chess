@@ -63,17 +63,6 @@ public class MemoryGameDAO implements GameDAO {
                 }
                 GameData black_game = createNewGameData(gameID, game.whiteUsername(), username_, game.gameName(), game.game());
                 game_database.replace(gameID, black_game);
-                return;
-
-            case "WHITE/BLACK":
-                if (game.whiteUsername() == null) {
-                    GameData new_game = createNewGameData(gameID, username_, game.blackUsername(), game.gameName(), game.game());
-                    game_database.replace(gameID, new_game);
-                }
-                else if (game.blackUsername() == null) {
-                    GameData new_game = createNewGameData(gameID, game.whiteUsername(), username_, game.gameName(), game.game());
-                    game_database.replace(gameID, new_game);
-                }
         }
 
     }

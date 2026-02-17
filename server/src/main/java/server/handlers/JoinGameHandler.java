@@ -23,10 +23,6 @@ public class JoinGameHandler implements Handler {
         String token = ctx.header("authorization");
         JoinGameRequest request = ctx.bodyAsClass(JoinGameRequest.class);
 
-        if (request.playerColor() == null) {
-            throw new BadRequestResponse();
-        }
-
         // Authenticate token
         try {
             user_service.authenticateToken(token);
