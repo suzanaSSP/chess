@@ -1,5 +1,7 @@
 package server.handlers;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
@@ -29,7 +31,9 @@ public class JoinGameHandler implements Handler {
             // Authentication passed
             String username = user_service.getUser_withAuth(token);
             game_service.joinGameService(username, request.playerColor(), request.gameID());
-            ctx.json("{}");
+            // Turn to JSON file
+            Gson gson = new Gson();
+            ctx.result(gson.toJson(new JsonObject()));
         } catch (UnauthorizedResponse e) {
             throw e;
         } catch (AlreadyBoundException e) {

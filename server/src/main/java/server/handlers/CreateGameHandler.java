@@ -1,5 +1,6 @@
 package server.handlers;
 
+import com.google.gson.Gson;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
@@ -37,6 +38,8 @@ public class CreateGameHandler implements Handler {
         // Everything passes, create game
         int game_id = game_service.createGameServices(request.gameName());
         CreateGameResult result = new CreateGameResult(game_id);
-        ctx.json(result);
+        // Turn to JSON file
+        Gson gson = new Gson();
+        ctx.result(gson.toJson(result));
     }
 }

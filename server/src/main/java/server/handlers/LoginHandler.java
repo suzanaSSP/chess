@@ -1,5 +1,6 @@
 package server.handlers;
 
+import com.google.gson.Gson;
 import io.javalin.http.*;
 import io.javalin.http.Handler;
 import server.handlers.requests_and_results.LoginRequest;
@@ -26,6 +27,7 @@ public class LoginHandler implements Handler {
         //Get result
         LoginResult result = userService.login_service(request);
         // Turn to JSON file
-        ctx.json(result);
+        Gson gson = new Gson();
+        ctx.result(gson.toJson(result));
     }
 }

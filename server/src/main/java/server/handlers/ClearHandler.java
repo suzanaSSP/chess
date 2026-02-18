@@ -1,5 +1,7 @@
 package server.handlers;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import services.UserService;
@@ -13,8 +15,10 @@ public class ClearHandler implements Handler {
     }
     public void handle(Context context) {
         userService.clear_service();
-        String json = "{}";
-        context.result(json);
+        // Turn to JSON file
+        Gson gson = new Gson();
+        context.result(gson.toJson(new JsonObject()));
+
     }
 
 }

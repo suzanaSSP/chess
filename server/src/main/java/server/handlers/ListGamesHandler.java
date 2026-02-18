@@ -1,5 +1,6 @@
 package server.handlers;
 
+import com.google.gson.Gson;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import io.javalin.http.UnauthorizedResponse;
@@ -28,6 +29,8 @@ public class ListGamesHandler implements Handler {
 
         // Passed authentication, list games
         ListGamesResult result = new ListGamesResult(game_service.listGamesService());
-        ctx.json(result);
+        // Turn to JSON file
+        Gson gson = new Gson();
+        ctx.result(gson.toJson(result));
     }
 }

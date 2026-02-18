@@ -1,5 +1,6 @@
 package server.handlers;
 
+import com.google.gson.Gson;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
@@ -25,7 +26,8 @@ public class RegisterHandler implements Handler {
         // Call service and store result in result class
         RegisterResult result = userService.register(request);
 
-        //Turn to JSON file
-        context.json(result);
+        // Turn to JSON file
+        Gson gson = new Gson();
+        context.result(gson.toJson(result));
     }
 }
