@@ -17,7 +17,9 @@ public class LoginHandler implements Handler {
 
     public void handle(Context ctx) {
         // Get information from request
-        LoginRequest request = ctx.bodyAsClass(LoginRequest.class);
+//        LoginRequest request = ctx.bodyAsClass(LoginRequest.class);
+        Gson gson = new Gson();
+        LoginRequest request = gson.fromJson(ctx.body(), LoginRequest.class);
 
         // Bad Requet
         if (request.username() == null || request.password() == null){
@@ -27,7 +29,7 @@ public class LoginHandler implements Handler {
         //Get result
         LoginResult result = userService.login_service(request);
         // Turn to JSON file
-        Gson gson = new Gson();
+
         ctx.result(gson.toJson(result));
     }
 }
