@@ -7,6 +7,7 @@ import io.javalin.http.Handler;
 import io.javalin.http.UnauthorizedResponse;
 import server.handlers.requests_and_results.CreateGameRequest;
 import server.handlers.requests_and_results.CreateGameResult;
+import server.handlers.requests_and_results.JoinGameRequest;
 import services.GameServices;
 import services.UserService;
 
@@ -21,7 +22,8 @@ public class CreateGameHandler implements Handler {
 
     public void handle(Context ctx) {
         String authToken = ctx.header("authorization");
-        CreateGameRequest request = ctx.bodyAsClass(CreateGameRequest.class);
+        Gson gson = new Gson();
+        CreateGameRequest request = gson.fromJson(ctx.body(), CreateGameRequest.class);
 
         // Bad request
         if (request.gameName() == null) {
@@ -39,7 +41,6 @@ public class CreateGameHandler implements Handler {
         int game_id = game_service.createGameServices(request.gameName());
         CreateGameResult result = new CreateGameResult(game_id);
         // Turn to JSON file
-        Gson gson = new Gson();
         ctx.result(gson.toJson(result));
     }
 }

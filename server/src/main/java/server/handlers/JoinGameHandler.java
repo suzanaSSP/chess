@@ -22,7 +22,9 @@ public class JoinGameHandler implements Handler {
     }
     public void handle(Context ctx)  {
         String token = ctx.header("authorization");
-        JoinGameRequest request = ctx.bodyAsClass(JoinGameRequest.class);
+//        JoinGameRequest request = ctx.bodyAsClass(JoinGameRequest.class);
+        Gson gson = new Gson();
+        JoinGameRequest request = gson.fromJson(ctx.body(), JoinGameRequest.class);
 
         // Authenticate token
         try {
@@ -32,7 +34,6 @@ public class JoinGameHandler implements Handler {
             String username = user_service.getUser_withAuth(token);
             game_service.joinGameService(username, request.playerColor(), request.gameID());
             // Turn to JSON file
-            Gson gson = new Gson();
             ctx.result(gson.toJson(new JsonObject()));
         } catch (UnauthorizedResponse e) {
             throw e;

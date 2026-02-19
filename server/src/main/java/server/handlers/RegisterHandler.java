@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+import server.handlers.requests_and_results.LoginRequest;
 import server.handlers.requests_and_results.RegisterRequest;
 import server.handlers.requests_and_results.RegisterResult;
 import services.UserService;
@@ -16,7 +17,8 @@ public class RegisterHandler implements Handler {
     }
     public void handle(Context context ){
         // Put context in request object
-        RegisterRequest request = context.bodyAsClass(RegisterRequest.class);
+        Gson gson = new Gson();
+        RegisterRequest request = gson.fromJson(context.body(), RegisterRequest.class);
 
         // Bad request
         if (request.username() == null || request.password() == null || request.email() == null){
@@ -27,7 +29,6 @@ public class RegisterHandler implements Handler {
         RegisterResult result = userService.register(request);
 
         // Turn to JSON file
-        Gson gson = new Gson();
         context.result(gson.toJson(result));
     }
 }
