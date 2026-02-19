@@ -12,14 +12,15 @@ public class LoginHandler implements Handler {
     UserService userService;
 
     public LoginHandler(UserService service){
+
         userService = service;
     }
 
     public void handle(Context ctx) {
         // Get information from request
-//        LoginRequest request = ctx.bodyAsClass(LoginRequest.class);
+        LoginRequest request = ctx.bodyAsClass(LoginRequest.class);
         Gson gson = new Gson();
-        LoginRequest request = gson.fromJson(ctx.body(), LoginRequest.class);
+//        LoginRequest request = gson.fromJson(ctx.body(), LoginRequest.class);
 
         // Bad Requet
         if (request.username() == null || request.password() == null){
