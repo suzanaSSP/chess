@@ -1,5 +1,6 @@
 package server;
 
+import com.google.gson.Gson;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
@@ -23,6 +24,7 @@ public class Server {
 
     public UserService service_user = new UserService(userData, authData, gameData);
     public GameServices service_game = new GameServices(userData, authData, gameData);
+    Gson gson = new Gson();
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
@@ -37,19 +39,19 @@ public class Server {
         //Exception handling for username already in use when registering
         javalin.exception(AlreadyBoundException.class, (e, ctx) -> {
             ctx.status(403);
-            ctx.json(Map.of("message", "Error: Already Taken"));
+            ctx.json(gson.toJson(Map.of("message", "Error: Already Taken")));
         });
 
         // Exception handling for user not found
         javalin.exception(UnauthorizedResponse.class, (e, ctx)-> {
             ctx.status(401);
-            ctx.json(Map.of("message","Error: unauthorized"));
+            ctx.json(gson.toJson(Map.of("message","Error: unauthorized")));
         });
 
         // 400 bad request
         javalin.exception(BadRequestResponse.class, (e, ctx) -> {
             ctx.status(400);
-            ctx.json(Map.of("message", "Error: bad request"));
+            ctx.json(gson.toJson(Map.of("message", "Error: bad request")));
         });
     }
 
