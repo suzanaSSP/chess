@@ -57,14 +57,14 @@ public class ChessBoard  {
      */
     public void resetBoard() {
         board = new ChessPiece[8][8];
-        add_start_pieces();
+        addStartPieces();
     }
 
-    public void add_start_pieces() {
-        add_start_pawns();
-        add_start_bishops();
-        add_start_knight();
-        add_start_rooks();
+    public void addStartPieces() {
+        addStartPawns();
+        addStartBishops();
+        addStartKnight();
+        addStartRooks();
 
         board[0][3] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
         board[0][4] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
@@ -73,48 +73,48 @@ public class ChessBoard  {
 
     }
 
-    public void add_start_pawns(){
-        ChessPiece white_pawn = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-        ChessPiece black_pawn = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+    public void addStartPawns(){
+        ChessPiece whitePawn = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+        ChessPiece blackPawn = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
         for (int i=0;i<8;i++){
             //add white pawn
-            board[1][i] = white_pawn;
-            board[6][i] = black_pawn;
+            board[1][i] = whitePawn;
+            board[6][i] = blackPawn;
         }
     }
 
-    public void add_start_bishops(){
-        ChessPiece white_bishop = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
-        ChessPiece black_bishop = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+    public void addStartBishops(){
+        ChessPiece whiteBishop = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+        ChessPiece blackBishop = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
 
-        board[0][2] = white_bishop;
-        board[0][5] = white_bishop;
-        board[7][2] = black_bishop;
-        board[7][5] = black_bishop;
+        board[0][2] = whiteBishop;
+        board[0][5] = whiteBishop;
+        board[7][2] = blackBishop;
+        board[7][5] = blackBishop;
 
     }
-    public void add_start_rooks(){
-        ChessPiece white_rook = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
-        ChessPiece black_rook = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+    public void addStartRooks(){
+        ChessPiece whiteRook = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        ChessPiece blackRook = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
 
-        board[0][0] = white_rook;
-        board[0][7] = white_rook;
-        board[7][0] = black_rook;
-        board[7][7] = black_rook;
+        board[0][0] = whiteRook;
+        board[0][7] = whiteRook;
+        board[7][0] = blackRook;
+        board[7][7] = blackRook;
     }
-    public void add_start_knight(){
-        ChessPiece white_knight = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
-        ChessPiece black_knight = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+    public void addStartKnight(){
+        ChessPiece whiteKnight = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+        ChessPiece blackKnight = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
 
-        board[0][1] = white_knight;
-        board[0][6] = white_knight;
-        board[7][1] = black_knight;
-        board[7][6] = black_knight;
+        board[0][1] = whiteKnight;
+        board[0][6] = whiteKnight;
+        board[7][1] = blackKnight;
+        board[7][6] = blackKnight;
     }
 
     @Override
     public String toString() {
-        StringBuilder print_board = new StringBuilder();
+        StringBuilder printBoard = new StringBuilder();
         for (int i=0; i<8;i++) {
             StringBuilder row = new StringBuilder();
             for (int j=0;j<8;j++) {
@@ -127,9 +127,9 @@ public class ChessBoard  {
                 }
             }
             row.append("\n");
-            print_board.append(row);
+            printBoard.append(row);
         }
-        return print_board.toString();
+        return printBoard.toString();
     }
 
     @Override

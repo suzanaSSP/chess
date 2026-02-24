@@ -14,7 +14,7 @@ public class ClearHandler implements Handler {
         userService = service;
     }
     public void handle(Context context) {
-        userService.clear_service();
+        userService.clearService();
         // Turn to JSON file
         Gson gson = new Gson();
         context.result(gson.toJson(new JsonObject()));

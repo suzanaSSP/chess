@@ -6,15 +6,15 @@ import java.nio.channels.AlreadyBoundException;
 import java.util.*;
 
 public class MemoryUserDAO implements UserDAO {
-    Map<String, UserData> user_database = new HashMap<>();
+    Map<String, UserData> userDatabase = new HashMap<>();
     // <username, UserData>
 
     public void clear(){
-        user_database = new HashMap<>();
+        userDatabase = new HashMap<>();
     }
 
     public UserData getUser(String username)  {
-        UserData user = user_database.get(username);
+        UserData user = userDatabase.get(username);
         if (user != null) {
             return user;
         } else {
@@ -23,10 +23,10 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     public UserData createUser(String username, String password, String email){
-        UserData user_test = user_database.get(username);
-        if (user_test == null) {
+        UserData userTest = userDatabase.get(username);
+        if (userTest == null) {
             UserData user = new UserData(username, password, email);
-            user_database.put(user.username(), user);
+            userDatabase.put(user.username(), user);
             return user;
         }
         else {

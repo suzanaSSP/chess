@@ -8,21 +8,22 @@ import java.util.Map;
 import java.util.UUID;
 
 public class MemoryAuthDAO implements AuthDAO {
-    Map<String, AuthData> auth_database = new HashMap<>();
+    Map<String, AuthData> authDatabase = new HashMap<>();
     //Map<Token, username>
 
-    public void clear() {auth_database = new HashMap<>();}
+    public void clear() {
+        authDatabase = new HashMap<>();}
 
     public String createAuth(String username){
         //Create token
-        var new_auth = UUID.randomUUID().toString();
+        var newAuth = UUID.randomUUID().toString();
         //Add to database
-        AuthData authorization = new AuthData(new_auth, username);
-        auth_database.put(new_auth, authorization);
-        return new_auth.toString();
+        AuthData authorization = new AuthData(newAuth, username);
+        authDatabase.put(newAuth, authorization);
+        return newAuth.toString();
     }
     public AuthData getAuth(String authToken){
-        AuthData authorization = auth_database.get(authToken);
+        AuthData authorization = authDatabase.get(authToken);
         if (authorization != null) {
             return authorization;
         }
@@ -32,7 +33,7 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     public void deleteAuth(String authtoken){
-        AuthData current_auth = getAuth(authtoken);
-        auth_database.remove(authtoken, current_auth);
+        AuthData currentAuth = getAuth(authtoken);
+        authDatabase.remove(authtoken, currentAuth);
     }
 }

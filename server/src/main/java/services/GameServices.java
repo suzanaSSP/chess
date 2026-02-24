@@ -7,7 +7,7 @@ import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import io.javalin.http.BadRequestResponse;
 import model.GameData;
-import server.handlers.requests_and_results.AlternativeGameData;
+import server.handlers.requestsandresults.AlternativeGameData;
 
 import java.util.Collection;
 
@@ -30,11 +30,11 @@ public class GameServices {
         return game.listGames();
     }
 
-    public void joinGameService(String username, String player_color, int gameId) {
-        if (player_color == null || ((!player_color.equals("WHITE")) && (!player_color.equals("BLACK")))) {
+    public void joinGameService(String username, String playerColor, int gameId) {
+        if (playerColor == null || ((!playerColor.equals("WHITE")) && (!playerColor.equals("BLACK")))) {
             throw new BadRequestResponse();
         }
-        game.updateGame(username, player_color, gameId);
+        game.updateGame(username, playerColor, gameId);
 
 
     }

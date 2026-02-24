@@ -5,19 +5,19 @@ import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import io.javalin.http.UnauthorizedResponse;
-import server.handlers.requests_and_results.CreateGameRequest;
-import server.handlers.requests_and_results.CreateGameResult;
-import server.handlers.requests_and_results.JoinGameRequest;
+import server.handlers.requestsandresults.CreateGameRequest;
+import server.handlers.requestsandresults.CreateGameResult;
+import server.handlers.requestsandresults.JoinGameRequest;
 import services.GameServices;
 import services.UserService;
 
 public class CreateGameHandler implements Handler {
-    UserService user_service;
-    GameServices game_service;
+    UserService userService;
+    GameServices gameService;
 
     public CreateGameHandler(UserService u, GameServices g){
-        user_service = u;
-        game_service = g;
+        userService = u;
+        gameService = g;
     }
 
     public void handle(Context ctx) {
@@ -32,14 +32,14 @@ public class CreateGameHandler implements Handler {
 
         // Authenticate token
         try {
-            user_service.authenticateToken(authToken);
+            userService.authenticateToken(authToken);
         } catch (UnauthorizedResponse e) {
             throw e;
         }
 
         // Everything passes, create game
-        int game_id = game_service.createGameServices(request.gameName());
-        CreateGameResult result = new CreateGameResult(game_id);
+        int gameId = gameService.createGameServices(request.gameName());
+        CreateGameResult result = new CreateGameResult(gameId);
         // Turn to JSON file
         ctx.result(gson.toJson(result));
     }

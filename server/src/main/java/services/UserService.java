@@ -6,7 +6,6 @@ import dataaccess.MemoryUserDAO;
 import io.javalin.http.UnauthorizedResponse;
 import model.AuthData;
 import model.UserData;
-import server.handlers.requests_and_results.*;
 
 public class UserService {
     MemoryAuthDAO auth;
@@ -21,28 +20,28 @@ public class UserService {
 
     public RegisterResult register(RegisterRequest registerRequest) {
         // Create User
-        UserData new_user = dataaccess.createUser(registerRequest.username(), registerRequest.password(),
+        UserData newUser = dataaccess.createUser(registerRequest.username(), registerRequest.password(),
                 registerRequest.email());
 
         // Create Token
-        String new_token = auth.createAuth(new_user.username());
+        String newToken = auth.createAuth(newUser.username());
 
-        RegisterResult result = new RegisterResult(new_user.username(), new_token);
+        RegisterResult result = new RegisterResult(newUser.username(), newToken);
         return result;
     }
 
-    public void clear_service(){
+    public void clearService(){
         auth.clear();
         game.clear();
         dataaccess.clear();
     }
 
-    public LoginResult login_service(LoginRequest request) {
+    public LoginResult loginService(LoginRequest request) {
         UserData user = dataaccess.getUser(request.username());
         if (user.username().equals(request.username()) && user.password().equals(request.password())) {
-            String new_token = auth.createAuth(user.username());
+            String newToken = auth.createAuth(user.username());
 
-            LoginResult result = new LoginResult(user.username(), new_token);
+            LoginResult result = new LoginResult(user.username(), newToken);
             return result;
         }
         else {
@@ -50,7 +49,7 @@ public class UserService {
         }
     }
 
-    public void logout_service(String token) {
+    public void logoutService(String token) {
         auth.deleteAuth(token);
     }
 
@@ -62,7 +61,7 @@ public class UserService {
         }
     }
 
-    public String getUser_withAuth(String token) {
+    public String getUserWithAuth(String token) {
         return auth.getAuth(token).username();
     }
 }
