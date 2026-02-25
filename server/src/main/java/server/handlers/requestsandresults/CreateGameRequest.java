@@ -1,4 +1,4 @@
-package server.handlers.requests_and_results;
+package server.handlers.requestsandresults;
 
 public record CreateGameRequest(String gameName) {
 }

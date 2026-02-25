@@ -6,6 +6,10 @@ import dataaccess.MemoryUserDAO;
 import io.javalin.http.UnauthorizedResponse;
 import model.AuthData;
 import model.UserData;
+import server.handlers.requestsandresults.LoginRequest;
+import server.handlers.requestsandresults.LoginResult;
+import server.handlers.requestsandresults.RegisterRequest;
+import server.handlers.requestsandresults.RegisterResult;
 
 public class UserService {
     MemoryAuthDAO auth;
