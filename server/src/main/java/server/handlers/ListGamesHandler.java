@@ -4,17 +4,17 @@ import com.google.gson.Gson;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import io.javalin.http.UnauthorizedResponse;
-import server.handlers.requests_and_results.ListGamesResult;
+import server.handlers.requestsandresults.ListGamesResult;
 import services.GameServices;
 import services.UserService;
 
 public class ListGamesHandler implements Handler {
-    UserService user_service;
-    GameServices game_service;
+    UserService userService;
+    GameServices gameService;
 
     public ListGamesHandler(UserService u, GameServices g){
-        user_service = u;
-        game_service = g;
+        userService = u;
+        gameService = g;
     }
 
     public void handle(Context ctx) {
@@ -22,13 +22,13 @@ public class ListGamesHandler implements Handler {
 
         // Authenticate token
         try {
-            user_service.authenticateToken(token);
+            userService.authenticateToken(token);
         } catch (UnauthorizedResponse e) {
             throw e;
         }
 
         // Passed authentication, list games
-        ListGamesResult result = new ListGamesResult(game_service.listGamesService());
+        ListGamesResult result = new ListGamesResult(gameService.listGamesService());
         // Turn to JSON file
         Gson gson = new Gson();
         ctx.result(gson.toJson(result));

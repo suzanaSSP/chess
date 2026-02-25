@@ -4,9 +4,9 @@ import com.google.gson.Gson;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
-import server.handlers.requests_and_results.LoginRequest;
-import server.handlers.requests_and_results.RegisterRequest;
-import server.handlers.requests_and_results.RegisterResult;
+import server.handlers.requestsandresults.LoginRequest;
+import server.handlers.requestsandresults.RegisterRequest;
+import server.handlers.requestsandresults.RegisterResult;
 import services.UserService;
 
 public class RegisterHandler implements Handler {
