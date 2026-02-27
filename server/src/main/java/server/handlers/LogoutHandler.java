@@ -16,14 +16,9 @@ public class LogoutHandler implements Handler {
 
     public void handle(Context ctx) {
         String authToken = ctx.header("authorization");
-        try {
             userService.logoutService(authToken);
             // Turn to JSON file
             Gson gson = new Gson();
             ctx.result(gson.toJson(new JsonObject()));
-
-        } catch (UnauthorizedResponse e) {
-            throw new UnauthorizedResponse("User not found");
-        }
     }
 }

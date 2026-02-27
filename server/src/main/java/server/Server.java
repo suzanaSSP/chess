@@ -23,7 +23,7 @@ public class Server {
     public MemoryGameDAO gameData = new MemoryGameDAO();
 
     public UserService serviceUser = new UserService(userData, authData, gameData);
-    public GameServices serviceGame = new GameServices(userData, authData, gameData);
+    public GameServices serviceGame = new GameServices(userData, authData, gameData, serviceUser);
     Gson gson = new Gson();
 
     public Server() {

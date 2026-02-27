@@ -30,15 +30,9 @@ public class CreateGameHandler implements Handler {
             throw new BadRequestResponse();
         }
 
-        // Authenticate token
-        try {
-            userService.authenticateToken(authToken);
-        } catch (UnauthorizedResponse e) {
-            throw e;
-        }
 
         // Everything passes, create game
-        int gameId = gameService.createGameServices(request.gameName());
+        int gameId = gameService.createGameServices(request.gameName(), authToken);
         CreateGameResult result = new CreateGameResult(gameId);
         // Turn to JSON file
         ctx.result(gson.toJson(result));

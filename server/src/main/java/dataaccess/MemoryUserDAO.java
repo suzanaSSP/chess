@@ -6,7 +6,7 @@ import java.nio.channels.AlreadyBoundException;
 import java.util.*;
 
 public class MemoryUserDAO implements UserDAO {
-    Map<String, UserData> userDatabase = new HashMap<>();
+    public Map<String, UserData> userDatabase = new HashMap<>();
     // <username, UserData>
 
     public void clear(){
@@ -32,5 +32,9 @@ public class MemoryUserDAO implements UserDAO {
         else {
             throw new AlreadyBoundException();
         }
+    }
+
+    public void addToDatabase(UserData userData){
+        userDatabase.put(userData.username(), userData);
     }
 }

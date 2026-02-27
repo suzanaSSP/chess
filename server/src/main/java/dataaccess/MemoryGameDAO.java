@@ -15,6 +15,7 @@ public class MemoryGameDAO implements GameDAO {
 
     public void clear(){
         gameDatabase = new HashMap<>();}
+
     public int createGame(String gameName){
         // Create ID
         Random rand = new Random();
@@ -69,7 +70,10 @@ public class MemoryGameDAO implements GameDAO {
                 GameData blackGame = createNewGameData(gameID, game.whiteUsername(), username, game.gameName(), game.game());
                 gameDatabase.replace(gameID, blackGame);
         }
+    }
 
+    public void addGame(GameData game){
+        gameDatabase.put(game.gameID(), game);
     }
 
 }

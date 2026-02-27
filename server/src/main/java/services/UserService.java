@@ -12,9 +12,9 @@ import server.handlers.requestsandresults.RegisterRequest;
 import server.handlers.requestsandresults.RegisterResult;
 
 public class UserService {
-    MemoryAuthDAO auth;
-    MemoryUserDAO dataaccess;
-    MemoryGameDAO game;
+    public MemoryAuthDAO auth;
+    public MemoryUserDAO dataaccess;
+    public MemoryGameDAO game;
 
     public UserService(MemoryUserDAO userDataBase, MemoryAuthDAO authDataBase, MemoryGameDAO g){
         auth = authDataBase;
@@ -54,7 +54,12 @@ public class UserService {
     }
 
     public void logoutService(String token) {
-        auth.deleteAuth(token);
+        try{
+            auth.deleteAuth(token);
+        } catch (UnauthorizedResponse e) {
+            throw e;
+        }
+
     }
 
     public void authenticateToken(String token) {
@@ -66,6 +71,11 @@ public class UserService {
     }
 
     public String getUserWithAuth(String token) {
-        return auth.getAuth(token).username();
+        try {
+            return auth.getAuth(token).username();
+        } catch (Exception e) {
+            throw new UnauthorizedResponse("User not found");
+        }
+
     }
 }

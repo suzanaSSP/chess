@@ -1,7 +1,6 @@
 package dataaccess.interfaces;
 
 import chess.ChessGame;
-import dataaccess.DataAccessException;
 import model.GameData;
 import server.handlers.requestsandresults.AlternativeGameData;
 
@@ -11,5 +10,6 @@ public interface GameDAO {
     void clear();
     int createGame(String gameName);
     Collection<AlternativeGameData> listGames();
-    void updateGame(String username, String playerColor, int gameID) throws DataAccessException;
+    void updateGame(String username, String playerColor, int gameID);
+    void addGame(GameData game);
 }
