@@ -250,7 +250,10 @@ public class ChessGame {
             return false;
         }
         ChessGame chessGame = (ChessGame) o;
-        return teamPlaying == chessGame.teamPlaying && Objects.equals(currentBoard, chessGame.currentBoard) && Objects.equals(whiteKing, chessGame.whiteKing) && Objects.equals(blackKing, chessGame.blackKing);
+        return teamPlaying == chessGame.teamPlaying &&
+                Objects.equals(currentBoard, chessGame.currentBoard) &&
+                Objects.equals(whiteKing, chessGame.whiteKing) &&
+                Objects.equals(blackKing, chessGame.blackKing);
     }
 
     @Override

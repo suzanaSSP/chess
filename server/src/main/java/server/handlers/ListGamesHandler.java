@@ -20,15 +20,8 @@ public class ListGamesHandler implements Handler {
     public void handle(Context ctx) {
         String token = ctx.header("authorization");
 
-        // Authenticate token
-        try {
-            userService.authenticateToken(token);
-        } catch (UnauthorizedResponse e) {
-            throw e;
-        }
-
         // Passed authentication, list games
-        ListGamesResult result = new ListGamesResult(gameService.listGamesService());
+        ListGamesResult result = new ListGamesResult(gameService.listGamesService(token));
         // Turn to JSON file
         Gson gson = new Gson();
         ctx.result(gson.toJson(result));

@@ -9,6 +9,7 @@ import model.GameData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import server.handlers.requestsandresults.ListGamesResult;
 import server.handlers.requestsandresults.RegisterRequest;
 import server.handlers.requestsandresults.RegisterResult;
 import services.GameServices;
@@ -47,12 +48,8 @@ public class GameServiceTest {
     @Test
     public void createGameException(){
         // User doesn't exist
-        assertThrows(UnauthorizedResponse.class, () -> testGameService.createGameServices("gameError", "safdagfgs"));
-    }
-
-    @Test
-    public void listGamesSuccessfully(){
-
+        assertThrows(UnauthorizedResponse.class, () -> testGameService.createGameServices("gameError",
+                "safdagfgs"));
     }
 
 }

@@ -35,7 +35,13 @@ public class GameServices {
         return game.createGame(gameName);
     }
 
-    public Collection<AlternativeGameData> listGamesService(){
+    public Collection<AlternativeGameData> listGamesService(String token){
+        // Authenticate token
+        try {
+            userService.authenticateToken(token);
+        } catch (UnauthorizedResponse e) {
+            throw e;
+        }
         return game.listGames();
     }
 

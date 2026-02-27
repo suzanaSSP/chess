@@ -116,7 +116,6 @@ public class PieceMovesCalculator {
                 return;
             }
         }
-
     }
 
     public void movesRight() {

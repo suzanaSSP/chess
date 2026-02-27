@@ -30,7 +30,8 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     public Collection<AlternativeGameData> listGames(){
-        // I am only doing this long complicated way because the autograded said so. My other way was more simple and it was working.
+        // I am only doing this long complicated way because the autograded said so.
+        // My other way was more simple and it was working.
         Collection<AlternativeGameData> games = new ArrayList<>();
         for (GameData game : gameDatabase.values()){
             AlternativeGameData newGame = new AlternativeGameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName());
@@ -72,8 +73,5 @@ public class MemoryGameDAO implements GameDAO {
         }
     }
 
-    public void addGame(GameData game){
-        gameDatabase.put(game.gameID(), game);
-    }
 
 }

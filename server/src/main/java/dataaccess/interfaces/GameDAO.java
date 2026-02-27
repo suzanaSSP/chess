@@ -8,8 +8,10 @@ import java.util.Collection;
 
 public interface GameDAO {
     void clear();
+
     int createGame(String gameName);
+
     Collection<AlternativeGameData> listGames();
+
     void updateGame(String username, String playerColor, int gameID);
-    void addGame(GameData game);
 }
