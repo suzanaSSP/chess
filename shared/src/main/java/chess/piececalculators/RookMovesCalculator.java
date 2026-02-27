@@ -1,4 +1,4 @@
-package chess.PieceCalculators;
+package chess.piececalculators;
 
 import chess.ChessBoard;
 import chess.ChessMove;
@@ -6,7 +6,7 @@ import chess.ChessPosition;
 
 import java.util.Collection;
 
-public class RookMovesCalculator extends PieceMovesCalculator{
+public class RookMovesCalculator extends PieceMovesCalculator {
     public RookMovesCalculator(ChessPosition currentPosition, ChessBoard board) {
         super(currentPosition, board);
     }

@@ -1,6 +1,6 @@
 package chess;
 
-import chess.PieceCalculators.*;
+import chess.piececalculators.*;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -62,19 +62,19 @@ public class ChessPiece {
             return bishop.bishopMoves();
         }
         else if(board.getPiece(myPosition).type == PieceType.QUEEN) {
-            QueenMovesCalculator queen = new QueenMovesCalculator(myPosition, board);
+            chess.piececalculators.QueenMovesCalculator queen = new chess.piececalculators.QueenMovesCalculator(myPosition, board);
             return queen.queenMoves();
         }
         else if(board.getPiece(myPosition).type == PieceType.KING) {
-            KingMovesCalculator king = new KingMovesCalculator(myPosition, board);
+            KingMovesCalculator king = new chess.piececalculators.KingMovesCalculator(myPosition, board);
             return king.kingMoves();
         }
         else if (board.getPiece(myPosition).type == PieceType.KNIGHT){
-            KnightMovesCalculator knight = new KnightMovesCalculator(myPosition, board);
+            chess.piececalculators.KnightMovesCalculator knight = new chess.piececalculators.KnightMovesCalculator(myPosition, board);
             return knight.knightMoves();
         }
         else if (board.getPiece(myPosition).type == PieceType.PAWN) {
-            PawnMovesCalculator pawn = new PawnMovesCalculator(myPosition, board);
+            chess.piececalculators.PawnMovesCalculator pawn = new chess.piececalculators.PawnMovesCalculator(myPosition, board);
             return pawn.pawnMoves();
         }
         return null;

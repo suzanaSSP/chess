@@ -1,14 +1,13 @@
-package chess.PieceCalculators;
+package chess.piececalculators;
 
 import chess.ChessBoard;
 import chess.ChessMove;
 import chess.ChessPosition;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class KingMovesCalculator extends PieceMovesCalculator{
+public class KingMovesCalculator extends PieceMovesCalculator {
     public KingMovesCalculator(ChessPosition currentPosition, ChessBoard board) {
         super(currentPosition, board);
     }
