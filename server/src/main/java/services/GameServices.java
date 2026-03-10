@@ -45,7 +45,7 @@ public class GameServices {
         return game.listGames();
     }
 
-    public void joinGameService(String username, String playerColor, int gameId) {
+    public void joinGameService(String username, String playerColor, int gameId) throws DataAccessException {
         if (playerColor == null || ((!playerColor.equals("WHITE")) && (!playerColor.equals("BLACK")))) {
             throw new BadRequestResponse();
         }

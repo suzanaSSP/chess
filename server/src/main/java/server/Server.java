@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.SQLAuthDAO;
+import dataaccess.SQLGameDAO;
 import dataaccess.SQLUserDAO;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.GameDAO;
@@ -32,7 +33,7 @@ public class Server {
         try {
             userData = new SQLUserDAO();
             authData = new SQLAuthDAO();
-
+            gameData = new SQLGameDAO();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
