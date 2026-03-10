@@ -1,4 +1,5 @@
-package dataaccess;
+package dataaccess.memorydao;
+import dataaccess.DataAccessException;
 import dataaccess.interfaces.UserDAO;
 import io.javalin.http.UnauthorizedResponse;
 import model.UserData;
@@ -9,7 +10,7 @@ public class MemoryUserDAO implements UserDAO {
     public Map<String, UserData> userDatabase = new HashMap<>();
     // <username, UserData>
 
-    public void clear(){
+    public void clear() throws DataAccessException {
         userDatabase = new HashMap<>();
     }
 

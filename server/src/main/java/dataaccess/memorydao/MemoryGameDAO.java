@@ -1,4 +1,4 @@
-package dataaccess;
+package dataaccess.memorydao;
 
 import chess.ChessGame;
 import dataaccess.interfaces.GameDAO;

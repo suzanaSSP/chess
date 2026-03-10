@@ -1,24 +1,22 @@
 package services;
 
-import chess.ChessGame;
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.interfaces.GameDAO;
+import dataaccess.interfaces.UserDAO;
+import dataaccess.memorydao.MemoryAuthDAO;
+import dataaccess.memorydao.MemoryGameDAO;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.UnauthorizedResponse;
-import model.GameData;
 import server.handlers.requestsandresults.AlternativeGameData;
 
 import java.util.Collection;
 
 public class GameServices {
     MemoryAuthDAO auth;
-    MemoryUserDAO dataaccess;
-    public MemoryGameDAO game;
+    UserDAO dataaccess;
+    public GameDAO game;
     UserService userService;
 
-    public GameServices(MemoryUserDAO userDataBase, MemoryAuthDAO authDataBase, MemoryGameDAO g, UserService u){
+    public GameServices(UserDAO userDataBase, MemoryAuthDAO authDataBase, GameDAO g, UserService u){
         auth = authDataBase;
         dataaccess = userDataBase;
         game = g;

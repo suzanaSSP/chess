@@ -1,4 +1,4 @@
-package dataaccess;
+package dataaccess.memorydao;
 
 import dataaccess.interfaces.AuthDAO;
 import io.javalin.http.UnauthorizedResponse;

@@ -1,9 +1,12 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.DataAccessException;
+import dataaccess.SQLUserDAO;
+import dataaccess.interfaces.GameDAO;
+import dataaccess.interfaces.UserDAO;
+import dataaccess.memorydao.MemoryAuthDAO;
+import dataaccess.memorydao.MemoryGameDAO;
 import io.javalin.*;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.UnauthorizedResponse;
@@ -18,15 +21,23 @@ import java.util.Map;
 public class Server {
 
     private final Javalin javalin;
-    public MemoryUserDAO userData = new MemoryUserDAO();
+    public UserDAO userData;
     public MemoryAuthDAO authData = new MemoryAuthDAO();
-    public MemoryGameDAO gameData = new MemoryGameDAO();
-
-    public UserService serviceUser = new UserService(userData, authData, gameData);
-    public GameServices serviceGame = new GameServices(userData, authData, gameData, serviceUser);
+    public GameDAO gameData = new MemoryGameDAO();
     Gson gson = new Gson();
 
     public Server() {
+        try {
+            userData = new SQLUserDAO();
+
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Service objects
+        UserService serviceUser = new UserService(userData, authData, gameData);
+        GameServices serviceGame = new GameServices(userData, authData, gameData, serviceUser);
+
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
                 .post("/user", (ctx) -> new RegisterHandler(serviceUser).handle(ctx))
                 .delete("/db", (ctx)-> new ClearHandler(serviceUser).handle(ctx))
@@ -52,6 +63,10 @@ public class Server {
         javalin.exception(BadRequestResponse.class, (e, ctx) -> {
             ctx.status(400);
             ctx.json(gson.toJson(Map.of("message", "Error: bad request")));
+        });
+        javalin.exception(DataAccessException.class, (e, ctx) -> {
+            ctx.status(500);
+            ctx.json(gson.toJson(Map.of("message", "Error: Database Error")));
         });
     }
 

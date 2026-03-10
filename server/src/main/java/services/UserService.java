@@ -1,8 +1,12 @@
 package services;
 
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.DataAccessException;
+import dataaccess.SQLUserDAO;
+import dataaccess.interfaces.AuthDAO;
+import dataaccess.interfaces.GameDAO;
+import dataaccess.interfaces.UserDAO;
+import dataaccess.memorydao.MemoryAuthDAO;
+import dataaccess.memorydao.MemoryGameDAO;
 import io.javalin.http.UnauthorizedResponse;
 import model.AuthData;
 import model.UserData;
@@ -12,37 +16,37 @@ import server.handlers.requestsandresults.RegisterRequest;
 import server.handlers.requestsandresults.RegisterResult;
 
 public class UserService {
-    public MemoryAuthDAO auth;
-    public MemoryUserDAO dataaccess;
-    public MemoryGameDAO game;
+    public AuthDAO auth;
+    public UserDAO dataaccess;
+    public GameDAO game;
 
-    public UserService(MemoryUserDAO userDataBase, MemoryAuthDAO authDataBase, MemoryGameDAO g){
+    public UserService(UserDAO userDataBase, AuthDAO authDataBase, GameDAO g){
         auth = authDataBase;
         dataaccess = userDataBase;
         game = g;
     }
 
-    public RegisterResult register(RegisterRequest registerRequest) {
+    public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
         // Create User
-        UserData newUser = dataaccess.createUser(registerRequest.username(), registerRequest.password(),
-                registerRequest.email());
+            UserData newUser = dataaccess.createUser(registerRequest.username(), registerRequest.password(),
+                    registerRequest.email());
+            // Create Token
+            String newToken = auth.createAuth(newUser.username());
 
-        // Create Token
-        String newToken = auth.createAuth(newUser.username());
+            RegisterResult result = new RegisterResult(newUser.username(), newToken);
+            return result;
 
-        RegisterResult result = new RegisterResult(newUser.username(), newToken);
-        return result;
     }
 
-    public void clearService(){
+    public void clearService() throws DataAccessException {
         auth.clear();
         game.clear();
         dataaccess.clear();
     }
 
-    public LoginResult loginService(LoginRequest request) {
+    public LoginResult loginService(LoginRequest request) throws DataAccessException {
         UserData user = dataaccess.getUser(request.username());
-        if (user.username().equals(request.username()) && user.password().equals(request.password())) {
+        if (user.username() != null && user.username().equals(request.username()) && user.password().equals(request.password())) {
             String newToken = auth.createAuth(user.username());
 
             LoginResult result = new LoginResult(user.username(), newToken);

@@ -1,15 +1,13 @@
 package service;
 
-import chess.ChessGame;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.DataAccessException;
+import dataaccess.interfaces.UserDAO;
+import dataaccess.memorydao.MemoryAuthDAO;
+import dataaccess.memorydao.MemoryGameDAO;
+import dataaccess.memorydao.MemoryUserDAO;
 import io.javalin.http.UnauthorizedResponse;
-import model.GameData;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.handlers.requestsandresults.ListGamesResult;
 import server.handlers.requestsandresults.RegisterRequest;
 import server.handlers.requestsandresults.RegisterResult;
 import services.GameServices;
@@ -19,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GameServiceTest {
-    MemoryUserDAO userDataBase = new MemoryUserDAO();
+    UserDAO userDataBase = new MemoryUserDAO();
     MemoryGameDAO actualGameDB = new MemoryGameDAO();
     MemoryAuthDAO authDatabase = new MemoryAuthDAO();
     UserService testUserService = new UserService(userDataBase, authDatabase, actualGameDB);
@@ -30,13 +28,13 @@ public class GameServiceTest {
     MemoryGameDAO expectedGameDB = new MemoryGameDAO();
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() throws DataAccessException {
         userDataBase.clear();
         actualGameDB.clear();
     }
 
     @Test
-    public void createGameSuccessfully(){
+    public void createGameSuccessfully() throws DataAccessException{
         // Add new user
         RegisterRequest testRequest = new RegisterRequest("username", "password", "email");
         RegisterResult result = testUserService.register(testRequest);

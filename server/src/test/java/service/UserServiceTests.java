@@ -1,7 +1,9 @@
 package service;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.DataAccessException;
+import dataaccess.interfaces.UserDAO;
+import dataaccess.memorydao.MemoryAuthDAO;
+import dataaccess.memorydao.MemoryGameDAO;
+import dataaccess.memorydao.MemoryUserDAO;
 import io.javalin.http.UnauthorizedResponse;
 import model.UserData;
 import org.junit.jupiter.api.Assertions;
@@ -24,13 +26,13 @@ public class UserServiceTests {
     private UserService testService = new UserService(actualDataBase, authData, new MemoryGameDAO());
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() throws DataAccessException {
         expectedDataBase.clear();
         actualDataBase.clear();
     }
 
     @Test
-    public void registerSuccessfully(){
+    public void registerSuccessfully() throws DataAccessException{
         // How expected database should be
         UserData newUser = new UserData("newUsername", "newPassword", "newEmail");
         expectedDataBase.addToDatabase(newUser);
@@ -38,7 +40,7 @@ public class UserServiceTests {
         // Create user to register
         RegisterRequest testRequest = new RegisterRequest("newUsername", "newPassword", "newEmail");
         testService.register(testRequest);
-        actualDataBase = testService.dataaccess;
+        actualDataBase = (MemoryUserDAO) testService.dataaccess;
 
         Assertions.assertEquals(expectedDataBase.userDatabase, actualDataBase.userDatabase);
     }
@@ -54,7 +56,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void clear(){
+    public void clear() throws DataAccessException{
         UserData testUser = new UserData("username", "password", "email");
         actualDataBase.addToDatabase(testUser);
         testService.clearService();
@@ -63,7 +65,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void loginSuccessfully(){
+    public void loginSuccessfully() throws DataAccessException{
         // Add user to database
         testService.register(new RegisterRequest("username", "password", "email"));
 
@@ -80,7 +82,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void logoutSuccessfully(){
+    public void logoutSuccessfully() throws DataAccessException{
         // Add user to database
         RegisterResult result = testService.register(new RegisterRequest("username", "password", "email"));
         testService.logoutService(result.authToken());
@@ -93,7 +95,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void authenticateUserSuccessfully(){
+    public void authenticateUserSuccessfully() throws DataAccessException{
         testService.register(new RegisterRequest("username", "password", "email"));
         assertNotNull(authData.authDatabase);
     }
@@ -104,7 +106,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void getUserSuccessfully(){
+    public void getUserSuccessfully() throws DataAccessException{
         RegisterResult result = testService.register(new RegisterRequest("username", "password", "email"));
         assertNotNull(testService.getUserWithAuth(result.authToken()));
     }
