@@ -46,11 +46,16 @@ public class UserService {
 
     public LoginResult loginService(LoginRequest request) throws DataAccessException {
         UserData user = dataaccess.getUser(request.username());
-        if (user.username() != null && user.username().equals(request.username()) && user.password().equals(request.password())) {
-            String newToken = auth.createAuth(user.username());
+        if (user != null){
+            if (user.username() != null && user.username().equals(request.username()) && user.password().equals(request.password())) {
+                String newToken = auth.createAuth(user.username());
 
-            LoginResult result = new LoginResult(user.username(), newToken);
-            return result;
+                LoginResult result = new LoginResult(user.username(), newToken);
+                return result;
+            }
+            else {
+                throw new UnauthorizedResponse();
+            }
         }
         else {
             throw new UnauthorizedResponse();
