@@ -2,6 +2,7 @@ package server.handlers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import dataaccess.DataAccessException;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
@@ -20,7 +21,7 @@ public class JoinGameHandler implements Handler {
         userService = u;
         gameService = g;
     }
-    public void handle(Context ctx)  {
+    public void handle(Context ctx) throws DataAccessException {
         String token = ctx.header("authorization");
 //        JoinGameRequest request = ctx.bodyAsClass(JoinGameRequest.class);
         Gson gson = new Gson();

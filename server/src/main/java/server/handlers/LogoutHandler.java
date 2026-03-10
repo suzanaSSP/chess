@@ -2,6 +2,7 @@ package server.handlers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import dataaccess.DataAccessException;
 import io.javalin.http.Handler;
 import io.javalin.http.Context;
 import io.javalin.http.UnauthorizedResponse;
@@ -14,7 +15,7 @@ public class LogoutHandler implements Handler {
         userService = service;
     }
 
-    public void handle(Context ctx) {
+    public void handle(Context ctx) throws DataAccessException {
         String authToken = ctx.header("authorization");
             userService.logoutService(authToken);
             // Turn to JSON file

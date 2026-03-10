@@ -2,6 +2,7 @@ package dataaccess;
 import dataaccess.interfaces.UserDAO;
 import model.UserData;
 
+import java.nio.channels.AlreadyBoundException;
 import java.sql.*;
 
 public class SQLUserDAO implements UserDAO {
@@ -90,7 +91,11 @@ public class SQLUserDAO implements UserDAO {
     }
 
     public UserData createUser(String username, String password, String email)  throws DataAccessException {
-        configureDatabase();
+        // Check is user already exists
+        UserData test_user = getUser(username);
+        if (test_user != null){
+            throw new AlreadyBoundException();
+        }
         var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         updateDatabase(statement, username, password, email);
         return new UserData(username, password, email);

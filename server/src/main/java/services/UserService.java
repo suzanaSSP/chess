@@ -28,13 +28,13 @@ public class UserService {
 
     public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
         // Create User
-            UserData newUser = dataaccess.createUser(registerRequest.username(), registerRequest.password(),
-                    registerRequest.email());
-            // Create Token
-            String newToken = auth.createAuth(newUser.username());
+        UserData newUser = dataaccess.createUser(registerRequest.username(), registerRequest.password(),
+                registerRequest.email());
+        // Create Token
+        String newToken = auth.createAuth(newUser.username());
 
-            RegisterResult result = new RegisterResult(newUser.username(), newToken);
-            return result;
+        RegisterResult result = new RegisterResult(newUser.username(), newToken);
+        return result;
 
     }
 
@@ -46,36 +46,32 @@ public class UserService {
 
     public LoginResult loginService(LoginRequest request) throws DataAccessException {
         UserData user = dataaccess.getUser(request.username());
-        if (user != null){
+        if (user != null) {
             if (user.username() != null && user.username().equals(request.username()) && user.password().equals(request.password())) {
                 String newToken = auth.createAuth(user.username());
 
                 LoginResult result = new LoginResult(user.username(), newToken);
                 return result;
             }
-            else {
-                throw new UnauthorizedResponse();
-            }
         }
-        else {
+        throw new UnauthorizedResponse();
+    }
+
+    public void logoutService(String token) throws DataAccessException {
+        AuthData authTokenTest = auth.getAuth(token);
+        if (authTokenTest == null){
             throw new UnauthorizedResponse();
         }
-    }
-
-    public void logoutService(String token) {
-        try{
+        else {
             auth.deleteAuth(token);
-        } catch (UnauthorizedResponse e) {
-            throw e;
         }
 
     }
 
-    public void authenticateToken(String token) {
-        try {
-            AuthData test = auth.getAuth(token);
-        } catch (Exception e) {
-            throw new UnauthorizedResponse("User not found");
+    public void authenticateToken(String token) throws DataAccessException {
+        AuthData test = auth.getAuth(token);
+        if (test == null){
+            throw new UnauthorizedResponse();
         }
     }
 

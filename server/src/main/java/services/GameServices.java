@@ -1,5 +1,6 @@
 package services;
 
+import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.GameDAO;
 import dataaccess.interfaces.UserDAO;
@@ -24,7 +25,7 @@ public class GameServices {
         userService = u;
     }
 
-    public Integer createGameServices(String gameName, String authToken){
+    public Integer createGameServices(String gameName, String authToken) throws DataAccessException {
         // Authenticate token
         try {
             userService.authenticateToken(authToken);
@@ -34,7 +35,7 @@ public class GameServices {
         return game.createGame(gameName);
     }
 
-    public Collection<AlternativeGameData> listGamesService(String token){
+    public Collection<AlternativeGameData> listGamesService(String token) throws DataAccessException{
         // Authenticate token
         try {
             userService.authenticateToken(token);

@@ -1,12 +1,11 @@
 package dataaccess;
 
 import dataaccess.interfaces.AuthDAO;
+import io.javalin.http.UnauthorizedResponse;
 import model.AuthData;
+import model.UserData;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.UUID;
 
 public class SQLAuthDAO implements AuthDAO {
@@ -26,12 +25,35 @@ public class SQLAuthDAO implements AuthDAO {
         return newAuth;
     };
 
-    public AuthData getAuth(String username){
-        return new AuthData(null, null);
-    };
-    public void deleteAuth(String username){
+    public AuthData getAuth(String authToken) throws DataAccessException{
+        try (Connection conn = DatabaseManager.getConnection()){
+            var statement = "SELECT authtoken, username FROM authorizations WHERE authtoken = ?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)){
+                ps.setString(1, authToken);
+                try (ResultSet rs = ps.executeQuery()){
+                    if (rs.next()){
+                        return readAuth(rs);
+                    }
+                    else {
+                        return null;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException("Database error");
+        }
+    }
 
-    };
+    public AuthData readAuth(ResultSet rs) throws SQLException {
+        String authToken = rs.getString("authtoken");
+        String username = rs.getString("username");
+        return new AuthData(authToken, username);
+    }
+
+    public void deleteAuth(String authToken) throws DataAccessException {
+        var statement = "DELETE FROM authorizations WHERE authtoken = ?";
+        updateDatabase(statement, authToken);
+    }
 
     private final String[] createStatements = {
             """

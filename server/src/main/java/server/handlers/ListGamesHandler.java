@@ -1,12 +1,15 @@
 package server.handlers;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import io.javalin.http.UnauthorizedResponse;
 import server.handlers.requestsandresults.ListGamesResult;
 import services.GameServices;
 import services.UserService;
+
+import javax.xml.crypto.Data;
 
 public class ListGamesHandler implements Handler {
     UserService userService;
@@ -17,7 +20,7 @@ public class ListGamesHandler implements Handler {
         gameService = g;
     }
 
-    public void handle(Context ctx) {
+    public void handle(Context ctx) throws DataAccessException {
         String token = ctx.header("authorization");
 
         // Passed authentication, list games
