@@ -3,7 +3,11 @@ package dataaccess;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.interfaces.GameDAO;
+import io.javalin.http.BadRequestResponse;
+import model.GameData;
 import server.handlers.requestsandresults.AlternativeGameData;
+
+import java.nio.channels.AlreadyBoundException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -86,23 +90,54 @@ public class SQLGameDAO implements GameDAO {
     }
 
     public void updateGame(String username, String playerColor, int gameID) throws DataAccessException {
+        // Check if game exists
+        AlternativeGameData game = getGame(gameID);
+        if (game == null){
+            throw new BadRequestResponse();
+        }
+
         String statement;
-        if (playerColor == "White"){
-            statement = "UPDATE games SET whiteUsername = ? WHERE gameID = ?";
+        if (playerColor.equals("WHITE")){
+            statement = "UPDATE games SET whiteUsername = ? WHERE gameID = ? AND whiteUsername IS NULL";
         } else {
-            statement = "UPDATE games SET blackUsername = ? WHERE gameID = ?";
+            statement = "UPDATE games SET blackUsername = ? WHERE gameID = ? AND blackUsername IS NULL";
         }
 
         try (Connection conn = DatabaseManager.getConnection()){
             try (PreparedStatement ps = conn.prepareStatement(statement)){
                 ps.setString(1, username);
                 ps.setInt(2, gameID);
-                ps.executeUpdate();
+                int rowsAffected = ps.executeUpdate();
+
+                // player taken in game
+                if (rowsAffected == 0) {
+                    throw new AlreadyBoundException();
+                }
             }
         } catch (SQLException e) {
             throw new DataAccessException("Database Error");
         }
     }
+
+    private AlternativeGameData getGame(int gameID) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()){
+            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName FROM games WHERE gameID = ?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)){
+                ps.setInt(1, gameID);
+                try (ResultSet rs = ps.executeQuery()){
+                    if (rs.next()){
+                        return readGame(rs);
+                    }
+                    else {
+                        return null;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException("Database error");
+        }
+    }
+
 
     private final String[] createStatements = {
             """

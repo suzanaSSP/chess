@@ -51,7 +51,6 @@ public class GameServices {
         }
         game.updateGame(username, playerColor, gameId);
 
-
     }
 
 }
