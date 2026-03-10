@@ -39,9 +39,9 @@ public class UserService {
     }
 
     public void clearService() throws DataAccessException {
+        dataaccess.clear();
         auth.clear();
         game.clear();
-        dataaccess.clear();
     }
 
     public LoginResult loginService(LoginRequest request) throws DataAccessException {

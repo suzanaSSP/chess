@@ -1,10 +1,8 @@
 package dataaccess;
 import dataaccess.interfaces.UserDAO;
 import model.UserData;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+
+import java.sql.*;
 
 public class SQLUserDAO implements UserDAO {
 
@@ -19,7 +17,7 @@ public class SQLUserDAO implements UserDAO {
               `password` varchar(256) NOT NULL,
               `email` varchar(256) NOT NULL,
               PRIMARY KEY (`username`)
-            ) 
+            )
             """
     };
 
@@ -47,6 +45,11 @@ public class SQLUserDAO implements UserDAO {
                     }
                 }
                 ps.executeUpdate();
+
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()){
+                    return rs.getInt(1);
+                }
                 return 0;
             }
         } catch (SQLException e) {
@@ -55,21 +58,47 @@ public class SQLUserDAO implements UserDAO {
     }
 
     public void clear() throws DataAccessException {
-        var statement = "DROP TABLE IF EXISTS users";
-        int response = updateDatabase(statement);
+        var statement = "TRUNCATE TABLE users";
+        updateDatabase(statement);
 
     }
-    public UserData getUser(String username){
-        return new UserData(null, null, null);
+    public UserData getUser(String userName) throws DataAccessException{
+        try (Connection conn = DatabaseManager.getConnection()){
+            var statement = "SELECT username, password, email FROM users WHERE username = ?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)){
+                ps.setString(1, userName);
+                try (ResultSet rs = ps.executeQuery()){
+                    if (rs.next()){
+                        return readUser(rs);
+                    }
+                    else {
+                        return null;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException("Database error");
+        }
     }
+
+    public UserData readUser(ResultSet rs) throws SQLException {
+        String username = rs.getString("username");
+        String password = rs.getString("password");
+        String email = rs.getString("email");
+        return new UserData(username, password, email);
+
+    }
+
     public UserData createUser(String username, String password, String email)  throws DataAccessException {
         configureDatabase();
-        var statement = "INSERT INTO Users (username, password, email) VALUES (?, ?, ?)";
-        int ID = updateDatabase(statement, username, password, email);
+        var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+        updateDatabase(statement, username, password, email);
         return new UserData(username, password, email);
     }
 
-    public void addToDatabase(UserData userData) {
-
+    public void addToDatabase(UserData userData) throws DataAccessException {
+        var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+        updateDatabase(statement, userData.username(), userData.password(), userData.email());
     }
+
 }

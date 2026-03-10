@@ -2,7 +2,9 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
+import dataaccess.SQLAuthDAO;
 import dataaccess.SQLUserDAO;
+import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.GameDAO;
 import dataaccess.interfaces.UserDAO;
 import dataaccess.memorydao.MemoryAuthDAO;
@@ -22,13 +24,14 @@ public class Server {
 
     private final Javalin javalin;
     public UserDAO userData;
-    public MemoryAuthDAO authData = new MemoryAuthDAO();
+    public AuthDAO authData;
     public GameDAO gameData = new MemoryGameDAO();
     Gson gson = new Gson();
 
     public Server() {
         try {
             userData = new SQLUserDAO();
+            authData = new SQLAuthDAO();
 
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
@@ -64,10 +67,12 @@ public class Server {
             ctx.status(400);
             ctx.json(gson.toJson(Map.of("message", "Error: bad request")));
         });
-        javalin.exception(DataAccessException.class, (e, ctx) -> {
+        javalin.exception(DataAccessException.class, (e, ctx) ->{
             ctx.status(500);
             ctx.json(gson.toJson(Map.of("message", "Error: Database Error")));
         });
+
+
     }
 
     public int run(int desiredPort) {

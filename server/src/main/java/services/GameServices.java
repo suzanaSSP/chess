@@ -1,5 +1,6 @@
 package services;
 
+import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.GameDAO;
 import dataaccess.interfaces.UserDAO;
 import dataaccess.memorydao.MemoryAuthDAO;
@@ -11,12 +12,12 @@ import server.handlers.requestsandresults.AlternativeGameData;
 import java.util.Collection;
 
 public class GameServices {
-    MemoryAuthDAO auth;
+    AuthDAO auth;
     UserDAO dataaccess;
     public GameDAO game;
     UserService userService;
 
-    public GameServices(UserDAO userDataBase, MemoryAuthDAO authDataBase, GameDAO g, UserService u){
+    public GameServices(UserDAO userDataBase, AuthDAO authDataBase, GameDAO g, UserService u){
         auth = authDataBase;
         dataaccess = userDataBase;
         game = g;
