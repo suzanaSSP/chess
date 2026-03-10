@@ -20,8 +20,6 @@ public class SQLAuthDAO implements AuthDAO {
         updateDatabase(statement);
     };
     public String createAuth(String username) throws DataAccessException {
-        configureDatabase();
-
         var newAuth = UUID.randomUUID().toString();
         var statement = "INSERT INTO authorizations(authtoken, username) VALUES (?, ?)";
         int id = updateDatabase(statement, newAuth, username);
@@ -37,10 +35,10 @@ public class SQLAuthDAO implements AuthDAO {
 
     private final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS  authorizations (
+            CREATE TABLE IF NOT EXISTS authorizations (
               `authtoken` varchar(256) NOT NULL,
               `username` varchar(256) NOT NULL,
-              PRIMARY KEY (`username`)
+              PRIMARY KEY (`authtoken`)
             ) 
             """
     };
