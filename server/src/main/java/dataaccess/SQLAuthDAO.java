@@ -21,7 +21,7 @@ public class SQLAuthDAO implements AuthDAO {
     public String createAuth(String username) throws DataAccessException {
         var newAuth = UUID.randomUUID().toString();
         var statement = "INSERT INTO authorizations(authtoken, username) VALUES (?, ?)";
-        int id = updateDatabase(statement, newAuth, username);
+        updateDatabase(statement, newAuth, username);
         return newAuth;
     };
 
