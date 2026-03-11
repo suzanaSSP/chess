@@ -78,7 +78,11 @@ public class UserDAOTests {
         testUserService.user.addToDatabase(expectedUser);
         UserData testUser = testUserService.user.getUser("username");
         assertEquals(expectedUser.email(), testUser.email());
-
     }
 
+    @Test
+    public void addToDatabaseException() throws DataAccessException {
+        UserData expectedUser = new UserData(null, null,null);
+        assertThrows(DataAccessException.class, () ->  testUserService.user.addToDatabase(expectedUser));
+    }
 }

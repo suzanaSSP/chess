@@ -50,10 +50,21 @@ public class AuthDAOTests {
     }
 
     @Test
+    public void getAuthException() throws DataAccessException {
+        assertNull(testUserService.auth.getAuth(null));
+    }
+
+    @Test
     public void deleteAuthSuccessfully() throws DataAccessException {
         String newAuth = testUserService.auth.createAuth("testUsername");
         testUserService.auth.deleteAuth(newAuth);
 
         assertNull(testUserService.auth.getAuth(newAuth));
+    }
+
+    @Test
+    public void deleteAuthException() throws DataAccessException {
+        testUserService.auth.deleteAuth("random token");
+        assertNull(testUserService.auth.getAuth("random token"));
     }
 }

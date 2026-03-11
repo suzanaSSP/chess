@@ -119,7 +119,7 @@ public class SQLGameDAO implements GameDAO {
         }
     }
 
-    public AlternativeGameData getGame(int gameID) throws DataAccessException {
+    private AlternativeGameData getGame(int gameID) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()){
             var statement = "SELECT gameID, whiteUsername, blackUsername, gameName FROM games WHERE gameID = ?";
             try (PreparedStatement ps = conn.prepareStatement(statement)){
