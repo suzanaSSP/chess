@@ -16,7 +16,7 @@ import java.util.Random;
 public class SQLGameDAO implements GameDAO {
 
     public SQLGameDAO() throws DataAccessException {
-        configureDatabase();
+        DatabaseManager.createDatabaseAndTables(createStatements);
     }
 
     public void clear() throws DataAccessException{
@@ -151,18 +151,4 @@ public class SQLGameDAO implements GameDAO {
             )
             """
     };
-
-    // Create database
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException("failed to create database", ex);
-        }
-    }
 }

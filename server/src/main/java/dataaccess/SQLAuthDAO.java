@@ -11,7 +11,7 @@ import java.util.UUID;
 public class SQLAuthDAO implements AuthDAO {
 
     public SQLAuthDAO() throws DataAccessException {
-        configureDatabase();
+        DatabaseManager.createDatabaseAndTables(createStatements);
     }
 
     public void clear() throws DataAccessException {
@@ -64,20 +64,6 @@ public class SQLAuthDAO implements AuthDAO {
             ) 
             """
     };
-
-    // Create database
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException("failed to create database", ex);
-        }
-    }
 
     private int updateDatabase(String statement, Object... params) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()){
