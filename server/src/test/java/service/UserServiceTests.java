@@ -1,6 +1,5 @@
 package service;
 import dataaccess.DataAccessException;
-import dataaccess.interfaces.UserDAO;
 import dataaccess.memorydao.MemoryAuthDAO;
 import dataaccess.memorydao.MemoryGameDAO;
 import dataaccess.memorydao.MemoryUserDAO;
@@ -40,7 +39,7 @@ public class UserServiceTests {
         // Create user to register
         RegisterRequest testRequest = new RegisterRequest("newUsername", "newPassword", "newEmail");
         testService.register(testRequest);
-        actualDataBase = (MemoryUserDAO) testService.dataaccess;
+        actualDataBase = (MemoryUserDAO) testService.user;
 
         Assertions.assertEquals(expectedDataBase.userDatabase, actualDataBase.userDatabase);
     }

@@ -1,15 +1,13 @@
 package services;
 
 import dataaccess.DataAccessException;
-import dataaccess.SQLUserDAO;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.GameDAO;
 import dataaccess.interfaces.UserDAO;
-import dataaccess.memorydao.MemoryAuthDAO;
-import dataaccess.memorydao.MemoryGameDAO;
 import io.javalin.http.UnauthorizedResponse;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import server.handlers.requestsandresults.LoginRequest;
 import server.handlers.requestsandresults.LoginResult;
 import server.handlers.requestsandresults.RegisterRequest;
@@ -17,18 +15,18 @@ import server.handlers.requestsandresults.RegisterResult;
 
 public class UserService {
     public AuthDAO auth;
-    public UserDAO dataaccess;
+    public UserDAO user;
     public GameDAO game;
 
     public UserService(UserDAO userDataBase, AuthDAO authDataBase, GameDAO g){
         auth = authDataBase;
-        dataaccess = userDataBase;
+        user = userDataBase;
         game = g;
     }
 
     public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
         // Create User
-        UserData newUser = dataaccess.createUser(registerRequest.username(), registerRequest.password(),
+        UserData newUser = user.createUser(registerRequest.username(), registerRequest.password(),
                 registerRequest.email());
         // Create Token
         String newToken = auth.createAuth(newUser.username());
@@ -39,18 +37,21 @@ public class UserService {
     }
 
     public void clearService() throws DataAccessException {
-        dataaccess.clear();
+        user.clear();
         auth.clear();
         game.clear();
     }
 
     public LoginResult loginService(LoginRequest request) throws DataAccessException {
-        UserData user = dataaccess.getUser(request.username());
-        if (user != null) {
-            if (user.username() != null && user.username().equals(request.username()) && user.password().equals(request.password())) {
-                String newToken = auth.createAuth(user.username());
+        UserData userTest = this.user.getUser(request.username());
 
-                LoginResult result = new LoginResult(user.username(), newToken);
+        if (userTest != null) {
+            // Check hashed password
+            Boolean correctPassword = BCrypt.checkpw(request.password(), userTest.password());
+            if (userTest.username().equals(request.username()) && correctPassword) {
+                String newToken = auth.createAuth(userTest.username());
+
+                LoginResult result = new LoginResult(userTest.username(), newToken);
                 return result;
             }
         }
@@ -81,6 +82,6 @@ public class UserService {
         } catch (Exception e) {
             throw new UnauthorizedResponse("User not found");
         }
-
     }
+
 }
