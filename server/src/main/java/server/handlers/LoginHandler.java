@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.*;
 import io.javalin.http.Handler;
-import server.handlers.requestsandresults.LoginRequest;
-import server.handlers.requestsandresults.LoginResult;
+import requestsandresults.LoginRequest;
+import requestsandresults.LoginResult;
 import services.UserService;
 
 

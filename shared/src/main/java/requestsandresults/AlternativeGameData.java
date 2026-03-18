@@ -1,4 +1,4 @@
-package server.handlers.requestsandresults;
+package requestsandresults;
 
 public record
 AlternativeGameData(int gameID, String whiteUsername, String blackUsername, String gameName) {

@@ -8,10 +8,10 @@ import io.javalin.http.UnauthorizedResponse;
 import model.AuthData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
-import server.handlers.requestsandresults.LoginRequest;
-import server.handlers.requestsandresults.LoginResult;
-import server.handlers.requestsandresults.RegisterRequest;
-import server.handlers.requestsandresults.RegisterResult;
+import requestsandresults.LoginRequest;
+import requestsandresults.LoginResult;
+import requestsandresults.RegisterRequest;
+import requestsandresults.RegisterResult;
 
 public class UserService {
     public AuthDAO auth;

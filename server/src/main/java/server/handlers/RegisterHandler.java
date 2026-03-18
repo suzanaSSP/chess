@@ -5,12 +5,10 @@ import dataaccess.DataAccessException;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
-import server.handlers.requestsandresults.LoginRequest;
-import server.handlers.requestsandresults.RegisterRequest;
-import server.handlers.requestsandresults.RegisterResult;
+import requestsandresults.LoginRequest;
+import requestsandresults.RegisterRequest;
+import requestsandresults.RegisterResult;
 import services.UserService;
-
-import javax.xml.crypto.Data;
 
 public class RegisterHandler implements Handler {
     UserService userService;

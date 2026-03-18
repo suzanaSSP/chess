@@ -4,7 +4,7 @@ import chess.ChessGame;
 import dataaccess.interfaces.GameDAO;
 import io.javalin.http.BadRequestResponse;
 import model.GameData;
-import server.handlers.requestsandresults.AlternativeGameData;
+import requestsandresults.AlternativeGameData;
 
 import java.nio.channels.AlreadyBoundException;
 import java.util.*;

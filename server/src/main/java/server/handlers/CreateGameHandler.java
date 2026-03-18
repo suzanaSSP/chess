@@ -5,10 +5,9 @@ import dataaccess.DataAccessException;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
-import io.javalin.http.UnauthorizedResponse;
-import server.handlers.requestsandresults.CreateGameRequest;
-import server.handlers.requestsandresults.CreateGameResult;
-import server.handlers.requestsandresults.JoinGameRequest;
+import requestsandresults.CreateGameRequest;
+import requestsandresults.CreateGameResult;
+import requestsandresults.JoinGameRequest;
 import services.GameServices;
 import services.UserService;
 

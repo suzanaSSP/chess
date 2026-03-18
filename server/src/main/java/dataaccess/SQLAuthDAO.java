@@ -1,10 +1,7 @@
 package dataaccess;
 
 import dataaccess.interfaces.AuthDAO;
-import io.javalin.http.UnauthorizedResponse;
 import model.AuthData;
-import model.UserData;
-
 import java.sql.*;
 import java.util.UUID;
 

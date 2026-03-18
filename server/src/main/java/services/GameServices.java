@@ -4,11 +4,9 @@ import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.GameDAO;
 import dataaccess.interfaces.UserDAO;
-import dataaccess.memorydao.MemoryAuthDAO;
-import dataaccess.memorydao.MemoryGameDAO;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.UnauthorizedResponse;
-import server.handlers.requestsandresults.AlternativeGameData;
+import requestsandresults.AlternativeGameData;
 
 import java.util.Collection;
 

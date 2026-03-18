@@ -4,12 +4,10 @@ import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.GameDAO;
 import dataaccess.interfaces.UserDAO;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.handlers.requestsandresults.RegisterRequest;
-import server.handlers.requestsandresults.RegisterResult;
+import requestsandresults.RegisterRequest;
 import services.UserService;
 
 import java.nio.channels.AlreadyBoundException;
