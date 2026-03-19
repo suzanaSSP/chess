@@ -8,10 +8,10 @@ import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.handlers.requestsandresults.LoginRequest;
-import server.handlers.requestsandresults.LoginResult;
-import server.handlers.requestsandresults.RegisterRequest;
-import server.handlers.requestsandresults.RegisterResult;
+import requestsandresults.LoginRequest;
+import requestsandresults.LoginResult;
+import requestsandresults.RegisterRequest;
+import requestsandresults.RegisterResult;
 import services.UserService;
 
 import java.nio.channels.AlreadyBoundException;
