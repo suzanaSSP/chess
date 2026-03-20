@@ -3,6 +3,8 @@ package ui;
 import client.ServerFacade;
 import requestsandresults.RegisterResult;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Scanner;
 
 public class Client {
@@ -21,7 +23,8 @@ public class Client {
             int answer = scanner.nextInt();
 
             try {
-                eval(answer);
+                result = eval(answer);
+
             } catch (Throwable e) {
                 System.out.print(e.toString());
             }
@@ -40,19 +43,27 @@ public class Client {
         System.out.println("Type number: ");
     }
 
-    public void eval(int answer){
+    public String eval(int answer) throws URISyntaxException, IOException, InterruptedException {
         switch (answer){
-            case 1 -> registerClient();
+            case 1:
+                return registerClient();
 
+            default:
+                return "Type valid number";
         }
     }
 
-    public void registerClient(){
-        System.out.println("Please provide information as follows: <your new username>, <your new password>, <your email>");
-        String line = scanner.nextLine();
-        var answers = line.split(", ");
-        RegisterResult result = sf.registerServerFacade(answers[0],  answers[1], answers[2]);
-        System.out.println("You're succesfully registered!");
+    public String registerClient() throws URISyntaxException, IOException, InterruptedException {
+        System.out.println("Choose a username: ");
+        String username = scanner.next();
+        System.out.println("Choose a password: ");
+        String password = scanner.next();
+        System.out.println("Type email: ");
+        String email = scanner.next();
+
+        RegisterResult result = sf.registerServerFacade(username, password, email);
         signedIn = 1;
+        return result.toString();
+
     }
 }

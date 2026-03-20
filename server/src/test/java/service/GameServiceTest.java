@@ -8,8 +8,8 @@ import dataaccess.memorydao.MemoryUserDAO;
 import io.javalin.http.UnauthorizedResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.handlers.requestsandresults.RegisterRequest;
-import server.handlers.requestsandresults.RegisterResult;
+import requestsandresults.RegisterRequest;
+import requestsandresults.RegisterResult;
 import services.GameServices;
 import services.UserService;
 

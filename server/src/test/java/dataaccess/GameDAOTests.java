@@ -6,7 +6,6 @@ import dataaccess.interfaces.UserDAO;
 import io.javalin.http.BadRequestResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.handlers.requestsandresults.AlternativeGameData;
 import services.GameServices;
 import services.UserService;
 
