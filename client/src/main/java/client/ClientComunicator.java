@@ -32,23 +32,17 @@ class ClientCommunicator {
 
     }
 
-    public HttpResponse<String> doGet(String host, int port, String urlPath) throws URISyntaxException, IOException, InterruptedException {
+    public HttpResponse<String> doGet(String host, int port, String urlPath, String authToken) throws URISyntaxException, IOException, InterruptedException {
         String urlString = String.format(Locale.getDefault(), "http://%s:%d%s", host, port, urlPath);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI(urlString))
                 .timeout(java.time.Duration.ofMillis(TIMEOUT_MILLIS))
-                .header("authorization", "abc123")
+                .header("authorization", authToken)
                 .GET()
                 .build();
 
         HttpResponse<String> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if(httpResponse.statusCode() == 200) {
-            HttpHeaders headers = httpResponse.headers();
-            System.out.println(httpResponse.body());
-        }
-
         return httpResponse;
     }
 
@@ -66,7 +60,7 @@ class ClientCommunicator {
 
         if(httpResponse.statusCode() == 200) {
             HttpHeaders headers = httpResponse.headers();
-            Optional<String> lengthHeader = headers.firstValue("Content-Length");
+            System.out.println("This is the header for logging in: " + headers.toString());
 
         } else {
             switch (httpResponse.statusCode()){

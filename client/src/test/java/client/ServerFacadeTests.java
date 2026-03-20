@@ -71,4 +71,9 @@ public class ServerFacadeTests {
         Assertions.assertTrue(result.username().equals("username"));
     }
 
+    @Test
+    public void loginException() {
+        Assertions.assertThrows(BadRequestResponse.class, () -> serverFacadeTest.loginServerFacade(null, null));
+    }
+
 }

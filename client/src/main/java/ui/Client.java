@@ -1,6 +1,7 @@
 package ui;
 
 import client.ServerFacade;
+import requestsandresults.ListGamesResult;
 import requestsandresults.LoginResult;
 import requestsandresults.RegisterResult;
 
@@ -108,12 +109,15 @@ public class Client {
         System.out.println("6. Help");
         System.out.println("Type number: ");
     }
-
+//
 //    public String evalSecondLoop(int answer){
 //        switch (answer) {
 //            case 1:
 //
 //        }
+//    }
+//
+//    public ListGamesResult listGamesClient() {
 //
 //    }
 
