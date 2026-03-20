@@ -1,8 +1,11 @@
 package client;
 
 import com.google.gson.Gson;
+import io.javalin.http.UnauthorizedResponse;
 import requestsandresults.RegisterRequest;
 import requestsandresults.RegisterResult;
+import io.javalin.http.BadRequestResponse;
+import java.nio.channels.AlreadyBoundException;
 import java.nio.charset.StandardCharsets;
 import java.io.IOException;
 import java.net.URI;
@@ -44,9 +47,6 @@ class ClientCommunicator {
         if(httpResponse.statusCode() == 200) {
             HttpHeaders headers = httpResponse.headers();
             System.out.println(httpResponse.body());
-        } else {
-            System.out.println("Error: received status code " + httpResponse.statusCode());
-            System.out.println(httpResponse.body());
         }
 
         return httpResponse;
@@ -68,11 +68,15 @@ class ClientCommunicator {
             HttpHeaders headers = httpResponse.headers();
             Optional<String> lengthHeader = headers.firstValue("Content-Length");
 
-            System.out.printf("Received %s bytes%n", lengthHeader.orElse("unknown"));
-            System.out.println(httpResponse.body());
         } else {
-            System.out.println("Error: received status code " + httpResponse.statusCode());
-            System.out.println(httpResponse.body());
+            switch (httpResponse.statusCode()){
+                case 403:
+                    throw new AlreadyBoundException();
+                case 400:
+                    throw new BadRequestResponse();
+                case 401:
+                    throw new UnauthorizedResponse();
+            }
         }
         return httpResponse;
     }

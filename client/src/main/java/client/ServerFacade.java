@@ -1,5 +1,6 @@
 package client;
 
+import io.javalin.http.BadRequestResponse;
 import requestsandresults.RegisterRequest;
 import requestsandresults.RegisterResult;
 

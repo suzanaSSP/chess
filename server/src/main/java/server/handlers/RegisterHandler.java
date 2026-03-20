@@ -5,7 +5,6 @@ import dataaccess.DataAccessException;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
-import requestsandresults.LoginRequest;
 import requestsandresults.RegisterRequest;
 import requestsandresults.RegisterResult;
 import services.UserService;

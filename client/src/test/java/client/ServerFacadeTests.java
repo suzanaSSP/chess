@@ -4,6 +4,7 @@ import dataaccess.DataAccessException;
 import dataaccess.SQLAuthDAO;
 import dataaccess.SQLGameDAO;
 import dataaccess.SQLUserDAO;
+import io.javalin.http.BadRequestResponse;
 import org.junit.jupiter.api.*;
 import requestsandresults.RegisterResult;
 import server.Server;
@@ -58,7 +59,7 @@ public class ServerFacadeTests {
 
     @Test
     public void registerException() throws URISyntaxException, IOException, InterruptedException {
-        serverFacadeTest.registerServerFacade("existingUsername", "existingPassword", "existingEmail");
+        Assertions.assertThrows(BadRequestResponse.class, () -> serverFacadeTest.registerServerFacade(null, null, null));
     }
 
 }

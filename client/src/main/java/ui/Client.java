@@ -12,7 +12,7 @@ public class Client {
     ServerFacade sf = new ServerFacade();
     private int signedIn = 0; // 0 if not signed in, 1 if it is signed in
 
-    public void runMenu(){
+    public void runMenu() throws URISyntaxException, IOException, InterruptedException {
         System.out.println("Lets play some Chess! Sign in to start:");
 
         //user input
@@ -24,7 +24,6 @@ public class Client {
 
             try {
                 result = eval(answer);
-
             } catch (Throwable e) {
                 System.out.print(e.toString());
             }
