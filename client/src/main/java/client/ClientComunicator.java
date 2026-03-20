@@ -25,7 +25,7 @@ class ClientCommunicator {
     Gson gson = new Gson();
 
     public RegisterResult registerCommunicator(RegisterRequest request) throws URISyntaxException, IOException, InterruptedException {
-        String requestString = gson.toJson(request).toString();
+       String requestString = gson.toJson(request).toString();
        HttpResponse<String> httpResponse = doPost("localhost", 8080, "/user", requestString);
        RegisterResult result = gson.fromJson(httpResponse.body(), RegisterResult.class);
        return result;

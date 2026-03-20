@@ -6,6 +6,7 @@ import dataaccess.SQLGameDAO;
 import dataaccess.SQLUserDAO;
 import io.javalin.http.BadRequestResponse;
 import org.junit.jupiter.api.*;
+import requestsandresults.LoginResult;
 import requestsandresults.RegisterResult;
 import server.Server;
 import server.ServerMain;
@@ -60,6 +61,14 @@ public class ServerFacadeTests {
     @Test
     public void registerException() throws URISyntaxException, IOException, InterruptedException {
         Assertions.assertThrows(BadRequestResponse.class, () -> serverFacadeTest.registerServerFacade(null, null, null));
+    }
+
+    @Test
+    public void loginSuccessfully() throws URISyntaxException, IOException, InterruptedException {
+        serverFacadeTest.registerServerFacade("username", "password", "email");
+        LoginResult result = serverFacadeTest.loginServerFacade("username", "password");
+        Assertions.assertNotNull(result);
+        Assertions.assertTrue(result.username().equals("username"));
     }
 
 }
