@@ -43,6 +43,14 @@ class ClientCommunicator {
                 .build();
 
         HttpResponse<String> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        switch (httpResponse.statusCode()){
+            case 403:
+                throw new AlreadyBoundException();
+            case 400:
+                throw new BadRequestResponse();
+            case 401:
+                throw new UnauthorizedResponse();
+        }
         return httpResponse;
     }
 
@@ -58,21 +66,16 @@ class ClientCommunicator {
 
         HttpResponse<String> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-        if(httpResponse.statusCode() == 200) {
-            HttpHeaders headers = httpResponse.headers();
-            System.out.println("This is the header for logging in: " + headers.toString());
-
-        } else {
-            switch (httpResponse.statusCode()){
-                case 403:
-                    throw new AlreadyBoundException();
-                case 400:
-                    throw new BadRequestResponse();
-                case 401:
-                    throw new UnauthorizedResponse();
-            }
+        switch (httpResponse.statusCode()){
+            case 403:
+                throw new AlreadyBoundException();
+            case 400:
+                throw new BadRequestResponse();
+            case 401:
+                throw new UnauthorizedResponse();
         }
         return httpResponse;
     }
-
 }
+
+

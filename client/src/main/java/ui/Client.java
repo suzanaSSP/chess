@@ -21,14 +21,14 @@ public class Client {
         var result = "";
 
         while(!result.equals("quit")){
+            if (signedIn == 1){
+                signedInLoop();
+            }
             printPrompt();
             int answer = scanner.nextInt();
 
             try {
                 result = evalFirstLoop(answer);
-                if (signedIn == 1){
-                    signedInLoop();
-                }
                 System.out.println(result);
             } catch (Throwable e) {
                 System.out.print(e.toString() + "\n");
@@ -92,7 +92,8 @@ public class Client {
             int answer = scanner.nextInt();
 
             try {
-
+                result = evalSecondLoop(answer);
+                System.out.println(result);
             } catch (Throwable e) {
                 System.out.print(e.toString());
             }
@@ -109,16 +110,24 @@ public class Client {
         System.out.println("6. Help");
         System.out.println("Type number: ");
     }
-//
-//    public String evalSecondLoop(int answer){
-//        switch (answer) {
-//            case 1:
-//
-//        }
-//    }
-//
-//    public ListGamesResult listGamesClient() {
-//
-//    }
+
+    public String evalSecondLoop(int answer) throws URISyntaxException, IOException, InterruptedException {
+        switch (answer) {
+            case 1:
+                return listGamesClient();
+            default:
+                return "Type valid number";
+        }
+    }
+
+    public String listGamesClient() throws URISyntaxException, IOException, InterruptedException {
+        System.out.println("Provide authToken again");
+        String answer = scanner.next();
+        ListGamesResult result = sf.listGamesServerFacade(answer);
+        if (result.games().isEmpty()){
+            return "No games to list";
+        }
+        return sf.listGamesServerFacade(answer).toString();
+    }
 
 }

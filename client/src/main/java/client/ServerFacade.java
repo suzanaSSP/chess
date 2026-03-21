@@ -28,6 +28,7 @@ public class ServerFacade {
 
     public ListGamesResult listGamesServerFacade(String authToken) throws URISyntaxException, IOException, InterruptedException {
         HttpResponse<String> httpResponse = cc.doGet("localhost", 8080, "/game", authToken);
+
         return gson.fromJson(httpResponse.body(), ListGamesResult.class);
     }
 }
