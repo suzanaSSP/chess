@@ -78,6 +78,27 @@ class ClientCommunicator {
         return httpResponse;
     }
 
+    public HttpResponse<String> doPut(String host, int port, String urlPath, String message, String authToken) throws URISyntaxException, IOException, InterruptedException {
+        String urlString = String.format(Locale.getDefault(), "http://%s:%d%s", host, port, urlPath);
+
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
+                .uri(new URI(urlString))
+                .timeout(java.time.Duration.ofMillis(TIMEOUT_MILLIS))
+                .PUT(HttpRequest.BodyPublishers.ofString(message, StandardCharsets.UTF_8));
+
+        if (authToken != null) {
+            builder.header("authorization", authToken);
+        }
+        HttpRequest request = builder.build();
+
+        HttpResponse<String> httpResponse = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        // Throw exception if needed
+        checkExceptions(httpResponse);
+
+        return httpResponse;
+
+    }
+
     public void checkExceptions(HttpResponse<String> httpResponse) {
         switch (httpResponse.statusCode()){
             case 403:

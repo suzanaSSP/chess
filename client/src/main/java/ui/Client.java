@@ -115,6 +115,9 @@ public class Client {
         switch (answer) {
             case 1:
                 return listGamesClient();
+            case 2:
+                joinGameClient();
+                return "Game joined";
             case 3:
                 String gameId = createGameClient();
                 System.out.println("Here is your game ID: " + gameId);
@@ -141,7 +144,15 @@ public class Client {
         String answer = scanner.next();
         // create game response already returns in string format
         return sf.createGameServerFacade(tokenUsing, answer);
+    }
 
+    public void joinGameClient() throws URISyntaxException, IOException, InterruptedException {
+        System.out.println("GameId for the game you want to play: ");
+        String gameId = scanner.next();
+        System.out.println("Your piece color: ");
+        String playercolor = scanner.next();
+
+        sf.joinGameServerFacade(playercolor, Integer.parseInt(gameId), tokenUsing);
     }
 
 }

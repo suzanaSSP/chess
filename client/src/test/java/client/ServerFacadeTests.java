@@ -11,7 +11,6 @@ import requestsandresults.ListGamesResult;
 import requestsandresults.LoginResult;
 import requestsandresults.RegisterResult;
 import server.Server;
-import server.ServerMain;
 import services.UserService;
 
 import java.io.IOException;
@@ -101,6 +100,25 @@ public class ServerFacadeTests {
     @Test
     public void listGamesException() {
         Assertions.assertThrows(UnauthorizedResponse.class, () -> serverFacadeTest.listGamesServerFacade("123"));
+    }
+
+    @Test
+    public void logoutSuccessfully() throws URISyntaxException, IOException, InterruptedException {
+        RegisterResult result = serverFacadeTest.registerServerFacade("username", "password", "email");
+        serverFacadeTest.logoutServerFacade(result.authToken());
+        Assertions.assertThrows(UnauthorizedResponse.class, ()-> userServiceTest.getUserWithAuth(result.authToken()));
+    }
+
+    @Test
+    public void logoutException() {
+        Assertions.assertThrows(UnauthorizedResponse.class, () -> serverFacadeTest.logoutServerFacade("1234"));
+    }
+
+    @Test
+    public void clearSuccessfully() throws URISyntaxException, IOException, InterruptedException {
+        serverFacadeTest.registerServerFacade("user", "password", "email");
+        serverFacadeTest.clearServerFacade();
+        Assertions.assertThrows(UnauthorizedResponse.class, ()-> serverFacadeTest.loginServerFacade("user", "password"));
     }
 
 }
