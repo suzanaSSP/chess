@@ -8,7 +8,6 @@ import dataaccess.SQLUserDAO;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.GameDAO;
 import dataaccess.interfaces.UserDAO;
-import dataaccess.memorydao.MemoryAuthDAO;
 import dataaccess.memorydao.MemoryGameDAO;
 import io.javalin.*;
 import io.javalin.http.BadRequestResponse;
@@ -16,7 +15,6 @@ import io.javalin.http.UnauthorizedResponse;
 import server.handlers.*;
 import services.GameServices;
 import services.UserService;
-
 import java.nio.channels.AlreadyBoundException;
 import java.util.Map;
 

@@ -5,7 +5,9 @@ import dataaccess.SQLAuthDAO;
 import dataaccess.SQLGameDAO;
 import dataaccess.SQLUserDAO;
 import io.javalin.http.BadRequestResponse;
+import io.javalin.http.UnauthorizedResponse;
 import org.junit.jupiter.api.*;
+import requestsandresults.ListGamesResult;
 import requestsandresults.LoginResult;
 import requestsandresults.RegisterResult;
 import server.Server;
@@ -74,6 +76,31 @@ public class ServerFacadeTests {
     @Test
     public void loginException() {
         Assertions.assertThrows(BadRequestResponse.class, () -> serverFacadeTest.loginServerFacade(null, null));
+    }
+
+    @Test
+    public void createGameSuccessfully() throws URISyntaxException, IOException, InterruptedException {
+        RegisterResult signUpResult = serverFacadeTest.registerServerFacade("username", "password", "email");
+        String gameID = serverFacadeTest.createGameServerFacade(signUpResult.authToken(), "myGame");
+        Assertions.assertNotNull(gameID);
+    }
+
+    @Test
+    public void createGameException() {
+        Assertions.assertThrows(BadRequestResponse.class, ()-> serverFacadeTest.createGameServerFacade("1234", null));
+    }
+
+    @Test
+    public void listGamesSuccessfully() throws URISyntaxException, IOException, InterruptedException {
+        RegisterResult signUpResult = serverFacadeTest.registerServerFacade("username", "password", "email");
+        String gameID = serverFacadeTest.createGameServerFacade(signUpResult.authToken(), "myGame");
+        ListGamesResult games = serverFacadeTest.listGamesServerFacade(signUpResult.authToken());
+        Assertions.assertNotNull(games);
+    }
+
+    @Test
+    public void listGamesException() {
+        Assertions.assertThrows(UnauthorizedResponse.class, () -> serverFacadeTest.listGamesServerFacade("123"));
     }
 
 }

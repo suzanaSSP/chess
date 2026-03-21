@@ -15,20 +15,31 @@ public class ServerFacade {
     public RegisterResult registerServerFacade(String username, String password, String email) throws URISyntaxException, IOException, InterruptedException {
         RegisterRequest request = new RegisterRequest(username, password, email);
         String requestString = gson.toJson(request).toString();
-        HttpResponse<String> httpResponse = cc.doPost("localhost", 8080, "/user", requestString);
+        HttpResponse<String> httpResponse = cc.doPost("localhost", 8080, "/user", requestString, null);
         return gson.fromJson(httpResponse.body(), RegisterResult.class);
     }
 
     public LoginResult loginServerFacade(String username, String password) throws URISyntaxException, IOException, InterruptedException {
         LoginRequest request = new LoginRequest(username, password);
         String requestString = gson.toJson(request).toString();
-        HttpResponse<String> httpResponse = cc.doPost("localhost", 8080, "/session", requestString);
+        HttpResponse<String> httpResponse = cc.doPost("localhost", 8080, "/session", requestString, null);
         return gson.fromJson(httpResponse.body(), LoginResult.class);
     }
 
     public ListGamesResult listGamesServerFacade(String authToken) throws URISyntaxException, IOException, InterruptedException {
         HttpResponse<String> httpResponse = cc.doGet("localhost", 8080, "/game", authToken);
-
         return gson.fromJson(httpResponse.body(), ListGamesResult.class);
+    }
+
+    public String createGameServerFacade(String authToken, String gameName) throws URISyntaxException, IOException, InterruptedException {
+        // No need to create game request because it's just a string
+        CreateGameRequest request = new CreateGameRequest(gameName);
+        String requestString = gson.toJson(request).toString();
+        HttpResponse<String> httpResponse = cc.doPost("localhost", 8080, "/game", requestString, authToken);
+        return httpResponse.body();
+    }
+
+    public void logoutServerFacade(String authToken) throws URISyntaxException, IOException, InterruptedException {
+        cc.doDelete("localhost", 8080, "/session", authToken);
     }
 }
