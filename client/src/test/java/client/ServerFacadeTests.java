@@ -15,6 +15,7 @@ import services.UserService;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.channels.AlreadyBoundException;
 
 
 public class ServerFacadeTests {
@@ -80,7 +81,7 @@ public class ServerFacadeTests {
     @Test
     public void createGameSuccessfully() throws URISyntaxException, IOException, InterruptedException {
         RegisterResult signUpResult = serverFacadeTest.registerServerFacade("username", "password", "email");
-        String gameID = serverFacadeTest.createGameServerFacade(signUpResult.authToken(), "myGame");
+        int gameID = serverFacadeTest.createGameServerFacade(signUpResult.authToken(), "myGame");
         Assertions.assertNotNull(gameID);
     }
 
@@ -92,7 +93,7 @@ public class ServerFacadeTests {
     @Test
     public void listGamesSuccessfully() throws URISyntaxException, IOException, InterruptedException {
         RegisterResult signUpResult = serverFacadeTest.registerServerFacade("username", "password", "email");
-        String gameID = serverFacadeTest.createGameServerFacade(signUpResult.authToken(), "myGame");
+        int gameID = serverFacadeTest.createGameServerFacade(signUpResult.authToken(), "myGame");
         ListGamesResult games = serverFacadeTest.listGamesServerFacade(signUpResult.authToken());
         Assertions.assertNotNull(games);
     }
@@ -119,6 +120,21 @@ public class ServerFacadeTests {
         serverFacadeTest.registerServerFacade("user", "password", "email");
         serverFacadeTest.clearServerFacade();
         Assertions.assertThrows(UnauthorizedResponse.class, ()-> serverFacadeTest.loginServerFacade("user", "password"));
+    }
+
+    @Test
+    public void joinGameSuccessfully() throws URISyntaxException, IOException, InterruptedException {
+        RegisterResult signUpResult = serverFacadeTest.registerServerFacade("username", "password", "email");
+        int gameID = serverFacadeTest.createGameServerFacade(signUpResult.authToken(), "myGame");
+        serverFacadeTest.joinGameServerFacade("WHITE", gameID, signUpResult.authToken());
+
+        Assertions.assertThrows(AlreadyBoundException.class, ()-> serverFacadeTest.joinGameServerFacade("WHITE", gameID, signUpResult.authToken()));
+    }
+
+    @Test
+    public void joinGameException() throws URISyntaxException, IOException, InterruptedException {
+        RegisterResult signUpResult = serverFacadeTest.registerServerFacade("username", "password", "email");
+        Assertions.assertThrows(BadRequestResponse.class, ()-> serverFacadeTest.joinGameServerFacade("WHITE", 1234, signUpResult.authToken()));
     }
 
 }

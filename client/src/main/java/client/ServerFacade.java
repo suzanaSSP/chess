@@ -31,12 +31,13 @@ public class ServerFacade {
         return gson.fromJson(httpResponse.body(), ListGamesResult.class);
     }
 
-    public String createGameServerFacade(String authToken, String gameName) throws URISyntaxException, IOException, InterruptedException {
+    public Integer createGameServerFacade(String authToken, String gameName) throws URISyntaxException, IOException, InterruptedException {
         // No need to create game request because it's just a string
         CreateGameRequest request = new CreateGameRequest(gameName);
         String requestString = gson.toJson(request).toString();
         HttpResponse<String> httpResponse = cc.doPost("localhost", 8080, "/game", requestString, authToken);
-        return httpResponse.body();
+        CreateGameResult result = gson.fromJson(httpResponse.body(), CreateGameResult.class);
+        return result.gameID();
     }
 
     public void logoutServerFacade(String authToken) throws URISyntaxException, IOException, InterruptedException {
