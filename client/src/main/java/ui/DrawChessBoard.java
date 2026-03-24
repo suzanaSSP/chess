@@ -76,6 +76,8 @@ public class DrawChessBoard {
             }
             changeColors();
         }
+        changeColors();
+
     }
 
     private static void changeColors() {
