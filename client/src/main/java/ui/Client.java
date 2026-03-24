@@ -14,6 +14,7 @@ public class Client {
     ServerFacade sf = new ServerFacade();
     private int signedIn = 0;// 0 if not signed in, 1 if it is signed in
     private String tokenUsing;
+    private String currPlayerColor = "WHITE";
 
     Map<Integer, AlternativeGameData> gamesInClient = new HashMap<>();
 
@@ -124,7 +125,14 @@ public class Client {
                 return "Games Listed";
             case 2:
                 joinGameClient();
+                drawChessboard();
                 return "Game joined";
+            case 4:
+                System.out.println("Which game to observe: ");
+                printGames();
+                int gameAnswer = scanner.nextInt();
+                // fetch game from map
+                drawChessboard();
             case 3:
                 String gameId = createGameClient();
                 System.out.println("Here is your game ID: " + gameId);
@@ -165,14 +173,21 @@ public class Client {
     }
 
     public void joinGameClient() throws URISyntaxException, IOException, InterruptedException {
+        printGames();
         System.out.println("Game you want to join:  ");
         int gameKey = scanner.nextInt();
+        System.out.println(gameKey);
         System.out.println("Your piece color: ");
-        String playercolor = scanner.next();
+        String playercolor = scanner.nextLine();
+        currPlayerColor = playercolor;
 
         AlternativeGameData gameResult = gamesInClient.get(gameKey);
 
         sf.joinGameServerFacade(playercolor.toUpperCase(), gameResult.gameID(), tokenUsing);
+    }
+
+    public void drawChessboard() {
+        new DrawChessBoard().drawBoard(currPlayerColor, System.out);
     }
 
 }
