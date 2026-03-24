@@ -28,6 +28,7 @@ public class Client {
                 signedInLoop();
             }
             printPrompt();
+
             int answer = scanner.nextInt();
 
             try {
@@ -127,7 +128,6 @@ public class Client {
             case 3:
                 String gameId = createGameClient();
                 System.out.println("Here is your game ID: " + gameId);
-
             case 5:
                 sf.logoutServerFacade(tokenUsing);
                 signedIn = 0;
@@ -159,7 +159,7 @@ public class Client {
 
     public String createGameClient() throws URISyntaxException, IOException, InterruptedException {
         System.out.println("What name do you want to give your new game: ");
-        String answer = scanner.next();
+        String answer = scanner.nextLine();
         // create game response already returns in string format
         return sf.createGameServerFacade(tokenUsing, answer).toString();
     }
