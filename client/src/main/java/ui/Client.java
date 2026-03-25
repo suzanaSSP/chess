@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 public class Client {
     Scanner scanner = new Scanner(System.in);
-    ServerFacade sf = new ServerFacade();
+    ServerFacade sf = new ServerFacade(8080);
     private int signedIn = 0;// 0 if not signed in, 1 if it is signed in
     private String tokenUsing;
     public String currPlayerColor = "WHITE";

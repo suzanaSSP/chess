@@ -11,12 +11,17 @@ import java.net.http.HttpResponse;
 public class ServerFacade {
     ClientCommunicator cc = new ClientCommunicator();
     Gson gson = new Gson();
+    int port;
+
+    public ServerFacade(int portInput) {
+        port = portInput;
+    }
 
     public RegisterResult registerServerFacade(String username, String password, String email)
             throws URISyntaxException, IOException, InterruptedException {
         RegisterRequest request = new RegisterRequest(username, password, email);
         String requestString = gson.toJson(request).toString();
-        HttpResponse<String> httpResponse = cc.doPost("localhost", 8080,
+        HttpResponse<String> httpResponse = cc.doPost("localhost", port,
                 "/user", requestString, null);
 
         try {
@@ -32,7 +37,7 @@ public class ServerFacade {
         LoginRequest request = new LoginRequest(username, password);
         String requestString = gson.toJson(request).toString();
         HttpResponse<String> httpResponse = cc.doPost("localhost",
-                8080, "/session", requestString, null);
+                port, "/session", requestString, null);
         try {
             return gson.fromJson(httpResponse.body(), LoginResult.class);
         } catch (JsonSyntaxException e) {
@@ -44,7 +49,7 @@ public class ServerFacade {
     public ListGamesResult listGamesServerFacade(String authToken)
             throws URISyntaxException, IOException, InterruptedException {
         HttpResponse<String> httpResponse = cc.doGet("localhost",
-                8080, "/game", authToken);
+                port, "/game", authToken);
 
         try {
             return gson.fromJson(httpResponse.body(), ListGamesResult.class);
@@ -59,7 +64,7 @@ public class ServerFacade {
         // No need to create game request because it's just a string
         CreateGameRequest request = new CreateGameRequest(gameName);
         String requestString = gson.toJson(request).toString();
-        HttpResponse<String> httpResponse = cc.doPost("localhost", 8080,
+        HttpResponse<String> httpResponse = cc.doPost("localhost", port,
                 "/game", requestString, authToken);
 
         try {
@@ -74,7 +79,7 @@ public class ServerFacade {
     public void logoutServerFacade(String authToken)
             throws URISyntaxException, IOException, InterruptedException {
         try {
-            cc.doDelete("localhost", 8080, "/session", authToken);
+            cc.doDelete("localhost", port, "/session", authToken);
         } catch (Exception e) {
             throw new ClientExceptions("Error?");
         }
@@ -84,7 +89,7 @@ public class ServerFacade {
     public void clearServerFacade()
             throws URISyntaxException, IOException, InterruptedException {
         try {
-            cc.doDelete("localhost", 8080, "/db", null);
+            cc.doDelete("localhost", port, "/db", null);
         } catch (Exception e) {
             throw new ClientExceptions("Error");
         }
@@ -96,7 +101,7 @@ public class ServerFacade {
         String requestString = gson.toJson(request).toString();
 
         try {
-            cc.doPut("localhost", 8080, "/game", requestString, authToken);
+            cc.doPut("localhost", port, "/game", requestString, authToken);
         } catch (Exception e) {
             throw new ClientExceptions("Error");
         }

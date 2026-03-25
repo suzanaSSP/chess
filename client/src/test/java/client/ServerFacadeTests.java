@@ -17,7 +17,7 @@ import java.net.URISyntaxException;
 public class ServerFacadeTests {
 
     private static Server server;
-    static ServerFacade serverFacadeTest = new ServerFacade();
+    private static ServerFacade serverFacadeTest;
     static UserService userServiceTest;
 
     static {
@@ -34,8 +34,8 @@ public class ServerFacadeTests {
     @BeforeAll
     public static void init() throws URISyntaxException, IOException, InterruptedException {
         server = new Server();
-        var port = server.run(8080);
-
+        var port = server.run(0);
+        serverFacadeTest = new ServerFacade(port);
         System.out.println("Started test HTTP server on " + port);
     }
 
