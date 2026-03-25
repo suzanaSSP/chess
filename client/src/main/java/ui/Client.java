@@ -14,11 +14,12 @@ public class Client {
     ServerFacade sf = new ServerFacade();
     private int signedIn = 0;// 0 if not signed in, 1 if it is signed in
     private String tokenUsing;
-    private String currPlayerColor = "WHITE";
+    public String currPlayerColor = "WHITE";
 
+    int gameCounter = 1;
     Map<Integer, AlternativeGameData> gamesInClient = new HashMap<>();
 
-    public void runMenu() {
+    public void runMenu() throws URISyntaxException, IOException, InterruptedException {
         System.out.println("Lets play some Chess! Sign in to start:");
 
         //user input
@@ -34,7 +35,6 @@ public class Client {
 
             try {
                 result = evalFirstLoop(answer);
-                System.out.println(result);
             } catch (Throwable e) {
                 System.out.print(e + "\n");
                 System.out.println("Try again: " + "\n");
@@ -58,7 +58,7 @@ public class Client {
             case 2:
                 return loginClient();
             case 3:
-                return "Register if this is your first time, login if you have already registered";
+                return "Register if this is your first time, login if you have already registered, and quit once finished";
             case 4:
                 return "quit";
             default:
@@ -140,6 +140,9 @@ public class Client {
                 signedIn = 0;
                 System.out.println("logout Successfully");
                 break;
+            case 6:
+                System.out.println("List games to see current running games, Join a Game once you picked a game, create your own game, observe a game other people are playing, and log out once finished");
+                break;
             default:
                 System.out.println("Type Valid Number");
                 break;
@@ -148,14 +151,14 @@ public class Client {
 
     public void listGamesClient() throws URISyntaxException, IOException, InterruptedException {
         ListGamesResult result = sf.listGamesServerFacade(tokenUsing);
-        System.out.println(result);
         if (result.games().isEmpty()){
             System.out.println("No games to list, create game");
         } else {
-            int i = 1;
             for (AlternativeGameData game : result.games()){
-                gamesInClient.put(i, game);
-                i++;
+                if (!gamesInClient.containsValue(game)) {
+                    gamesInClient.putIfAbsent(gameCounter, game);
+                    gameCounter++;
+                }
             }
             printGames();
         }
@@ -163,19 +166,24 @@ public class Client {
     }
 
     public void printGames() {
-        System.out.println("\n");
         for (Map.Entry<Integer, AlternativeGameData> game : gamesInClient.entrySet()){
             System.out.println(game.getKey() + ". " + game.getValue().gameName());
         }
-        System.out.println("\n");
     }
 
     public String createGameClient() throws URISyntaxException, IOException, InterruptedException {
         System.out.println("What name do you want to give your new game: ");
         String answer = scanner.nextLine();
         int gameID = sf.createGameServerFacade(tokenUsing, answer);
+
+        //Add Game to Map
+        AlternativeGameData newGame = new AlternativeGameData(gameID, null, null, answer);
+        gamesInClient.put(gameCounter, newGame);
+        gameCounter++;
+
         return String.valueOf(gameID);
     }
+
 
     public void joinGameClient() throws URISyntaxException, IOException, InterruptedException {
         if (gamesInClient.isEmpty()) {
@@ -186,7 +194,7 @@ public class Client {
             int gameKey = Integer.parseInt(scanner.nextLine());
             System.out.println("Your piece color: ");
             String playercolor = scanner.nextLine();
-            currPlayerColor = playercolor;
+            currPlayerColor = playercolor.toUpperCase();
 
             AlternativeGameData gameResult = gamesInClient.get(gameKey);
 
@@ -200,6 +208,10 @@ public class Client {
     public void drawChessboard() {
         System.out.println("\n");
         new DrawChessBoard().drawBoard(currPlayerColor, System.out);
+    }
+
+    private void clearClient() throws URISyntaxException, IOException, InterruptedException {
+        sf.clearServerFacade();
     }
 
 

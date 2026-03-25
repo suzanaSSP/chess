@@ -9,9 +9,7 @@ import static ui.EscapeSequences.*;
 public class DrawChessBoard {
     private static List<String> letters = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h");
     // Board dimensions.
-    private static final int BOARD_SIZE_IN_SQUARES = 3;
     private static final int SQUARE_SIZE_IN_PADDED_CHARS = 3;
-    private static final int LINE_WIDTH_IN_PADDED_CHARS = 1;
     private static String headerColor = SET_BG_COLOR_WHITE;
     private static String currentSquareColor = SET_BG_COLOR_LIGHT_GREY;
     private static String textHeaderColor = SET_TEXT_COLOR_BLACK;
@@ -23,7 +21,7 @@ public class DrawChessBoard {
     public void drawBoard(String playerColor, PrintStream out) {
         drawHeaders(out);
         System.out.println("\n");
-        if (playerColor == "WHITE") {
+        if (playerColor.equals("WHITE")) {
             drawWhiteRows(out);
         } else {
             drawBlackRows(out);
@@ -68,7 +66,7 @@ public class DrawChessBoard {
     }
 
     private static void drawWhiteRows(PrintStream out) {
-        for (int i=1; i<=8; i++) {
+        for (int i=8; i>=1; i--) {
             // Horizantal number
             drawSquare(out, String.valueOf(i), headerColor, textHeaderColor);
             drawRow(out, i);
@@ -78,7 +76,7 @@ public class DrawChessBoard {
     }
 
     private static void drawBlackRows(PrintStream out) {
-        for (int i=8; i>=1; i--) {
+        for (int i=1; i<=8; i++) {
             // Horizantal number
             drawSquare(out, String.valueOf(i), headerColor, textHeaderColor);
             drawRow(out, i);
