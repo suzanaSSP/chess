@@ -18,8 +18,6 @@ public class Client {
     private int signedIn = 0;// 0 if not signed in, 1 if it is signed in
     private String tokenUsing;
     public String currPlayerColor = "WHITE";
-
-    int gameCounter = 1;
     Map<Integer, AlternativeGameData> gamesInClient = new HashMap<>();
 
     public void runMenu() throws URISyntaxException, IOException, InterruptedException {
@@ -137,8 +135,8 @@ public class Client {
                 joinGameClient();
                 break;
             case 3:
-                String gameId = createGameClient();
-                System.out.println("Here is your game ID: " + gameId);
+                createGameClient();
+                System.out.println("Game created successfully");
                 break;
             case 4:
                 observeGame();
@@ -172,6 +170,7 @@ public class Client {
             try {
                 int gameAnswer = Integer.parseInt(scanner.nextLine());
                 if (gamesInClient.containsKey(gameAnswer)) {
+                    currPlayerColor = "WHITE";
                     drawChessboard();
                 } else {
                     System.out.println("Please type valid number");
@@ -251,10 +250,9 @@ public class Client {
                 if (gameResult == null) {
                     throw new BadRequestResponse();
                 }
+                drawChessboard();
 
                 sf.joinGameServerFacade(playercolor.toUpperCase(), gameResult.gameID(), tokenUsing);
-
-                drawChessboard();
             } catch (AlreadyBoundException e) {
                 System.out.println("There is already a player in that position. Pick another color or another game.");
             } catch (Throwable e) {

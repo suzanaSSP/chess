@@ -39,8 +39,13 @@ public class ServerFacadeTests {
     public static void init() throws URISyntaxException, IOException, InterruptedException {
         server = new Server();
         var port = server.run(8080);
-        serverFacadeTest.clearServerFacade();
+
         System.out.println("Started test HTTP server on " + port);
+    }
+
+    @BeforeEach
+    public void setUp() throws URISyntaxException, IOException, InterruptedException {
+        serverFacadeTest.clearServerFacade();
     }
 
     @AfterAll
