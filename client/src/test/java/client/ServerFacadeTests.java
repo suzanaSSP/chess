@@ -4,18 +4,14 @@ import dataaccess.DataAccessException;
 import dataaccess.SQLAuthDAO;
 import dataaccess.SQLGameDAO;
 import dataaccess.SQLUserDAO;
-import io.javalin.http.BadRequestResponse;
-import io.javalin.http.UnauthorizedResponse;
 import org.junit.jupiter.api.*;
 import requestsandresults.ListGamesResult;
 import requestsandresults.LoginResult;
 import requestsandresults.RegisterResult;
 import server.Server;
 import services.UserService;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.channels.AlreadyBoundException;
 
 
 public class ServerFacadeTests {
@@ -67,7 +63,7 @@ public class ServerFacadeTests {
 
     @Test
     public void registerException() {
-        Assertions.assertThrows(BadRequestResponse.class, () -> serverFacadeTest.registerServerFacade(null, null, null));
+        Assertions.assertThrows(ClientExceptions.class, () -> serverFacadeTest.registerServerFacade(null, null, null));
     }
 
     @Test
@@ -80,7 +76,7 @@ public class ServerFacadeTests {
 
     @Test
     public void loginException() {
-        Assertions.assertThrows(BadRequestResponse.class, () -> serverFacadeTest.loginServerFacade(null, null));
+        Assertions.assertThrows(ClientExceptions.class, () -> serverFacadeTest.loginServerFacade(null, null));
     }
 
     @Test
@@ -91,7 +87,7 @@ public class ServerFacadeTests {
 
     @Test
     public void createGameException() {
-        Assertions.assertThrows(BadRequestResponse.class, ()-> serverFacadeTest.createGameServerFacade("1234", null));
+        Assertions.assertThrows(ClientExceptions.class, ()-> serverFacadeTest.createGameServerFacade("1234", null));
     }
 
     @Test
@@ -104,26 +100,26 @@ public class ServerFacadeTests {
 
     @Test
     public void listGamesException() {
-        Assertions.assertThrows(UnauthorizedResponse.class, () -> serverFacadeTest.listGamesServerFacade("123"));
+        Assertions.assertThrows(ClientExceptions.class, () -> serverFacadeTest.listGamesServerFacade("123"));
     }
 
     @Test
     public void logoutSuccessfully() throws URISyntaxException, IOException, InterruptedException {
         RegisterResult result = serverFacadeTest.registerServerFacade("username", "password", "email");
         serverFacadeTest.logoutServerFacade(result.authToken());
-        Assertions.assertThrows(UnauthorizedResponse.class, ()-> userServiceTest.getUserWithAuth(result.authToken()));
+        Assertions.assertThrows(ClientExceptions.class, ()-> serverFacadeTest.listGamesServerFacade(result.authToken()));
     }
 
     @Test
     public void logoutException() {
-        Assertions.assertThrows(UnauthorizedResponse.class, () -> serverFacadeTest.logoutServerFacade("1234"));
+        Assertions.assertThrows(ClientExceptions.class, () -> serverFacadeTest.logoutServerFacade("1234"));
     }
 
     @Test
     public void clearSuccessfully() throws URISyntaxException, IOException, InterruptedException {
         serverFacadeTest.registerServerFacade("user", "password", "email");
         serverFacadeTest.clearServerFacade();
-        Assertions.assertThrows(UnauthorizedResponse.class, ()-> serverFacadeTest.loginServerFacade("user", "password"));
+        Assertions.assertThrows(ClientExceptions.class, ()-> serverFacadeTest.loginServerFacade("user", "password"));
     }
 
     @Test
@@ -132,13 +128,13 @@ public class ServerFacadeTests {
         int gameID = serverFacadeTest.createGameServerFacade(signUpResult.authToken(), "myGame");
         serverFacadeTest.joinGameServerFacade("WHITE", gameID, signUpResult.authToken());
 
-        Assertions.assertThrows(AlreadyBoundException.class, ()-> serverFacadeTest.joinGameServerFacade("WHITE", gameID, signUpResult.authToken()));
+        Assertions.assertThrows(ClientExceptions.class, ()-> serverFacadeTest.joinGameServerFacade("WHITE", gameID, signUpResult.authToken()));
     }
 
     @Test
     public void joinGameException() throws URISyntaxException, IOException, InterruptedException {
         RegisterResult signUpResult = serverFacadeTest.registerServerFacade("username", "password", "email");
-        Assertions.assertThrows(BadRequestResponse.class, ()-> serverFacadeTest.joinGameServerFacade("WHITE", 1234, signUpResult.authToken()));
+        Assertions.assertThrows(ClientExceptions.class, ()-> serverFacadeTest.joinGameServerFacade("WHITE", 1234, signUpResult.authToken()));
     }
 
 }

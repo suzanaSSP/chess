@@ -15,7 +15,8 @@ class ClientCommunicator {
     private static final int TIMEOUT_MILLIS = 5000;
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
-    public HttpResponse<String> doGet(String host, int port, String urlPath, String authToken) throws URISyntaxException, IOException, InterruptedException {
+    public HttpResponse<String> doGet(String host, int port, String urlPath, String authToken)
+            throws URISyntaxException, IOException, InterruptedException {
         String urlString = String.format(Locale.getDefault(), "http://%s:%d%s", host, port, urlPath);
 
         HttpRequest.Builder builder = HttpRequest.newBuilder()
@@ -35,7 +36,8 @@ class ClientCommunicator {
         return httpResponse;
     }
 
-    public HttpResponse<String> doPost(String host, int port, String urlPath, String message, String authToken) throws URISyntaxException, IOException, InterruptedException {
+    public HttpResponse<String> doPost(String host, int port, String urlPath, String message, String authToken)
+            throws URISyntaxException, IOException, InterruptedException {
         String urlString = String.format(Locale.getDefault(), "http://%s:%d%s", host, port, urlPath);
 
         HttpRequest.Builder builder = HttpRequest.newBuilder()
@@ -55,7 +57,8 @@ class ClientCommunicator {
         return httpResponse;
     }
 
-    public HttpResponse<String> doDelete(String host, int port, String urlPath, String authToken) throws URISyntaxException, IOException, InterruptedException {
+    public HttpResponse<String> doDelete(String host, int port, String urlPath, String authToken)
+            throws URISyntaxException, IOException, InterruptedException {
         String urlString = String.format(Locale.getDefault(), "http://%s:%d%s", host, port, urlPath);
 
         HttpRequest.Builder builder = HttpRequest.newBuilder()
@@ -75,7 +78,8 @@ class ClientCommunicator {
         return httpResponse;
     }
 
-    public HttpResponse<String> doPut(String host, int port, String urlPath, String message, String authToken) throws URISyntaxException, IOException, InterruptedException {
+    public HttpResponse<String> doPut(String host, int port, String urlPath, String message, String authToken)
+            throws URISyntaxException, IOException, InterruptedException {
         String urlString = String.format(Locale.getDefault(), "http://%s:%d%s", host, port, urlPath);
 
         HttpRequest.Builder builder = HttpRequest.newBuilder()
