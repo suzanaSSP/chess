@@ -36,6 +36,9 @@ public class Client {
             try {
                 int answer = Integer.parseInt(scanner.nextLine());
                 result = evalFirstLoop(answer);
+                if (answer == 3 || answer > 4 || answer < 4) {
+                    System.out.println(result);
+                }
 
             } catch (AlreadyBoundException e) {
                 System.out.println("Username already in use, pick another one");
@@ -82,7 +85,8 @@ public class Client {
         RegisterResult result = sf.registerServerFacade(username, password, email);
         signedIn = 1;
         tokenUsing = result.authToken();
-        return result.toString();
+        return "Register Successfully";
+
 
     }
 
@@ -95,7 +99,7 @@ public class Client {
         LoginResult result = sf.loginServerFacade(username, password);
         tokenUsing = result.authToken();
         signedIn = 1;
-        return result.toString();
+        return "Login Successfully";
     }
 
     public void signedInLoop() {
@@ -128,7 +132,6 @@ public class Client {
         switch (answer) {
             case 1:
                 listGamesClient();
-                printGames();
                 break;
             case 2:
                 joinGameClient();
@@ -141,9 +144,7 @@ public class Client {
                 observeGame();
                 break;
             case 5:
-                sf.logoutServerFacade(tokenUsing);
-                signedIn = 0;
-                System.out.println("logout Successfully");
+                logOutClient();
                 break;
             case 6:
                 System.out.println("List games to see current running games, Join a Game once you picked a game, create your own game, observe a game other people are playing, and log out once finished");
@@ -151,6 +152,16 @@ public class Client {
             default:
                 System.out.println("Type Valid Number");
                 break;
+        }
+    }
+
+    public void logOutClient() {
+        try {
+            sf.logoutServerFacade(tokenUsing);
+            signedIn = 0;
+            System.out.println("logout Successfully");
+        } catch (UnauthorizedResponse | URISyntaxException | IOException | InterruptedException e) {
+            System.out.println("You registered incorrectly, quit now");
         }
     }
 
@@ -173,13 +184,16 @@ public class Client {
     }
 
     public void listGamesClient() throws URISyntaxException, IOException, InterruptedException {
-        printGames();
+        if (!gamesInClient.isEmpty()) {
+            printGames();
+        }
+
         // list games is already called everytime
     }
 
     public void setUpGamesClient(int answer) throws URISyntaxException, IOException, InterruptedException {
         ListGamesResult result = sf.listGamesServerFacade(tokenUsing);
-        if (result.games().isEmpty() && answer != 3){
+        if (result.games().isEmpty() && answer != 3 && answer != 5 && answer !=6){
             System.out.println("No games, create game");
         } else {
             int counter = 1;
@@ -241,6 +255,8 @@ public class Client {
                 sf.joinGameServerFacade(playercolor.toUpperCase(), gameResult.gameID(), tokenUsing);
 
                 drawChessboard();
+            } catch (AlreadyBoundException e) {
+                System.out.println("There is already a player in that position. Pick another color or another game.");
             } catch (Throwable e) {
                 System.out.println("Please Type a valid answer");
             }
