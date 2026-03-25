@@ -17,7 +17,13 @@ public class ServerFacade {
         String requestString = gson.toJson(request).toString();
         HttpResponse<String> httpResponse = cc.doPost("localhost", 8080,
                 "/user", requestString, null);
-        return gson.fromJson(httpResponse.body(), RegisterResult.class);
+
+        try {
+            return gson.fromJson(httpResponse.body(), RegisterResult.class);
+        } catch (ClientExceptions e) {
+            throw e;
+        }
+
     }
 
     public LoginResult loginServerFacade(String username, String password)
@@ -26,7 +32,12 @@ public class ServerFacade {
         String requestString = gson.toJson(request).toString();
         HttpResponse<String> httpResponse = cc.doPost("localhost",
                 8080, "/session", requestString, null);
-        return gson.fromJson(httpResponse.body(), LoginResult.class);
+        try {
+            return gson.fromJson(httpResponse.body(), LoginResult.class);
+        } catch (ClientExceptions e) {
+            throw e;
+        }
+
     }
 
     public ListGamesResult listGamesServerFacade(String authToken)
