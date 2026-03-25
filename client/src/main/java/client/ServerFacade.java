@@ -1,6 +1,7 @@
 package client;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import requestsandresults.*;
 
 import java.io.IOException;
@@ -20,8 +21,8 @@ public class ServerFacade {
 
         try {
             return gson.fromJson(httpResponse.body(), RegisterResult.class);
-        } catch (ClientExceptions e) {
-            throw e;
+        } catch (JsonSyntaxException e) {
+            throw new ClientExceptions("Error");
         }
 
     }
@@ -34,8 +35,8 @@ public class ServerFacade {
                 8080, "/session", requestString, null);
         try {
             return gson.fromJson(httpResponse.body(), LoginResult.class);
-        } catch (ClientExceptions e) {
-            throw e;
+        } catch (JsonSyntaxException e) {
+            throw new ClientExceptions("Error");
         }
 
     }
