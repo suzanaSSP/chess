@@ -1,9 +1,5 @@
 package client;
 
-import io.javalin.http.UnauthorizedResponse;
-
-import io.javalin.http.BadRequestResponse;
-import java.nio.channels.AlreadyBoundException;
 import java.nio.charset.StandardCharsets;
 import java.io.IOException;
 import java.net.URI;
@@ -15,6 +11,7 @@ import java.net.http.HttpClient;
 
 
 class ClientCommunicator {
+
     private static final int TIMEOUT_MILLIS = 5000;
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
@@ -102,11 +99,11 @@ class ClientCommunicator {
     public void checkExceptions(HttpResponse<String> httpResponse) {
         switch (httpResponse.statusCode()){
             case 403:
-                throw new AlreadyBoundException();
+                throw new ClientExceptions("Already taken");
             case 400:
-                throw new BadRequestResponse();
+                throw new ClientExceptions("Bad Requests");
             case 401:
-                throw new UnauthorizedResponse();
+                throw new ClientExceptions("Unauthorized");
         }
     }
 }

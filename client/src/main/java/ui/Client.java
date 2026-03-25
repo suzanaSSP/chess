@@ -1,13 +1,10 @@
 package ui;
 
+import client.ClientExceptions;
 import client.ServerFacade;
-import io.javalin.http.BadRequestResponse;
-import io.javalin.http.UnauthorizedResponse;
 import requestsandresults.*;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.channels.AlreadyBoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -38,10 +35,8 @@ public class Client {
                     System.out.println(result);
                 }
 
-            } catch (AlreadyBoundException e) {
-                System.out.println("Username already in use, pick another one");
-            } catch (UnauthorizedResponse unauthorizedResponse) {
-                System.out.println("Invalid username or password, if you haven't registered, register first");
+            } catch (ClientExceptions e) {
+                System.out.println(e.getMessage());
             } catch (Exception e) {
                 System.out.println(" Please type valid response");
             }
@@ -106,7 +101,7 @@ public class Client {
             int answer = Integer.parseInt(scanner.nextLine());
             try {
                 evalSecondLoop(answer);
-            } catch (BadRequestResponse | URISyntaxException | IOException | InterruptedException e) {
+            } catch (ClientExceptions | URISyntaxException | IOException | InterruptedException e) {
                 System.out.println("Please type a valid answer");
             }
         }
@@ -158,7 +153,7 @@ public class Client {
             sf.logoutServerFacade(tokenUsing);
             signedIn = 0;
             System.out.println("logout Successfully");
-        } catch (UnauthorizedResponse | URISyntaxException | IOException | InterruptedException e) {
+        } catch (ClientExceptions | URISyntaxException | IOException | InterruptedException e) {
             System.out.println("You registered incorrectly, quit now");
         }
     }
@@ -248,12 +243,12 @@ public class Client {
 
                 AlternativeGameData gameResult = gamesInClient.get(gameKey);
                 if (gameResult == null) {
-                    throw new BadRequestResponse();
+                    throw new ClientExceptions("Invalid input");
                 }
                 drawChessboard();
 
                 sf.joinGameServerFacade(playercolor.toUpperCase(), gameResult.gameID(), tokenUsing);
-            } catch (AlreadyBoundException e) {
+            } catch (ClientExceptions e) {
                 System.out.println("There is already a player in that position. Pick another color or another game.");
             } catch (Throwable e) {
                 System.out.println("Please Type a valid answer");
