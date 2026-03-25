@@ -73,18 +73,32 @@ public class ServerFacade {
 
     public void logoutServerFacade(String authToken)
             throws URISyntaxException, IOException, InterruptedException {
-        cc.doDelete("localhost", 8080, "/session", authToken);
+        try {
+            cc.doDelete("localhost", 8080, "/session", authToken);
+        } catch (Exception e) {
+            throw new ClientExceptions("Error?");
+        }
+
     }
 
     public void clearServerFacade()
             throws URISyntaxException, IOException, InterruptedException {
-        cc.doDelete("localhost", 8080, "/db", null);
+        try {
+            cc.doDelete("localhost", 8080, "/db", null);
+        } catch (Exception e) {
+            throw new ClientExceptions("Error");
+        }
     }
 
     public void joinGameServerFacade(String playercolor, int gameid, String authToken)
             throws URISyntaxException, IOException, InterruptedException {
         JoinGameRequest request = new JoinGameRequest(playercolor, gameid);
         String requestString = gson.toJson(request).toString();
-        cc.doPut("localhost", 8080, "/game", requestString, authToken);
+
+        try {
+            cc.doPut("localhost", 8080, "/game", requestString, authToken);
+        } catch (Exception e) {
+            throw new ClientExceptions("Error");
+        }
     }
 }
