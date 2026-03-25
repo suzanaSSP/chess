@@ -11,10 +11,10 @@ public class DrawChessBoard {
     // Board dimensions.
     private static final int SQUARE_SIZE_IN_PADDED_CHARS = 3;
     private static String headerColor = SET_BG_COLOR_WHITE;
-    private static String currentSquareColor = SET_BG_COLOR_LIGHT_GREY;
+    private static String currentSquareColor = SET_BG_COLOR_MAGENTA;
     private static String textHeaderColor = SET_TEXT_COLOR_BLACK;
 
-    private static List<String> pieces = Arrays.asList("R", "N", "B", "K", "Q", "B", "N", "R");
+    private static List<String> pieces = Arrays.asList("R", "N", "B", "Q", "K", "B", "N", "R");
     private static final String EMPTY = " ";
     private static String playerColorTest = "WHITE";
 
