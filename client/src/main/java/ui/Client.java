@@ -33,13 +33,16 @@ public class Client {
                 signedInLoop();
             }
             printPrompt();
-
-            int answer = Integer.parseInt(scanner.nextLine());
-
             try {
+                int answer = Integer.parseInt(scanner.nextLine());
                 result = evalFirstLoop(answer);
+
             } catch (AlreadyBoundException e) {
                 System.out.println("Username already in use, pick another one");
+            } catch (UnauthorizedResponse unauthorizedResponse) {
+                System.out.println("Invalid username or password, if you haven't registered, register first");
+            } catch (Exception e) {
+                System.out.println(" Please type valid response");
             }
         }
     }
@@ -61,6 +64,7 @@ public class Client {
             case 3:
                 return "Register if this is your first time, login if you have already registered, and quit once finished";
             case 4:
+                System.out.println("Goodbye");
                 return "quit";
             default:
                 return "Please type a valid number";
@@ -120,7 +124,7 @@ public class Client {
 
     public void evalSecondLoop(int answer) throws URISyntaxException, IOException, InterruptedException {
         // create games in client
-        listGamesClient();
+        setUpGamesClient(answer);
         switch (answer) {
             case 1:
                 listGamesClient();
@@ -151,15 +155,13 @@ public class Client {
     }
 
     public void observeGame() {
-        if (gamesInClient.isEmpty()) {
-            System.out.println("No Games, create game");
-        } else {
+        if (!gamesInClient.isEmpty()) {
             printGames();
             System.out.println("Which game to observe: ");
             try {
                 int gameAnswer = Integer.parseInt(scanner.nextLine());
                 if (gamesInClient.containsKey(gameAnswer)) {
-                   drawChessboard();
+                    drawChessboard();
                 } else {
                     System.out.println("Please type valid number");
                 }
@@ -171,15 +173,21 @@ public class Client {
     }
 
     public void listGamesClient() throws URISyntaxException, IOException, InterruptedException {
+        printGames();
+        // list games is already called everytime
+    }
+
+    public void setUpGamesClient(int answer) throws URISyntaxException, IOException, InterruptedException {
         ListGamesResult result = sf.listGamesServerFacade(tokenUsing);
-        if (result.games().isEmpty()){
-            System.out.println("No games to list, create game");
+        if (result.games().isEmpty() && answer != 3){
+            System.out.println("No games, create game");
         } else {
+            int counter = 1;
             for (AlternativeGameData game : result.games()){
                 if (!gamesInClient.containsValue(game)) {
-                    gamesInClient.putIfAbsent(gameCounter, game);
-                    gameCounter++;
+                    gamesInClient.put(counter, game);
                 }
+                counter++;
             }
         }
     }
@@ -216,9 +224,7 @@ public class Client {
 
 
     public void joinGameClient() throws URISyntaxException, IOException, InterruptedException {
-        if (gamesInClient.isEmpty()) {
-            System.out.println("No games, create game");
-        } else {
+        if (!gamesInClient.isEmpty()) {
             printGames();
             System.out.println("Game you want to join:  ");
             try {
@@ -238,8 +244,6 @@ public class Client {
             } catch (Throwable e) {
                 System.out.println("Please Type a valid answer");
             }
-
-
         }
 
     }
