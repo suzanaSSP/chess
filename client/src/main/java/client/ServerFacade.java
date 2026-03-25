@@ -45,7 +45,13 @@ public class ServerFacade {
             throws URISyntaxException, IOException, InterruptedException {
         HttpResponse<String> httpResponse = cc.doGet("localhost",
                 8080, "/game", authToken);
-        return gson.fromJson(httpResponse.body(), ListGamesResult.class);
+
+        try {
+            return gson.fromJson(httpResponse.body(), ListGamesResult.class);
+        } catch (JsonSyntaxException e) {
+            throw new ClientExceptions("Error");
+        }
+
     }
 
     public Integer createGameServerFacade(String authToken, String gameName)
@@ -55,8 +61,14 @@ public class ServerFacade {
         String requestString = gson.toJson(request).toString();
         HttpResponse<String> httpResponse = cc.doPost("localhost", 8080,
                 "/game", requestString, authToken);
-        CreateGameResult result = gson.fromJson(httpResponse.body(), CreateGameResult.class);
-        return result.gameID();
+
+        try {
+            CreateGameResult result = gson.fromJson(httpResponse.body(), CreateGameResult.class);
+            return result.gameID();
+        } catch (JsonSyntaxException e) {
+            throw new ClientExceptions("Error");
+        }
+
     }
 
     public void logoutServerFacade(String authToken)
