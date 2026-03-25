@@ -22,6 +22,7 @@ public class ServerFacade {
         try {
             return gson.fromJson(httpResponse.body(), RegisterResult.class);
         } catch (JsonSyntaxException e) {
+            e.printStackTrace();
             throw new ClientExceptions("Error");
         }
 
