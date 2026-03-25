@@ -51,7 +51,8 @@ public class Client {
         System.out.println("Type number: ");
     }
 
-    public String evalFirstLoop(int answer) throws URISyntaxException, IOException, InterruptedException {
+    public String evalFirstLoop(int answer) throws URISyntaxException,
+            IOException, InterruptedException {
         switch (answer){
             case 1:
                 return registerClient();
@@ -67,7 +68,8 @@ public class Client {
         }
     }
 
-    public String registerClient() throws URISyntaxException, IOException, InterruptedException {
+    public String registerClient() throws URISyntaxException,
+            IOException, InterruptedException {
         System.out.println("Choose a username: ");
         String username = scanner.nextLine();
         System.out.println("Choose a password: ");
@@ -83,7 +85,8 @@ public class Client {
 
     }
 
-    public String loginClient() throws URISyntaxException, IOException, InterruptedException {
+    public String loginClient() throws URISyntaxException,
+            IOException, InterruptedException {
         System.out.println("Insert username: ");
         String username = scanner.nextLine();
         System.out.println("Insert Password: ");
@@ -140,7 +143,9 @@ public class Client {
                 logOutClient();
                 break;
             case 6:
-                System.out.println("List games to see current running games, Join a Game once you picked a game, create your own game, observe a game other people are playing, and log out once finished");
+                System.out.println("List games to see current running games, " +
+                        "Join a Game once you picked a game, create your own game, " +
+                        "observe a game other people are playing, and log out once finished");
                 break;
             default:
                 System.out.println("Type Valid Number");
@@ -212,7 +217,8 @@ public class Client {
                 blackUser = "No Player";
             }
 
-            System.out.println(game.getKey() + ". " + game.getValue().gameName() + " (White Player: " + whiteUser + "), (Black Player: " + blackUser + ")");
+            System.out.println(game.getKey() + ". " + game.getValue().gameName() +
+                    " (White Player: " + whiteUser + "), (Black Player: " + blackUser + ")");
         }
 
     }
@@ -221,11 +227,6 @@ public class Client {
         System.out.println("What name do you want to give your new game: ");
         String answer = scanner.nextLine();
         int gameID = sf.createGameServerFacade(tokenUsing, answer);
-
-        //Add Game to Map
-//        AlternativeGameData newGame = new AlternativeGameData(gameID, null, null, answer);
-//        gamesInClient.put(gameCounter, newGame);
-//        gameCounter++;
 
         return String.valueOf(gameID);
     }
@@ -249,7 +250,7 @@ public class Client {
 
                 sf.joinGameServerFacade(playercolor.toUpperCase(), gameResult.gameID(), tokenUsing);
             } catch (ClientExceptions e) {
-                System.out.println("There is already a player in that position. Pick another color or another game.");
+                System.out.println(e.getMessage());
             } catch (Throwable e) {
                 System.out.println("Please Type a valid answer");
             }
@@ -261,10 +262,4 @@ public class Client {
         System.out.println("\n");
         new DrawChessBoard().drawBoard(currPlayerColor, System.out);
     }
-
-    private void clearClient() throws URISyntaxException, IOException, InterruptedException {
-        sf.clearServerFacade();
-    }
-
-
 }
