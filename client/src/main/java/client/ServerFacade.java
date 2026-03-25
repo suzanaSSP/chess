@@ -1,7 +1,6 @@
 package client;
 
 import com.google.gson.Gson;
-import io.javalin.http.BadRequestResponse;
 import requestsandresults.*;
 
 import java.io.IOException;

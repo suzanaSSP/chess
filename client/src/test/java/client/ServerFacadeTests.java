@@ -21,7 +21,7 @@ import java.nio.channels.AlreadyBoundException;
 public class ServerFacadeTests {
 
     private static Server server;
-    ServerFacade serverFacadeTest = new ServerFacade();
+    static ServerFacade serverFacadeTest = new ServerFacade();
     static UserService userServiceTest;
 
     static {
@@ -32,14 +32,14 @@ public class ServerFacadeTests {
         }
     }
 
-    public ServerFacadeTests() throws DataAccessException {
+    public ServerFacadeTests() {
     }
 
     @BeforeAll
-    public static void init() throws DataAccessException {
+    public static void init() throws URISyntaxException, IOException, InterruptedException {
         server = new Server();
         var port = server.run(8080);
-        userServiceTest.clearService();
+        serverFacadeTest.clearServerFacade();
         System.out.println("Started test HTTP server on " + port);
     }
 
@@ -61,7 +61,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void registerException() throws URISyntaxException, IOException, InterruptedException {
+    public void registerException() {
         Assertions.assertThrows(BadRequestResponse.class, () -> serverFacadeTest.registerServerFacade(null, null, null));
     }
 
@@ -70,7 +70,7 @@ public class ServerFacadeTests {
         serverFacadeTest.registerServerFacade("username", "password", "email");
         LoginResult result = serverFacadeTest.loginServerFacade("username", "password");
         Assertions.assertNotNull(result);
-        Assertions.assertTrue(result.username().equals("username"));
+        Assertions.assertEquals("username", result.username());
     }
 
     @Test
@@ -81,8 +81,7 @@ public class ServerFacadeTests {
     @Test
     public void createGameSuccessfully() throws URISyntaxException, IOException, InterruptedException {
         RegisterResult signUpResult = serverFacadeTest.registerServerFacade("username", "password", "email");
-        int gameID = serverFacadeTest.createGameServerFacade(signUpResult.authToken(), "myGame");
-        Assertions.assertNotNull(gameID);
+        Assertions.assertNotNull(serverFacadeTest.createGameServerFacade(signUpResult.authToken(), "myGame"));
     }
 
     @Test
@@ -93,7 +92,7 @@ public class ServerFacadeTests {
     @Test
     public void listGamesSuccessfully() throws URISyntaxException, IOException, InterruptedException {
         RegisterResult signUpResult = serverFacadeTest.registerServerFacade("username", "password", "email");
-        int gameID = serverFacadeTest.createGameServerFacade(signUpResult.authToken(), "myGame");
+        serverFacadeTest.createGameServerFacade(signUpResult.authToken(), "myGame");
         ListGamesResult games = serverFacadeTest.listGamesServerFacade(signUpResult.authToken());
         Assertions.assertNotNull(games);
     }

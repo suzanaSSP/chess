@@ -18,7 +18,7 @@ public class Client {
 
     Map<Integer, AlternativeGameData> gamesInClient = new HashMap<>();
 
-    public void runMenu() throws URISyntaxException, IOException, InterruptedException {
+    public void runMenu() {
         System.out.println("Lets play some Chess! Sign in to start:");
 
         //user input
@@ -30,13 +30,13 @@ public class Client {
             }
             printPrompt();
 
-            int answer = scanner.nextInt();
+            int answer = Integer.parseInt(scanner.nextLine());
 
             try {
                 result = evalFirstLoop(answer);
                 System.out.println(result);
             } catch (Throwable e) {
-                System.out.print(e.toString() + "\n");
+                System.out.print(e + "\n");
                 System.out.println("Try again: " + "\n");
 
             }
@@ -68,11 +68,11 @@ public class Client {
 
     public String registerClient() throws URISyntaxException, IOException, InterruptedException {
         System.out.println("Choose a username: ");
-        String username = scanner.next();
+        String username = scanner.nextLine();
         System.out.println("Choose a password: ");
-        String password = scanner.next();
+        String password = scanner.nextLine();
         System.out.println("Type email: ");
-        String email = scanner.next();
+        String email = scanner.nextLine();
 
         RegisterResult result = sf.registerServerFacade(username, password, email);
         signedIn = 1;
@@ -82,9 +82,9 @@ public class Client {
 
     public String loginClient() throws URISyntaxException, IOException, InterruptedException {
         System.out.println("Insert username: ");
-        String username = scanner.next();
+        String username = scanner.nextLine();
         System.out.println("Insert Password: ");
-        String password = scanner.next();
+        String password = scanner.nextLine();
 
         LoginResult result = sf.loginServerFacade(username, password);
         tokenUsing = result.authToken();
@@ -92,22 +92,20 @@ public class Client {
         return result.toString();
     }
 
-    public void signedInLoop() throws URISyntaxException, IOException, InterruptedException {
-        var result = " ";
+    public void signedInLoop() {
         while (signedIn == 1){
             signedInPrompt();
-            int answer = scanner.nextInt();
-
+            int answer = Integer.parseInt(scanner.nextLine());
             try {
-                result = evalSecondLoop(answer);
-                System.out.println(result);
+                evalSecondLoop(answer);
             } catch (Throwable e) {
-                System.out.print(e.toString());
+                System.out.print(e);
             }
         }
     }
 
     public void signedInPrompt(){
+        System.out.println("\n");
         System.out.println("1. List Games");
         System.out.println("2. Join game");
         System.out.println("3. Create Game");
@@ -115,79 +113,94 @@ public class Client {
         System.out.println("5. Log out");
         System.out.println("6. Help");
         System.out.println("Type number: ");
+
     }
 
-    public String evalSecondLoop(int answer) throws URISyntaxException, IOException, InterruptedException {
+    public void evalSecondLoop(int answer) throws URISyntaxException, IOException, InterruptedException {
         switch (answer) {
             case 1:
                 listGamesClient();
-                printGames();
-                return "Games Listed";
+                break;
             case 2:
                 joinGameClient();
-                drawChessboard();
-                return "Game joined";
-            case 4:
-                System.out.println("Which game to observe: ");
-                printGames();
-                int gameAnswer = scanner.nextInt();
-                // fetch game from map
-                drawChessboard();
+                break;
             case 3:
                 String gameId = createGameClient();
                 System.out.println("Here is your game ID: " + gameId);
+                break;
+            case 4:
+//                System.out.println("Which game to observe: ");
+//                printGames();
+//                int gameAnswer = scanner.nextInt();
+                // fetch game from map
+                drawChessboard();
+                break;
             case 5:
                 sf.logoutServerFacade(tokenUsing);
                 signedIn = 0;
-                return "logout Successfully";
+                System.out.println("logout Successfully");
+                break;
             default:
-                return "Type valid number";
+                System.out.println("Type Valid Number");
+                break;
         }
     }
 
-    public String listGamesClient() throws URISyntaxException, IOException, InterruptedException {
+    public void listGamesClient() throws URISyntaxException, IOException, InterruptedException {
         ListGamesResult result = sf.listGamesServerFacade(tokenUsing);
+        System.out.println(result);
         if (result.games().isEmpty()){
-            return "No games to list";
+            System.out.println("No games to list, create game");
+        } else {
+            int i = 1;
+            for (AlternativeGameData game : result.games()){
+                gamesInClient.put(i, game);
+                i++;
+            }
+            printGames();
         }
 
-        int i = 1;
-        for (AlternativeGameData game : result.games()){
-            gamesInClient.put(i, game);
-            i++;
-        }
-        return result.toString();
     }
 
     public void printGames() {
+        System.out.println("\n");
         for (Map.Entry<Integer, AlternativeGameData> game : gamesInClient.entrySet()){
             System.out.println(game.getKey() + ". " + game.getValue().gameName());
         }
+        System.out.println("\n");
     }
 
     public String createGameClient() throws URISyntaxException, IOException, InterruptedException {
         System.out.println("What name do you want to give your new game: ");
         String answer = scanner.nextLine();
-        // create game response already returns in string format
-        return sf.createGameServerFacade(tokenUsing, answer).toString();
+        int gameID = sf.createGameServerFacade(tokenUsing, answer);
+        return String.valueOf(gameID);
     }
 
     public void joinGameClient() throws URISyntaxException, IOException, InterruptedException {
-        printGames();
-        System.out.println("Game you want to join:  ");
-        int gameKey = scanner.nextInt();
-        System.out.println(gameKey);
-        System.out.println("Your piece color: ");
-        String playercolor = scanner.nextLine();
-        currPlayerColor = playercolor;
+        if (gamesInClient.isEmpty()) {
+            System.out.println("No games, create game");
+        } else {
+            printGames();
+            System.out.println("Game you want to join:  ");
+            int gameKey = Integer.parseInt(scanner.nextLine());
+            System.out.println("Your piece color: ");
+            String playercolor = scanner.nextLine();
+            currPlayerColor = playercolor;
 
-        AlternativeGameData gameResult = gamesInClient.get(gameKey);
+            AlternativeGameData gameResult = gamesInClient.get(gameKey);
 
-        sf.joinGameServerFacade(playercolor.toUpperCase(), gameResult.gameID(), tokenUsing);
+            sf.joinGameServerFacade(playercolor.toUpperCase(), gameResult.gameID(), tokenUsing);
+
+            drawChessboard();
+        }
+
     }
 
     public void drawChessboard() {
+        System.out.println("\n");
         new DrawChessBoard().drawBoard(currPlayerColor, System.out);
     }
+
 
 }

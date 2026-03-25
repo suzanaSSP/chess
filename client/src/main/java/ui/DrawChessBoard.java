@@ -18,9 +18,11 @@ public class DrawChessBoard {
 
     private static List<String> pieces = Arrays.asList("R", "N", "B", "K", "Q", "B", "N", "R");
     private static final String EMPTY = " ";
+    private static String playerColorTest = "WHITE";
 
     public void drawBoard(String playerColor, PrintStream out) {
         drawHeaders(out);
+        System.out.println("\n");
         if (playerColor == "WHITE") {
             drawWhiteRows(out);
         } else {
@@ -28,11 +30,17 @@ public class DrawChessBoard {
         }
         drawHeaders(out);
     }
+
+
     public static void main(String[] args) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         drawHeaders(out);
-        out.print("\n");
-        drawBlackRows(out);
+        System.out.println("\n");
+        if (playerColorTest == "WHITE") {
+            drawWhiteRows(out);
+        } else {
+            drawBlackRows(out);
+        }
         drawHeaders(out);
     }
 
@@ -60,7 +68,7 @@ public class DrawChessBoard {
     }
 
     private static void drawWhiteRows(PrintStream out) {
-        for (int i=8; i>=1; i--) {
+        for (int i=1; i<=8; i++) {
             // Horizantal number
             drawSquare(out, String.valueOf(i), headerColor, textHeaderColor);
             drawRow(out, i);
@@ -70,7 +78,7 @@ public class DrawChessBoard {
     }
 
     private static void drawBlackRows(PrintStream out) {
-        for (int i=1; i<=8; i++) {
+        for (int i=8; i>=1; i--) {
             // Horizantal number
             drawSquare(out, String.valueOf(i), headerColor, textHeaderColor);
             drawRow(out, i);
