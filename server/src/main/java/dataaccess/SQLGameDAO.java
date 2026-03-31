@@ -137,6 +137,24 @@ public class SQLGameDAO implements GameDAO {
         }
     }
 
+    public ChessGame getChessGame(int gameID) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()){
+            var statement = "SELECT game FROM games WHERE gameID = ?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)){
+                ps.setInt(1, gameID);
+                try (ResultSet rs = ps.executeQuery()){
+                    if (rs.next()){
+                        return rs.getObject("game", ChessGame.class);
+                    }
+                    else {
+                        return null;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException("Database error");
+        }
+    }
 
     private final String[] createStatements = {
             """
