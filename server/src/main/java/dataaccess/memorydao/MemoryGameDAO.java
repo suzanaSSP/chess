@@ -1,6 +1,7 @@
 package dataaccess.memorydao;
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import dataaccess.interfaces.GameDAO;
 import io.javalin.http.BadRequestResponse;
 import model.GameData;
@@ -71,6 +72,10 @@ public class MemoryGameDAO implements GameDAO {
                 GameData blackGame = createNewGameData(gameID, game.whiteUsername(), username, game.gameName(), game.game());
                 gameDatabase.replace(gameID, blackGame);
         }
+    }
+
+    public ChessGame getChessGame(int gameID) throws DataAccessException{
+        return new ChessGame();
     }
 
 

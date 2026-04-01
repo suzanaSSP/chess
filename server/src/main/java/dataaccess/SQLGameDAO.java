@@ -1,6 +1,8 @@
 package dataaccess;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.interfaces.GameDAO;
 import io.javalin.http.BadRequestResponse;
@@ -153,6 +155,23 @@ public class SQLGameDAO implements GameDAO {
             }
         } catch (Exception e) {
             throw new DataAccessException("Database error");
+        }
+    }
+
+    public void updateChessGame(int gameID, ChessMove move) throws DataAccessException, InvalidMoveException {
+        ChessGame gameFetched = getChessGame(gameID);
+        gameFetched.makeMove(move);
+        String jsonGame = toJsonGame(gameFetched);
+
+        String statement = "UPDATE games SET game = ? WHERE gameID = ?";
+        try (Connection conn = DatabaseManager.getConnection()){
+            try (PreparedStatement ps = conn.prepareStatement(statement)){
+                ps.setString(1, jsonGame);
+                ps.setInt(2, gameID);
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Database Error");
         }
     }
 
