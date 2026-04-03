@@ -68,5 +68,7 @@ public class UserGameCommand {
             super(commandType, authToken, gameId);
             this.move = move;
         }
+
+        public ChessMove getMove() {return move;}
     }
 }

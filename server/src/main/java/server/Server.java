@@ -13,8 +13,10 @@ import io.javalin.*;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.UnauthorizedResponse;
 import server.handlers.*;
+import server.websockets.WebSocketHandler;
 import services.GameServices;
 import services.UserService;
+
 import java.nio.channels.AlreadyBoundException;
 import java.util.Map;
 
@@ -39,6 +41,7 @@ public class Server {
         // Service objects
         UserService serviceUser = new UserService(userData, authData, gameData);
         GameServices serviceGame = new GameServices(userData, authData, gameData, serviceUser);
+        WebSocketHandler wsHandler = new WebSocketHandler(serviceUser, serviceGame);
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
                 .post("/user", (ctx) -> new RegisterHandler(serviceUser).handle(ctx))
@@ -47,7 +50,12 @@ public class Server {
                 .delete("/session", (ctx)-> new LogoutHandler(serviceUser).handle(ctx))
                 .post("/game", (ctx) -> new CreateGameHandler(serviceUser, serviceGame).handle(ctx))
                 .get("/game", (ctx)-> new ListGamesHandler(serviceUser, serviceGame).handle(ctx))
-                .put("/game", (ctx) -> new JoinGameHandler(serviceUser, serviceGame).handle(ctx));
+                .put("/game", (ctx) -> new JoinGameHandler(serviceUser, serviceGame).handle(ctx))
+                        .ws("/ws", ws -> {
+                            ws.onConnect(wsHandler);
+                            ws.onMessage(wsHandler);
+                            ws.onClose(wsHandler);
+                        });
 
         //Exception handling for username already in use when registering
         javalin.exception(AlreadyBoundException.class, (e, ctx) -> {

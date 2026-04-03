@@ -51,11 +51,12 @@ public class ServerMessage {
         }
     }
 
-    public class LoadGameMessage extends ServerMessage {
+    public static class LoadGameMessage extends ServerMessage {
         ChessGame game;
-        public LoadGameMessage(ChessGame game) {
+        String jsonGame;
+        public LoadGameMessage(String game) {
             super(ServerMessageType.LOAD_GAME);
-            this.game = game;
+            this.jsonGame = game;
         }
     }
 

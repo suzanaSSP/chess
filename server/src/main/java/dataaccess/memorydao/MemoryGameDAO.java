@@ -1,6 +1,8 @@
 package dataaccess.memorydao;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.GameDAO;
 import io.javalin.http.BadRequestResponse;
@@ -75,6 +77,10 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     public ChessGame getChessGame(int gameID) throws DataAccessException{
+        return new ChessGame();
+    }
+
+    public ChessGame updateChessGame(int gameID, ChessMove move) throws DataAccessException, InvalidMoveException{
         return new ChessGame();
     }
 

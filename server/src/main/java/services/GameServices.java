@@ -1,6 +1,8 @@
 package services;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDAO;
 import dataaccess.interfaces.GameDAO;
@@ -53,6 +55,10 @@ public class GameServices {
 
     public ChessGame getGameWithId(int gameId) throws DataAccessException {
         return game.getChessGame(gameId);
+    }
+
+    public ChessGame updateChessGame(int gameId, ChessMove move) throws DataAccessException, InvalidMoveException {
+        return game.updateChessGame(gameId, move);
     }
 
 }

@@ -158,7 +158,7 @@ public class SQLGameDAO implements GameDAO {
         }
     }
 
-    public void updateChessGame(int gameID, ChessMove move) throws DataAccessException, InvalidMoveException {
+    public ChessGame updateChessGame(int gameID, ChessMove move) throws DataAccessException, InvalidMoveException {
         ChessGame gameFetched = getChessGame(gameID);
         gameFetched.makeMove(move);
         String jsonGame = toJsonGame(gameFetched);
@@ -173,6 +173,7 @@ public class SQLGameDAO implements GameDAO {
         } catch (SQLException e) {
             throw new DataAccessException("Database Error");
         }
+        return gameFetched;
     }
 
     private final String[] createStatements = {

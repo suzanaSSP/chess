@@ -1,9 +1,11 @@
 package server.websockets;
 
+import chess.ChessGame;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.UnauthorizedResponse;
-import io.javalin.websocket.WsMessageContext;
+import io.javalin.websocket.*;
 import org.eclipse.jetty.websocket.api.Session;
 import org.jetbrains.annotations.NotNull;
 import services.GameServices;
@@ -13,19 +15,27 @@ import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 
-import static javax.management.remote.JMXConnectorFactory.connect;
-
-public class WebSocketHandler {
+public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
     Gson gson = new Gson();
     ConnectionManager connectionManager = new ConnectionManager();
     UserService userService;
     GameServices gameServices;
 
-    public void handleMessage(@NotNull WsMessageContext wsMessageContext, UserService service, GameServices gameServices) throws Exception {
-        int gameId = -1;
-        Session session = wsMessageContext.session;
+    public WebSocketHandler(UserService service, GameServices gameServices) {
         this.userService = service;
         this.gameServices = gameServices;
+    }
+
+    @Override
+    public void handleConnect(WsConnectContext ctx) {
+        System.out.println("Websocket connected");
+        ctx.enableAutomaticPings();
+    }
+
+    @Override
+    public void handleMessage(@NotNull WsMessageContext wsMessageContext) throws Exception {
+        int gameId = -1;
+        Session session = wsMessageContext.session;
 
         try {
             UserGameCommand command = gson.fromJson(
@@ -58,19 +68,40 @@ public class WebSocketHandler {
         return userService.getUserWithAuth(authToken);
     }
 
-    public void connect(Session session, String username, UserGameCommand command) throws DataAccessException {
+    @Override
+    public void handleClose(WsCloseContext ctx) {
+        System.out.println("Websocket closed");
+    }
+
+    public void connect(Session session, String username, UserGameCommand command)
+            throws DataAccessException, IOException {
         // get game
-        gameServices.getGameWithId(command.getGameID());
+        ChessGame currGame = gameServices.getGameWithId(command.getGameID());
         // load game
+        String jsonGame = gson.toJson(currGame);
+        ServerMessage loadGame = new ServerMessage.LoadGameMessage(jsonGame);
+        connectionManager.sendNotificationsToALL(command.getGameID(), null, loadGame);
         // notify people
+        String message = String.format("%s joined the game", username);
+        ServerMessage notification = new ServerMessage.NotificationMessage(message);
+
+        // broadcast to everyone in gameID EXCEPT this session
+        connectionManager.sendNotificationsToALL(command.getGameID(), session, notification);
 
     }
 
-    public void makeMove(Session session, String username, UserGameCommand.MakeMoveCommand command) {
+    public void makeMove(Session session, String username, UserGameCommand.MakeMoveCommand command)
+            throws DataAccessException, InvalidMoveException, IOException {
         // get game
-        // make move
+        ChessGame updatedChessGame = gameServices.updateChessGame(command.getGameID(), command.getMove());
         // load game
+        String jsonGame = gson.toJson(updatedChessGame);
+        ServerMessage loadGame = new ServerMessage.LoadGameMessage(jsonGame);
+        connectionManager.sendNotificationsToALL(command.getGameID(), null, loadGame);
         // notify people
+        String message = String.format("%s moved to %s", username, command.getMove().toString());
+        ServerMessage notification = new ServerMessage.NotificationMessage(message);
+        connectionManager.sendNotificationsToALL(command.getGameID(), session, notification);
 
     }
 

@@ -32,6 +32,9 @@ public class ConnectionManager {
         List<Session> chosenSessions = connections.get(gameId);
         for (Session c: chosenSessions) {
             if (c.isOpen()) {
+                if (excludeSession == null) {
+                    c.getRemote().sendString(msg);
+                }
                 if (!c.equals(excludeSession)) {
                     c.getRemote().sendString(msg);
                 }
