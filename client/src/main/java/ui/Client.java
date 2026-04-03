@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessBoard;
 import client.ClientExceptions;
 import client.ServerFacade;
 import requestsandresults.*;
@@ -260,6 +261,6 @@ public class Client {
 
     public void drawChessboard() {
         System.out.println("\n");
-        new DrawChessBoard().drawBoard(currPlayerColor, System.out);
+        new DrawChessBoard(new ChessBoard(), currPlayerColor).drawBoard(System.out);
     }
 }

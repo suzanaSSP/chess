@@ -12,6 +12,7 @@ import java.util.Objects;
 public class ChessBoard  {
 
     ChessPiece[][] board = new ChessPiece[8][8];
+    boolean isBlack = false;
 
     public ChessBoard() {
         
@@ -60,16 +61,28 @@ public class ChessBoard  {
         addStartPieces();
     }
 
+    public void setToBlack() {
+        isBlack = true;
+    }
+
     public void addStartPieces() {
         addStartPawns();
         addStartBishops();
         addStartKnight();
         addStartRooks();
 
-        board[0][3] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
-        board[0][4] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
-        board[7][3] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
-        board[7][4] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+        if (isBlack == false) {
+            board[0][3] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+            board[0][4] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+            board[7][3] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+            board[7][4] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+        } else {
+            board[0][4] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+            board[0][3] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+            board[7][4] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+            board[7][3] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+        }
+
 
     }
 

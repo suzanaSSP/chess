@@ -28,13 +28,15 @@ public class WebSocketCommunicator extends Endpoint {
         // send CONNECT
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
         this.session.getBasicRemote().sendText(gson.toJson(command));
-        
+
     }
 
     @OnMessage
     public void onMessage(String message){
-        ServerMessage.NotificationMessage notificationMessage = gson.fromJson(message,
-                ServerMessage.NotificationMessage.class);
+        ServerMessage msg = gson.fromJson(message, ServerMessage.class);
+        if (msg.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
+
+        }
     }
 
     //Endpoint requires this method, but you don't have to do anything
