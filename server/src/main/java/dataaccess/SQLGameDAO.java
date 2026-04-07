@@ -120,6 +120,30 @@ public class SQLGameDAO implements GameDAO {
         }
     }
 
+    public void removeUser(String username, int gameID) throws DataAccessException {
+        AlternativeGameData game = getGame(gameID);
+        if (game == null){
+            throw new BadRequestResponse();
+        }
+
+        String statement;
+        statement = "UPDATE games SET whiteUsername = CASE WHEN whiteUsername = ? THEN null END, " +
+                "blackUsername = CASE WHEN blackUsername = ? THEN null END WHERE gameID = ? AND (whiteUsername = ? OR blackUsername =?)";
+
+        try (Connection conn = DatabaseManager.getConnection()){
+            try (PreparedStatement ps = conn.prepareStatement(statement)){
+                ps.setString(1, username);
+                ps.setString(2, username);
+                ps.setInt(3, gameID);
+                ps.setString(4, username);
+                ps.setString(5, username);
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Database Error");
+        }
+    }
+
     private AlternativeGameData getGame(int gameID) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()){
             var statement = "SELECT gameID, whiteUsername, blackUsername, gameName FROM games WHERE gameID = ?";

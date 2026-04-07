@@ -58,6 +58,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case RESIGN:
                     resign(session, username, command);
                     break;
+                case REDRAW:
+                    redraw(session, username, command);
+                    break;
             }
         } catch (UnauthorizedResponse e) {
             sendMessage(session, new ServerMessage.ErrorMessage("Error: unauthorized"));
@@ -124,7 +127,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     public void leaveGame(Session session, String username, UserGameCommand command)
-            throws IOException {
+            throws IOException, DataAccessException {
+        gameServices.removePlayer(command.getGameID(), username);
         connectionManager.remove(command.getGameID(), session);
         String message = username + "left the game";
         ServerMessage newMsg = new ServerMessage.NotificationMessage(message);
@@ -144,7 +148,10 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         ServerMessage notification = new ServerMessage.NotificationMessage(message);
         connectionManager.sendNotificationsToALL(command.getGameID(), null, notification);
         // user stays in the game
+    }
 
+    public void redraw(Session session, String username, UserGameCommand command) {
+        
     }
 
 }

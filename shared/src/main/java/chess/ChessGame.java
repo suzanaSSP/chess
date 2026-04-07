@@ -57,10 +57,17 @@ public class ChessGame {
     public void setGameOver() {gameOver = 1;}
 
     public boolean isGameOver() {
-        if (isInCheckmate(teamPlaying) || isInStalemate(teamPlaying)) {
+        System.out.println("I'm in gameover checker");
+        ChessGame.TeamColor otherTeam;
+        if (teamPlaying == TeamColor.WHITE) {
+            otherTeam = TeamColor.BLACK;
+        } else {otherTeam = TeamColor.WHITE;}
+        if (isInCheckmate(teamPlaying) || isInStalemate(teamPlaying)
+        || isInCheckmate(otherTeam) || isInStalemate(otherTeam)) {
             setGameOver();
             return true;
         }
+        System.out.println("I'm return false");
         return  false;
     }
 
@@ -100,7 +107,9 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        System.out.println("I'm in make move");
         if (isGameOver()) {
+            System.out.println("I passed the game over thing");
             throw new GameOverException(teamPlaying);
         }
 

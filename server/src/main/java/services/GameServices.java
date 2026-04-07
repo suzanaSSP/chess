@@ -61,4 +61,8 @@ public class GameServices {
         return game.updateChessGame(gameId, move);
     }
 
+    public void removePlayer(int gameId, String username) throws DataAccessException {
+        game.removeUser(username, gameId);
+    }
+
 }
