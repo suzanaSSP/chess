@@ -20,6 +20,7 @@ public class Client {
     public String currPlayerColor = "WHITE";
     Map<Integer, AlternativeGameData> gamesInClient = new HashMap<>();
     WebSocketCommunicator wsComunicator = new WebSocketCommunicator();
+    private int gameplay = 0;
 
     public void runMenu() throws URISyntaxException, IOException, InterruptedException {
         System.out.println("Lets play some Chess! Sign in to start:");
@@ -135,6 +136,7 @@ public class Client {
                 break;
             case 2:
                 joinGameClient();
+                gameplay = 1;
                 break;
             case 3:
                 createGameClient();
@@ -245,16 +247,18 @@ public class Client {
                 System.out.println("Your piece color: ");
                 String playercolor = scanner.nextLine();
                 currPlayerColor = playercolor.toUpperCase();
-
                 AlternativeGameData gameResult = gamesInClient.get(gameKey);
                 if (gameResult == null) {
                     throw new ClientExceptions("Invalid input");
                 }
-                sf.joinGameServerFacade(playercolor.toUpperCase(), gameResult.gameID(), tokenUsing);
+                sf.joinGameServerFacade(currPlayerColor, gameResult.gameID(), tokenUsing);
+                wsComunicator.connectSession("localhost", 8080, tokenUsing, gameResult.gameID());
 
             } catch (ClientExceptions e) {
+                System.out.println("I'm in the client exception");
                 System.out.println(e.getMessage());
             } catch (Throwable e) {
+                e.printStackTrace();
                 System.out.println("Please Type a valid answer");
             }
         }
@@ -264,5 +268,28 @@ public class Client {
     public void drawChessboard(ChessBoard board) {
         System.out.println("\n");
         new DrawChessBoard(board, currPlayerColor).drawBoard(System.out);
+    }
+
+    public void gamePlayLoop() {
+        while (gameplay == 1) {
+            gamePlayPrompt();
+            int answer = Integer.parseInt(scanner.nextLine());
+            try {
+                evalSecondLoop(answer);
+            } catch (ClientExceptions | URISyntaxException | IOException | InterruptedException e) {
+                System.out.println("Please type a valid answer");
+            }
+        }
+    }
+
+    public void gamePlayPrompt() {
+        System.out.println("\n");
+        System.out.println("1. Help");
+        System.out.println("2. Redraw ChessBoard");
+        System.out.println("3. Leave");
+        System.out.println("4. Make Move");
+        System.out.println("5. Resign");
+        System.out.println("6. Highlight Legal moves");
+        System.out.println("Type number: ");
     }
 }

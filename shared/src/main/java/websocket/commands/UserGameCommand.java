@@ -1,6 +1,7 @@
 package websocket.commands;
 
 import chess.ChessMove;
+import chess.ChessPosition;
 
 import java.util.Objects;
 
@@ -29,7 +30,8 @@ public class UserGameCommand {
         MAKE_MOVE,
         LEAVE,
         RESIGN,
-        REDRAW
+        REDRAW,
+        HIGHLIGHT
     }
 
     public CommandType getCommandType() {
@@ -71,5 +73,16 @@ public class UserGameCommand {
         }
 
         public ChessMove getMove() {return move;}
+    }
+
+    public class HighLightCommand extends UserGameCommand {
+        private ChessPosition position;
+
+        public HighLightCommand(CommandType commandType, String authToken, Integer gameId, ChessPosition pos) {
+            super(commandType, authToken, gameId);
+            this.position = pos;
+        }
+
+        public ChessPosition getPosition(){return position;}
     }
 }

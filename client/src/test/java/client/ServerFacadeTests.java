@@ -136,5 +136,11 @@ public class ServerFacadeTests {
         RegisterResult signUpResult = serverFacadeTest.registerServerFacade("username", "password", "email");
         Assertions.assertThrows(ClientExceptions.class, ()-> serverFacadeTest.joinGameServerFacade("WHITE", 1234, signUpResult.authToken()));
     }
+    @Test
+    public void joinGameWithWrongName() throws URISyntaxException, IOException, InterruptedException {
+        RegisterResult signUpResult = serverFacadeTest.registerServerFacade("username", "password", "email");
+        int gameID = serverFacadeTest.createGameServerFacade(signUpResult.authToken(), "myGame");
+        Assertions.assertThrows(ClientExceptions.class, ()-> serverFacadeTest.joinGameServerFacade("White", gameID, signUpResult.authToken()));
+    }
 
 }

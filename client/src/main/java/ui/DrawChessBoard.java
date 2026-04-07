@@ -1,9 +1,6 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -54,6 +51,14 @@ public class DrawChessBoard {
             drawBlackRows(out);
             drawBlackHeaders(out);
         }
+    }
+
+    public void drawPossibleMoves(PrintStream out, Collection<ChessMove> moves) {
+        drawBoard(out);
+        String squareMove = SET_BG_COLOR_YELLOW;
+        String killOrCurrPos = SET_BG_COLOR_DARK_GREEN;
+
+
     }
 
 

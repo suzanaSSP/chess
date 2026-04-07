@@ -1,8 +1,6 @@
 package server.websockets;
 
-import chess.ChessGame;
-import chess.GameOverException;
-import chess.InvalidMoveException;
+import chess.*;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.BadRequestResponse;
@@ -16,6 +14,7 @@ import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
+import java.util.Collection;
 
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
     Gson gson = new Gson();
@@ -59,8 +58,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     resign(session, username, command);
                     break;
                 case REDRAW:
-                    redraw(session, username, command);
+                    redraw(session, command);
                     break;
+                case HIGHLIGHT:
+                    UserGameCommand.HighLightCommand highLightCommand = gson.fromJson(wsMessageContext.message(),
+                            UserGameCommand.HighLightCommand.class);
+                    highlight(session, username, highLightCommand);
             }
         } catch (UnauthorizedResponse e) {
             sendMessage(session, new ServerMessage.ErrorMessage("Error: unauthorized"));
@@ -150,8 +153,17 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         // user stays in the game
     }
 
-    public void redraw(Session session, String username, UserGameCommand command) {
-        
+    public void redraw(Session session, UserGameCommand command) throws DataAccessException, IOException {
+        ChessGame currGame = gameServices.getGameWithId(command.getGameID());
+        String jsonGame = gson.toJson(currGame);
+        ServerMessage.LoadGameMessage loadGameMsg = new ServerMessage.LoadGameMessage(jsonGame);
+        connectionManager.sendNotification(session, loadGameMsg);
+    }
+
+    public void highlight(Session session, String username, UserGameCommand.HighLightCommand command) throws DataAccessException {
+        ChessGame currGame = gameServices.getGameWithId(command.getGameID());
+        Collection<ChessMove> pieceMoves = currGame.validMoves(command.getPosition());
+
     }
 
 }

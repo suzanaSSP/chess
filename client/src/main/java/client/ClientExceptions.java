@@ -5,5 +5,4 @@ public class ClientExceptions extends RuntimeException {
         super(message);
     }
 
-
 }

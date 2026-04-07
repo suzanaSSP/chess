@@ -1,8 +1,12 @@
 package websocket.messages;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -17,7 +21,9 @@ public class ServerMessage {
     public enum ServerMessageType {
         LOAD_GAME,
         ERROR,
-        NOTIFICATION
+        NOTIFICATION,
+        REDRAW,
+        HIGHLIGHT
     }
 
     public ServerMessage(ServerMessageType type) {
@@ -62,8 +68,6 @@ public class ServerMessage {
             this.jsonGame = game;
             this.game = new Gson().fromJson(jsonGame, ChessGame.class);
         }
-
-        public String getJsonGame() {return jsonGame;}
         public ChessGame getChessGame(){return this.game;}
     }
 
@@ -73,6 +77,31 @@ public class ServerMessage {
         public ErrorMessage(String message) {
             super(ServerMessageType.ERROR);
             this.errorMessage = message;
+        }
+    }
+
+    public static class RedrawBoardMessage extends ServerMessage {
+        ChessGame game;
+        String jsonGame;
+
+        public RedrawBoardMessage(String game) {
+            super(ServerMessageType.REDRAW);
+            this.jsonGame = game;
+            this.game = new Gson().fromJson(jsonGame, ChessGame.class);
+        }
+
+        public ChessGame getChessGame() {
+            return this.game;
+        }
+    }
+
+    public static class HighLightMovesMessage extends ServerMessage {
+        Collection<ChessMove> moves;
+
+        public HighLightMovesMessage(String moves) {
+            super(ServerMessageType.HIGHLIGHT);
+            Type collectionType = new TypeToken<Collection<ChessMove>>() {}.getType();
+            this.moves = new Gson().fromJson(moves, collectionType);
         }
     }
 }
