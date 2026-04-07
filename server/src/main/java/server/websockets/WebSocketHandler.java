@@ -1,6 +1,7 @@
 package server.websockets;
 
 import chess.ChessGame;
+import chess.GameOverException;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
@@ -35,21 +36,28 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     @Override
     public void handleMessage(@NotNull WsMessageContext wsMessageContext) throws Exception {
-        int gameId = -1;
         Session session = wsMessageContext.session;
-
         try {
-            UserGameCommand command = gson.fromJson(
-                    wsMessageContext.message(), UserGameCommand.class);
-            gameId = command.getGameID();
+            UserGameCommand command = gson.fromJson(wsMessageContext.message(), UserGameCommand.class);
+            int gameId = command.getGameID();
             String username = getUsername(command.getAuthToken());
             connectionManager.add(gameId, session);
 
             switch (command.getCommandType()) {
-                case CONNECT -> connect(session, username, command);
-                case MAKE_MOVE -> makeMove(session, username, (UserGameCommand.MakeMoveCommand) command);
-                case LEAVE -> leaveGame(session, username, gameId, command);
-                case RESIGN -> resign(session, username, command);
+                case CONNECT:
+                    connect(session, username, command);
+                    break;
+                case MAKE_MOVE:
+                    UserGameCommand.MakeMoveCommand gameCommand = gson.fromJson(wsMessageContext.message(),
+                            UserGameCommand.MakeMoveCommand.class);
+                    makeMove(session, username, gameCommand);
+                    break;
+                case LEAVE:
+                    leaveGame(session, username, command);
+                    break;
+                case RESIGN:
+                    resign(session, username, command);
+                    break;
             }
         } catch (UnauthorizedResponse e) {
             sendMessage(session, new ServerMessage.ErrorMessage("Error: unauthorized"));
@@ -92,37 +100,49 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             ServerMessage notification = new ServerMessage.NotificationMessage(message);
             // broadcast to everyone in gameID EXCEPT this session
             connectionManager.sendNotificationsToALL(command.getGameID(), session, notification);
-
-
     }
 
     public void makeMove(Session session, String username, UserGameCommand.MakeMoveCommand command)
             throws DataAccessException, InvalidMoveException, IOException {
         // get game
-        ChessGame updatedChessGame = gameServices.updateChessGame(command.getGameID(), command.getMove());
-        // load game
-        String jsonGame = gson.toJson(updatedChessGame);
-        ServerMessage loadGame = new ServerMessage.LoadGameMessage(jsonGame);
-        connectionManager.sendNotificationsToALL(command.getGameID(), null, loadGame);
-        // notify people
-        String message = String.format("%s moved to %s", username, command.getMove().toString());
-        ServerMessage notification = new ServerMessage.NotificationMessage(message);
-        connectionManager.sendNotificationsToALL(command.getGameID(), session, notification);
-
+        try {
+            ChessGame updatedChessGame = gameServices.updateChessGame(command.getGameID(), command.getMove());
+            // load game
+            String jsonGame = gson.toJson(updatedChessGame);
+            ServerMessage loadGame = new ServerMessage.LoadGameMessage(jsonGame);
+            connectionManager.sendNotificationsToALL(command.getGameID(), null, loadGame);
+            // notify people
+            String message = String.format("%s moved to %s", username, command.getMove().toString());
+            ServerMessage notification = new ServerMessage.NotificationMessage(message);
+            connectionManager.sendNotificationsToALL(command.getGameID(), session, notification);
+        } catch (GameOverException e) {
+            String winner = e.getWinner();
+            String message = "GAME OVER, Winner: " + winner;
+            ServerMessage notification = new ServerMessage.NotificationMessage(message);
+            connectionManager.sendNotificationsToALL(command.getGameID(), null, notification);
+        }
     }
 
-    public void leaveGame(Session session, String username, int gameId, UserGameCommand command) {
-        connectionManager.remove(gameId, session);
+    public void leaveGame(Session session, String username, UserGameCommand command)
+            throws IOException {
+        connectionManager.remove(command.getGameID(), session);
         String message = username + "left the game";
         ServerMessage newMsg = new ServerMessage.NotificationMessage(message);
+        connectionManager.sendNotificationsToALL(command.getGameID(), session, newMsg);
         // send back to post-login UI
 
     }
 
-    public void resign(Session session, String username, UserGameCommand command) {
+    public void resign(Session session, String username, UserGameCommand command)
+            throws DataAccessException, IOException {
         // get game
+        ChessGame currGame = gameServices.getGameWithId(command.getGameID());
         // game lost
+        currGame.setGameOver();
         // send notification
+        String message = "GAME OVER";
+        ServerMessage notification = new ServerMessage.NotificationMessage(message);
+        connectionManager.sendNotificationsToALL(command.getGameID(), null, notification);
         // user stays in the game
 
     }

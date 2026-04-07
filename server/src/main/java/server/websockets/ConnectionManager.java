@@ -21,7 +21,9 @@ public class ConnectionManager {
             connections.put(gameId, sessions);
         }
         else {
-            connections.get(gameId).add(session);
+            if (!connections.get(gameId).contains(session)) {
+                connections.get(gameId).add(session);
+            }
         }
 
     }

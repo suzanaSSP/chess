@@ -40,6 +40,11 @@ public class WebSocketCommunicator extends Endpoint {
             ServerMessage.LoadGameMessage loadGameMessage = gson.fromJson(message, ServerMessage.LoadGameMessage.class);
             new DrawChessBoard(loadGameMessage.getChessGame().currentBoard, playercolor).drawBoard(System.out);
         }
+        else if (msg.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
+            ServerMessage.NotificationMessage nMessagae = gson.fromJson(message,
+                    ServerMessage.NotificationMessage.class);
+            System.out.println(nMessagae.getMessage());
+        }
     }
 
     //Endpoint requires this method, but you don't have to do anything

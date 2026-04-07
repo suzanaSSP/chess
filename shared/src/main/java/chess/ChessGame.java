@@ -19,6 +19,7 @@ public class ChessGame {
     public ChessGame() {
         currentBoard.addStartPieces();
     }
+    int gameOver = 0;
 
     //DEEP COPY
     public ChessGame(ChessGame original) {
@@ -45,13 +46,22 @@ public class ChessGame {
     public void setTeamTurn(TeamColor team) {
         teamPlaying = team;
     }
-
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
     public enum TeamColor {
         WHITE,
         BLACK
+    }
+
+    public void setGameOver() {gameOver = 1;}
+
+    public boolean isGameOver() {
+        if (isInCheckmate(teamPlaying) || isInStalemate(teamPlaying)) {
+            setGameOver();
+            return true;
+        }
+        return  false;
     }
 
     /**
@@ -90,8 +100,13 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        if (isGameOver()) {
+            throw new GameOverException(teamPlaying);
+        }
+
         if (validMoves(move.startPosition) == null || !validMoves(move.startPosition).contains(move) ||
-        validMoves(move.startPosition).isEmpty()|| getTeamTurn() != currentBoard.getPiece(move.startPosition).getTeamColor()) {
+        validMoves(move.startPosition).isEmpty()
+                || getTeamTurn() != currentBoard.getPiece(move.startPosition).getTeamColor()) {
             throw new InvalidMoveException();
         } else {
             ChessPiece piece = currentBoard.getPiece(move.startPosition);
