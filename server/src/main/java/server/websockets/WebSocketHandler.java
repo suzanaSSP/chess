@@ -4,6 +4,7 @@ import chess.ChessGame;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.UnauthorizedResponse;
 import io.javalin.websocket.*;
 import org.eclipse.jetty.websocket.api.Session;
@@ -51,17 +52,18 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case RESIGN -> resign(session, username, command);
             }
         } catch (UnauthorizedResponse e) {
-            sendMessage(session, gameId, new ServerMessage.ErrorMessage("Error: unauthorized"));
-            throw e;
+            sendMessage(session, new ServerMessage.ErrorMessage("Error: unauthorized"));
+        } catch (BadRequestResponse e) {
+            sendMessage(session, new ServerMessage.ErrorMessage("Error: invalid input"));
         } catch (Exception ex) {
             ex.printStackTrace();
-            sendMessage(session, gameId, new ServerMessage.ErrorMessage("Error: " + ex.getMessage()));
+            sendMessage(session, new ServerMessage.ErrorMessage("Error: " + ex.getMessage()));
             throw ex;
         }
     }
 
-    public void sendMessage(Session session, int gameId, ServerMessage message) throws IOException {
-        connectionManager.sendNotification(gameId, session, message);
+    public void sendMessage(Session session, ServerMessage message) throws IOException {
+        connectionManager.sendNotification(session, message);
     }
 
     public String getUsername(String authToken) {
@@ -75,18 +77,22 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     public void connect(Session session, String username, UserGameCommand command)
             throws DataAccessException, IOException {
-        // get game
-        ChessGame currGame = gameServices.getGameWithId(command.getGameID());
-        // load game
-        String jsonGame = gson.toJson(currGame);
-        ServerMessage loadGame = new ServerMessage.LoadGameMessage(jsonGame);
-        connectionManager.sendNotificationsToALL(command.getGameID(), null, loadGame);
-        // notify people
-        String message = String.format("%s joined the game", username);
-        ServerMessage notification = new ServerMessage.NotificationMessage(message);
 
-        // broadcast to everyone in gameID EXCEPT this session
-        connectionManager.sendNotificationsToALL(command.getGameID(), session, notification);
+            // get game
+            ChessGame currGame = gameServices.getGameWithId(command.getGameID());
+            if (currGame == null) {
+                throw new BadRequestResponse();
+            }
+            // load game
+            String jsonGame = gson.toJson(currGame);
+            ServerMessage loadGame = new ServerMessage.LoadGameMessage(jsonGame);
+            connectionManager.sendNotification(session, loadGame);
+            // notify people
+            String message = String.format("%s joined the game", username);
+            ServerMessage notification = new ServerMessage.NotificationMessage(message);
+            // broadcast to everyone in gameID EXCEPT this session
+            connectionManager.sendNotificationsToALL(command.getGameID(), session, notification);
+
 
     }
 

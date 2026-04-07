@@ -1,5 +1,6 @@
 package server.websockets;
 
+import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.ServerMessage;
 
@@ -14,13 +15,15 @@ public class ConnectionManager {
     Map<Integer, List<Session>> connections = new HashMap<>();
 
     public void add(int gameId, Session session) {
-        if (connections.get(gameId).isEmpty()){
+        if (connections.get(gameId) == null) {
             List<Session> sessions = new ArrayList<>();
             sessions.add(session);
             connections.put(gameId, sessions);
-        } else {
+        }
+        else {
             connections.get(gameId).add(session);
         }
+
     }
 
     public void remove(int gameId, Session session) {
@@ -28,22 +31,21 @@ public class ConnectionManager {
     }
 
     public void sendNotificationsToALL(int gameId, Session excludeSession, ServerMessage notification) throws IOException {
-        String msg = notification.toString();
+        String msg = new Gson().toJson(notification);
         List<Session> chosenSessions = connections.get(gameId);
         for (Session c: chosenSessions) {
             if (c.isOpen()) {
                 if (excludeSession == null) {
                     c.getRemote().sendString(msg);
-                }
-                if (!c.equals(excludeSession)) {
+                } else if (!c.equals(excludeSession)) {
                     c.getRemote().sendString(msg);
                 }
             }
         }
     }
 
-    public void sendNotification(int gameId, Session session, ServerMessage notification) throws IOException {
-        String msg = notification.toString();
+    public void sendNotification(Session session, ServerMessage notification) throws IOException {
+        String msg = new Gson().toJson(notification);
         if (session.isOpen()) {
             session.getRemote().sendString(msg);
         }

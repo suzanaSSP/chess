@@ -1,6 +1,7 @@
 package websocket.messages;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 
 import java.util.Objects;
 
@@ -49,6 +50,8 @@ public class ServerMessage {
             super(ServerMessageType.NOTIFICATION);
             this.message = message;
         }
+
+        public String getMessage() {return this.message;}
     }
 
     public static class LoadGameMessage extends ServerMessage {
@@ -57,15 +60,19 @@ public class ServerMessage {
         public LoadGameMessage(String game) {
             super(ServerMessageType.LOAD_GAME);
             this.jsonGame = game;
+            this.game = new Gson().fromJson(jsonGame, ChessGame.class);
         }
+
+        public String getJsonGame() {return jsonGame;}
+        public ChessGame getChessGame(){return this.game;}
     }
 
     public static class ErrorMessage extends ServerMessage {
-        String message;
+        String errorMessage;
 
         public ErrorMessage(String message) {
             super(ServerMessageType.ERROR);
-            this.message = message;
+            this.errorMessage = message;
         }
     }
 }

@@ -1,8 +1,10 @@
 package ui;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import client.ClientExceptions;
 import client.ServerFacade;
+import client.WebSocketCommunicator;
 import requestsandresults.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -17,6 +19,7 @@ public class Client {
     private String tokenUsing;
     public String currPlayerColor = "WHITE";
     Map<Integer, AlternativeGameData> gamesInClient = new HashMap<>();
+    WebSocketCommunicator wsComunicator = new WebSocketCommunicator();
 
     public void runMenu() throws URISyntaxException, IOException, InterruptedException {
         System.out.println("Lets play some Chess! Sign in to start:");
@@ -172,7 +175,7 @@ public class Client {
                 int gameAnswer = Integer.parseInt(scanner.nextLine());
                 if (gamesInClient.containsKey(gameAnswer)) {
                     currPlayerColor = "WHITE";
-                    drawChessboard();
+                    drawChessboard(new ChessBoard());
                 } else {
                     System.out.println("Please type valid number");
                 }
@@ -247,9 +250,8 @@ public class Client {
                 if (gameResult == null) {
                     throw new ClientExceptions("Invalid input");
                 }
-                drawChessboard();
-
                 sf.joinGameServerFacade(playercolor.toUpperCase(), gameResult.gameID(), tokenUsing);
+
             } catch (ClientExceptions e) {
                 System.out.println(e.getMessage());
             } catch (Throwable e) {
@@ -259,8 +261,8 @@ public class Client {
 
     }
 
-    public void drawChessboard() {
+    public void drawChessboard(ChessBoard board) {
         System.out.println("\n");
-        new DrawChessBoard(new ChessBoard(), currPlayerColor).drawBoard(System.out);
+        new DrawChessBoard(board, currPlayerColor).drawBoard(System.out);
     }
 }

@@ -1,7 +1,9 @@
 package client;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import jakarta.websocket.*;
+import ui.DrawChessBoard;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
@@ -13,7 +15,7 @@ public class WebSocketCommunicator extends Endpoint {
     Session session;
     Gson gson = new Gson();
 
-    public void connectSession(String url, String authToken, int gameID)
+    public void connectSession(String url, String authToken, int gameID, String playercolor)
             throws URISyntaxException, DeploymentException, IOException {
         // CONNECT ->
         // LOAD GAME/ NOTIFIACTION <-
@@ -32,10 +34,11 @@ public class WebSocketCommunicator extends Endpoint {
     }
 
     @OnMessage
-    public void onMessage(String message){
+    public void onMessage(String message, String playercolor){
         ServerMessage msg = gson.fromJson(message, ServerMessage.class);
         if (msg.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
-
+            ServerMessage.LoadGameMessage loadGameMessage = gson.fromJson(message, ServerMessage.LoadGameMessage.class);
+            new DrawChessBoard(loadGameMessage.getChessGame().currentBoard, playercolor).drawBoard(System.out);
         }
     }
 

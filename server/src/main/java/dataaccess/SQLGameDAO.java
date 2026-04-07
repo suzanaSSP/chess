@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Random;
 
 public class SQLGameDAO implements GameDAO {
+    Gson gson = new Gson();
 
     public SQLGameDAO() throws DataAccessException {
         DatabaseManager.createDatabaseAndTables(createStatements);
@@ -56,7 +57,6 @@ public class SQLGameDAO implements GameDAO {
     }
 
     private String toJsonGame(ChessGame game) {
-        var gson = new Gson();
         return gson.toJson(game);
     }
 
@@ -146,7 +146,8 @@ public class SQLGameDAO implements GameDAO {
                 ps.setInt(1, gameID);
                 try (ResultSet rs = ps.executeQuery()){
                     if (rs.next()){
-                        return rs.getObject("game", ChessGame.class);
+                        String jsonGame = rs.getString("game");
+                        return gson.fromJson(jsonGame, ChessGame.class);
                     }
                     else {
                         return null;
