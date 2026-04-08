@@ -19,13 +19,9 @@ public class ChessGame {
 
     public boolean wasMoved = false;
     public boolean resigned = false;
+    public int gameOver = 0;
 
-    public ChessGame() {
-        if (teamPlaying == TeamColor.WHITE) {
-            currentBoard.addWhiteStartPieces();
-            } else {currentBoard.addBlackStartPieces();}
-    }
-    int gameOver = 0;
+    public ChessGame() {}
 
     //DEEP COPY
     public ChessGame(ChessGame original) {
@@ -80,20 +76,6 @@ public class ChessGame {
         }
         return  false;
     }
-
-    public void isOpponentInCheckMate() {
-        ChessGame.TeamColor otherTeam;
-        if (teamPlaying == TeamColor.WHITE) {
-            otherTeam = TeamColor.BLACK;
-        } else {
-            otherTeam = TeamColor.WHITE;
-        }
-
-        if (isInCheckmate(otherTeam)){
-            throw new OpponentCheckMateException("My enemy is in checkmate hahaha");
-        }
-    }
-
     /**
      * Gets a valid moves for a piece at the given location
      *
@@ -218,12 +200,6 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        /**Check for checkmate:
-         * King can't move
-         * Pieces can't kill
-         * Pieces can't go in front
-         */
-
         if (!isInCheck(teamColor)){
             return false;
         }

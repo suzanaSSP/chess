@@ -3,21 +3,19 @@ package ui;
 import chess.*;
 
 import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static ui.EscapeSequences.*;
 
 public class DrawChessBoard {
-    private static List<String> whiteLetters = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h");
-    private static List<String> blackLetters = Arrays.asList("h", "g", "f", "e", "d", "c", "b", "a");
+    private final static List<String> whiteLetters = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h");
     // Board dimensions.
     private static final int SQUARE_SIZE_IN_PADDED_CHARS = 3;
-    private static String headerColor = SET_BG_COLOR_WHITE;
+    private final static String headerColor = SET_BG_COLOR_WHITE;
     private static String currentSquareColor = SET_BG_COLOR_MAGENTA;
-    private static String textHeaderColor = SET_TEXT_COLOR_BLACK;
+    private final static String textHeaderColor = SET_TEXT_COLOR_BLACK;
 
-    private static Map<ChessPiece.PieceType, String> piecesMap =
+    private final static Map<ChessPiece.PieceType, String> piecesMap =
             Map.of(ChessPiece.PieceType.KING, "K",
                     ChessPiece.PieceType.QUEEN, "Q",
                     ChessPiece.PieceType.BISHOP, "B",
@@ -25,8 +23,7 @@ public class DrawChessBoard {
                     ChessPiece.PieceType.ROOK, "R",
                     ChessPiece.PieceType.PAWN, "P");
     private static final String EMPTY = " ";
-    private static String playerColorTest = "WHITE";
-    private ChessBoard currBoard;
+    private final ChessBoard currBoard;
     String playerColor;
 
     public DrawChessBoard(ChessBoard currBoard, String playerColor) {
@@ -38,40 +35,13 @@ public class DrawChessBoard {
         System.out.println("\n");
         if (playerColor.equals("WHITE")) {
             drawWhiteHeaders(out);
-            drawWhiteRows(out);
+            drawRows(out);
             drawWhiteHeaders(out);
         } else if (playerColor.equals("BLACK")){
             drawBlackHeaders(out);
-            drawBlackRows(out);
+            drawRows(out);
             drawBlackHeaders(out);
         }
-    }
-
-    public void updateBoard(ChessBoard newBoard) {
-        this.currBoard = newBoard;
-    }
-
-    public void drawPossibleMoves(PrintStream out, Collection<ChessMove> moves) {
-        drawBoard(out);
-        String squareMove = SET_BG_COLOR_YELLOW;
-        String killOrCurrPos = SET_BG_COLOR_DARK_GREEN;
-
-
-    }
-
-
-    public void main(String[] args) {
-        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        if (playerColorTest == "WHITE") {
-            drawWhiteHeaders(out);
-            drawWhiteRows(out);
-            drawWhiteHeaders(out);
-        } else if (playerColorTest == "BLACK"){
-            drawBlackHeaders(out);
-            drawBlackRows(out);
-            drawBlackHeaders(out);
-        }
-
     }
 
     private static void drawWhiteHeaders(PrintStream out){
@@ -92,20 +62,22 @@ public class DrawChessBoard {
 
     }
 
-    private void drawWhiteRows(PrintStream out) {
-        for (int i=8; i>=1; i--) {
-            // Horizantal number
-            drawSquare(out, String.valueOf(i), headerColor, textHeaderColor);
-            drawWithChessBoard(out, i);
-            drawSquare(out, String.valueOf(i), headerColor, textHeaderColor);
-            out.print("\n");
+    private void drawRows(PrintStream out) {
+        int start;
+        int end;
+        int step;
+        if (playerColor.equals("WHITE")) {
+            start = 8;
+            end = 1;
+            step = -1;
+        } else {
+            start = 1;
+            end = 8;
+            step = 1;
         }
-    }
 
-    private void drawBlackRows(PrintStream out) {
-        out.println("\n");
-        for (int i=1; i<=8; i++) {
-            // Horizantal number
+        for (int i=start; i!=end+step; i+=step) {
+            // Horizontal number
             drawSquare(out, String.valueOf(i), headerColor, textHeaderColor);
             drawWithChessBoard(out, i);
             drawSquare(out, String.valueOf(i), headerColor, textHeaderColor);
@@ -146,37 +118,8 @@ public class DrawChessBoard {
         out.print(player);
     }
 
-    private static void drawRow(PrintStream out, int i, String currPlayerColor) {
-        String currColumn;
-        for (int j=0; j<8; j++) {
-            //CHeck for which column
-            if (currPlayerColor == "BLACK") {
-                currColumn = blackLetters.get(j);
-            } else{
-                currColumn = whiteLetters.get(j);
-            }
-
-            // Check for which row
-            if (i == 8 ) {
-                String peiceTest = piecesMap.get(currColumn);
-                drawSquare(out, piecesMap.get(currColumn), currentSquareColor, SET_TEXT_COLOR_BLACK);
-            } else if (i == 7) {
-                drawSquare(out, "P", currentSquareColor, SET_TEXT_COLOR_BLACK);
-            }  else if (i == 2) {
-                drawSquare(out, "P", currentSquareColor, SET_TEXT_COLOR_WHITE);
-            } else if (i == 1) {
-                drawSquare(out, piecesMap.get(currColumn), currentSquareColor, SET_TEXT_COLOR_WHITE);
-            } else {
-                drawSquare(out, EMPTY, currentSquareColor, currentSquareColor);
-            }
-            changeColors();
-        }
-        changeColors();
-
-    }
-
     private static void changeColors() {
-        if (currentSquareColor == SET_BG_COLOR_LIGHT_GREY) {
+        if (currentSquareColor.equals(SET_BG_COLOR_LIGHT_GREY)) {
             currentSquareColor = SET_BG_COLOR_MAGENTA;
         }
         else {
