@@ -58,6 +58,7 @@ public class ChessBoard  {
      */
     public void resetBoard() {
         board = new ChessPiece[8][8];
+        addWhiteStartPieces();
     }
 
     public void setToBlack() {
