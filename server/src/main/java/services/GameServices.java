@@ -57,8 +57,8 @@ public class GameServices {
         return game.getChessGame(gameId);
     }
 
-    public ChessGame updateChessGame(int gameId, ChessMove move) throws DataAccessException, InvalidMoveException {
-        return game.updateChessGame(gameId, move);
+    public void updateChessGame(ChessGame newGame, int gameId) throws DataAccessException, InvalidMoveException {
+        game.updateChessGame(newGame, gameId);
     }
 
     public void removePlayer(int gameId, String username) throws DataAccessException {

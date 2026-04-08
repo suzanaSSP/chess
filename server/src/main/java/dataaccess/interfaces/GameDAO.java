@@ -14,7 +14,7 @@ public interface GameDAO {
     Collection<AlternativeGameData> listGames() throws DataAccessException;
     void updateGame(String username, String playerColor, int gameID) throws DataAccessException;
     ChessGame getChessGame(int gameID) throws DataAccessException;
-    ChessGame updateChessGame(int gameID, ChessMove move) throws DataAccessException, InvalidMoveException;
+    void updateChessGame(ChessGame newGame, int gameID) throws DataAccessException, InvalidMoveException;
     void removeUser(String playerColor, int gameID) throws DataAccessException;
 }
 

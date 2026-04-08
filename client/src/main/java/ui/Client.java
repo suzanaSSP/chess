@@ -309,6 +309,8 @@ public class Client {
                 gameplay = 0;
                 wsComunicator.leaveCommand(tokenUsing, currGamePLaying);
                 break;
+            case 5:
+                wsComunicator.resignCommand(tokenUsing, currGamePLaying);
         }
     }
 

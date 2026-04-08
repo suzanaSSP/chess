@@ -24,7 +24,6 @@ public class WebSocketCommunicator extends Endpoint {
         // connect session
         String urlString = String.format(Locale.getDefault(), "ws://%s:%d/ws", host, port);
         URI socketURI = new URI(urlString);
-        System.out.println(urlString);
 
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         this.session = container.connectToServer(this, socketURI);
@@ -34,25 +33,12 @@ public class WebSocketCommunicator extends Endpoint {
             public void onMessage(String message){
                 ServerMessage msg = gson.fromJson(message, ServerMessage.class);
                 if (msg.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
-                    ServerMessage.LoadGameMessage loadGameMessage = gson.fromJson(message, ServerMessage.LoadGameMessage.class);
-                    ChessGame currGame = loadGameMessage.getChessGame();
-                    if (playerColor == "WHITE") {
-                        currGame.currentBoard.addWhiteStartPieces();
-                    } else {
-                        currGame.currentBoard.addBlackStartPieces();
-                    }
-                    new DrawChessBoard(currGame.currentBoard, playerColor).drawBoard(System.out);
-
+                    loadGameResponse(message, playerColor);
                 }
                 else if (msg.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
                     ServerMessage.NotificationMessage nMessagae = gson.fromJson(message,
                             ServerMessage.NotificationMessage.class);
                     System.out.println(nMessagae.getMessage());
-                }
-
-                else if(msg.getServerMessageType() == ServerMessage.ServerMessageType.REDRAW) {
-                    ServerMessage.RedrawBoardMessage board = gson.fromJson(message, ServerMessage.RedrawBoardMessage.class);
-                    new DrawChessBoard(board.getChessGame().currentBoard, playerColor).drawBoard(System.out);
                 }
 
                 else if (msg.getServerMessageType() == ServerMessage.ServerMessageType.HIGHLIGHT) {
@@ -79,7 +65,23 @@ public class WebSocketCommunicator extends Endpoint {
         this.session.getBasicRemote().sendText(gson.toJson(command));
     }
 
+    public void resignCommand(String authToken, int gameID) throws IOException {
+        UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
+        this.session.getBasicRemote().sendText(gson.toJson(command));
+    }
 
+    public void loadGameResponse(String message, String playerColor) {
+        ServerMessage.LoadGameMessage loadGameMessage = gson.fromJson(message, ServerMessage.LoadGameMessage.class);
+        ChessGame currGame = loadGameMessage.getChessGame();
+        if (currGame.wasMoved == false) {
+            if (playerColor == "WHITE") {
+                currGame.currentBoard.addWhiteStartPieces();
+            } else {
+                currGame.currentBoard.addBlackStartPieces();
+            }
+        }
+        new DrawChessBoard(currGame.currentBoard, playerColor).drawBoard(System.out);
+    }
 
     //Endpoint requires this method, but you don't have to do anything
     @Override

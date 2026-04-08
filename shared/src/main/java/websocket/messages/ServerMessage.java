@@ -22,7 +22,6 @@ public class ServerMessage {
         LOAD_GAME,
         ERROR,
         NOTIFICATION,
-        REDRAW,
         HIGHLIGHT
     }
 
@@ -81,25 +80,6 @@ public class ServerMessage {
             super(ServerMessageType.ERROR);
             this.errorMessage = message;
         }
-    }
-
-    public static class RedrawBoardMessage extends ServerMessage {
-        ChessGame game;
-        String jsonGame;
-        String playerColor;
-
-        public RedrawBoardMessage(String game, String playerColor) {
-            super(ServerMessageType.REDRAW);
-            this.jsonGame = game;
-            this.game = new Gson().fromJson(jsonGame, ChessGame.class);
-            this.playerColor = playerColor;
-        }
-
-        public ChessGame getChessGame() {
-            return this.game;
-        }
-
-        public String getPlayerColor() {return this.playerColor;}
     }
 
     public static class HighLightMovesMessage extends ServerMessage {

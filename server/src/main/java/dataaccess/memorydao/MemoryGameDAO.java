@@ -80,8 +80,7 @@ public class MemoryGameDAO implements GameDAO {
         return new ChessGame();
     }
 
-    public ChessGame updateChessGame(int gameID, ChessMove move) throws DataAccessException, InvalidMoveException{
-        return new ChessGame();
+    public void updateChessGame(ChessGame game, int gameID) throws DataAccessException, InvalidMoveException{
     }
     public void removeUser(String playerColor, int gameID) throws DataAccessException{}
 

@@ -183,10 +183,8 @@ public class SQLGameDAO implements GameDAO {
         }
     }
 
-    public ChessGame updateChessGame(int gameID, ChessMove move) throws DataAccessException, InvalidMoveException {
-        ChessGame gameFetched = getChessGame(gameID);
-        gameFetched.makeMove(move);
-        String jsonGame = toJsonGame(gameFetched);
+    public void updateChessGame(ChessGame updateGame, int gameID) throws DataAccessException, InvalidMoveException {
+        String jsonGame = toJsonGame(updateGame);
 
         String statement = "UPDATE games SET game = ? WHERE gameID = ?";
         try (Connection conn = DatabaseManager.getConnection()){
@@ -198,8 +196,10 @@ public class SQLGameDAO implements GameDAO {
         } catch (SQLException e) {
             throw new DataAccessException("Database Error");
         }
-        return gameFetched;
+
     }
+
+
 
     private final String[] createStatements = {
             """

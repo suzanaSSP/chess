@@ -16,6 +16,8 @@ public class ChessGame {
     ChessPosition whiteKing = new ChessPosition(1, 5);
     ChessPosition blackKing = new ChessPosition(8, 5);
 
+    public boolean wasMoved = false;
+
     public ChessGame() {
     }
     int gameOver = 0;
@@ -53,16 +55,19 @@ public class ChessGame {
         BLACK
     }
 
-    public void setGameOver() {gameOver = 1;}
+    public void setGameOver() {
+        if (gameOver == 0) {
+            gameOver = 1;
+        }
+    }
 
     public boolean isGameOver() {
         System.out.println("I'm in gameover checker");
-        ChessGame.TeamColor otherTeam;
-        if (teamPlaying == TeamColor.WHITE) {
-            otherTeam = TeamColor.BLACK;
-        } else {otherTeam = TeamColor.WHITE;}
-        if (isInCheckmate(teamPlaying) || isInStalemate(teamPlaying)
-        || isInCheckmate(otherTeam) || isInStalemate(otherTeam)) {
+//        ChessGame.TeamColor otherTeam;
+////        if (teamPlaying == TeamColor.WHITE) {
+////            otherTeam = TeamColor.BLACK;
+////        } else {otherTeam = TeamColor.WHITE;}
+        if (isInCheckmate(teamPlaying) || isInStalemate(teamPlaying) || gameOver == 1) {
             setGameOver();
             return true;
         }
@@ -123,6 +128,7 @@ public class ChessGame {
             if (move.promotionPiece != null) {
                 piece.type = move.promotionPiece;
             }
+            wasMoved = true;
             if (getTeamTurn() == TeamColor.WHITE) {
                 setTeamTurn(TeamColor.BLACK);
             } else {

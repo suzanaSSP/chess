@@ -112,9 +112,11 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             throws DataAccessException, InvalidMoveException, IOException {
         // get game
         try {
-            ChessGame updatedChessGame = gameServices.updateChessGame(command.getGameID(), command.getMove());
+            ChessGame currGame = gameServices.getGameWithId(command.getGameID());
+            currGame.makeMove(command.getMove());
+            gameServices.updateChessGame(currGame, command.getGameID());
             // load game
-            String jsonGame = gson.toJson(updatedChessGame);
+            String jsonGame = gson.toJson(currGame);
             ServerMessage loadGame = new ServerMessage.LoadGameMessage(jsonGame);
             connectionManager.sendNotificationsToALL(command.getGameID(), null, loadGame);
             // notify people
@@ -141,16 +143,21 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     public void resign(Session session, String username, UserGameCommand command)
-            throws DataAccessException, IOException {
+            throws DataAccessException, IOException, InvalidMoveException {
         // get game
         ChessGame currGame = gameServices.getGameWithId(command.getGameID());
         // game lost
         currGame.setGameOver();
+        currGame.currentBoard.resetBoard();
+        gameServices.updateChessGame(currGame, command.getGameID());
         // send notification
         String message = "GAME OVER";
         ServerMessage notification = new ServerMessage.NotificationMessage(message);
         connectionManager.sendNotificationsToALL(command.getGameID(), null, notification);
         // user stays in the game
+        String jsonGame = gson.toJson(currGame);
+        ServerMessage.LoadGameMessage lgMessage = new ServerMessage.LoadGameMessage(jsonGame);
+        connectionManager.sendNotificationsToALL(command.getGameID(), null, lgMessage);
     }
 
     public void redraw(Session session, UserGameCommand command) throws DataAccessException, IOException {
