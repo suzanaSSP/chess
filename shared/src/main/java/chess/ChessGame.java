@@ -17,7 +17,6 @@ public class ChessGame {
     ChessPosition blackKing = new ChessPosition(8, 5);
 
     public ChessGame() {
-        currentBoard.addStartPieces();
     }
     int gameOver = 0;
 

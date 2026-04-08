@@ -21,6 +21,7 @@ public class Client {
     Map<Integer, AlternativeGameData> gamesInClient = new HashMap<>();
     WebSocketCommunicator wsComunicator = new WebSocketCommunicator();
     private int gameplay = 0;
+    private int currGamePLaying = 0;
 
     public void runMenu() throws URISyntaxException, IOException, InterruptedException {
         System.out.println("Lets play some Chess! Sign in to start:");
@@ -105,6 +106,9 @@ public class Client {
 
     public void signedInLoop() {
         while (signedIn == 1){
+            if (gameplay == 1) {
+                gamePlayLoop();
+            }
             signedInPrompt();
             int answer = Integer.parseInt(scanner.nextLine());
             try {
@@ -252,7 +256,10 @@ public class Client {
                     throw new ClientExceptions("Invalid input");
                 }
                 sf.joinGameServerFacade(currPlayerColor, gameResult.gameID(), tokenUsing);
-                wsComunicator.connectSession("localhost", 8080, tokenUsing, gameResult.gameID());
+                wsComunicator.connectSession("localhost", 8080, currPlayerColor);
+                wsComunicator.connectCommand( tokenUsing, gameResult.gameID());
+                gameplay = 1;
+                currGamePLaying = gameResult.gameID();
 
             } catch (ClientExceptions e) {
                 System.out.println("I'm in the client exception");
@@ -275,8 +282,8 @@ public class Client {
             gamePlayPrompt();
             int answer = Integer.parseInt(scanner.nextLine());
             try {
-                evalSecondLoop(answer);
-            } catch (ClientExceptions | URISyntaxException | IOException | InterruptedException e) {
+                evalThirdLoop(answer);
+            } catch (ClientExceptions | IOException e) {
                 System.out.println("Please type a valid answer");
             }
         }
@@ -292,4 +299,17 @@ public class Client {
         System.out.println("6. Highlight Legal moves");
         System.out.println("Type number: ");
     }
+
+    public void evalThirdLoop(int answer) throws IOException {
+        switch (answer){
+            case 2:
+                wsComunicator.redrawSession(tokenUsing, currGamePLaying, currPlayerColor);
+                break;
+            case 3:
+                gameplay = 0;
+                wsComunicator.leaveCommand(tokenUsing, currGamePLaying);
+                break;
+        }
+    }
+
 }

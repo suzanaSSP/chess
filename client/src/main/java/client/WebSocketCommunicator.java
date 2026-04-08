@@ -16,7 +16,7 @@ public class WebSocketCommunicator extends Endpoint {
     Session session;
     Gson gson = new Gson();
 
-    public void connectSession(String host, int port, String authToken, int gameID)
+    public void connectSession(String host, int port, String playerColor)
             throws URISyntaxException, DeploymentException, IOException {
         // CONNECT ->
         // LOAD GAME/ NOTIFIACTION <-
@@ -32,11 +32,17 @@ public class WebSocketCommunicator extends Endpoint {
         this.session.addMessageHandler(new MessageHandler.Whole<String>() {
             @OnMessage
             public void onMessage(String message){
-                String playercolor = "WHITE";
                 ServerMessage msg = gson.fromJson(message, ServerMessage.class);
                 if (msg.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
                     ServerMessage.LoadGameMessage loadGameMessage = gson.fromJson(message, ServerMessage.LoadGameMessage.class);
-                    new DrawChessBoard(loadGameMessage.getChessGame().currentBoard, playercolor).drawBoard(System.out);
+                    ChessGame currGame = loadGameMessage.getChessGame();
+                    if (playerColor == "WHITE") {
+                        currGame.currentBoard.addWhiteStartPieces();
+                    } else {
+                        currGame.currentBoard.addBlackStartPieces();
+                    }
+                    new DrawChessBoard(currGame.currentBoard, playerColor).drawBoard(System.out);
+
                 }
                 else if (msg.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
                     ServerMessage.NotificationMessage nMessagae = gson.fromJson(message,
@@ -46,7 +52,7 @@ public class WebSocketCommunicator extends Endpoint {
 
                 else if(msg.getServerMessageType() == ServerMessage.ServerMessageType.REDRAW) {
                     ServerMessage.RedrawBoardMessage board = gson.fromJson(message, ServerMessage.RedrawBoardMessage.class);
-                    new DrawChessBoard(board.getChessGame().currentBoard, playercolor).drawBoard(System.out);
+                    new DrawChessBoard(board.getChessGame().currentBoard, playerColor).drawBoard(System.out);
                 }
 
                 else if (msg.getServerMessageType() == ServerMessage.ServerMessageType.HIGHLIGHT) {
@@ -54,12 +60,23 @@ public class WebSocketCommunicator extends Endpoint {
                 }
             }
         });
+    }
 
+    public void redrawSession(String authToken, int gameID, String playerColor) throws IOException {
+        UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.REDRAW, authToken, gameID);
+        this.session.getBasicRemote().sendText(gson.toJson(command));
+
+    }
+
+    public void connectCommand(String authToken, int gameID) throws IOException {
         // send CONNECT
         UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
         this.session.getBasicRemote().sendText(gson.toJson(command));
+    }
 
-
+    public void leaveCommand(String authToken, int gameID) throws IOException {
+        UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
+        this.session.getBasicRemote().sendText(gson.toJson(command));
     }
 
 

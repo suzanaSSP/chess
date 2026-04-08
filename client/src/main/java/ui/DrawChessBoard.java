@@ -26,18 +26,12 @@ public class DrawChessBoard {
                     ChessPiece.PieceType.PAWN, "P");
     private static final String EMPTY = " ";
     private static String playerColorTest = "WHITE";
-    private static ChessBoard currBoard = new ChessBoard();
+    private ChessBoard currBoard;
     String playerColor;
 
     public DrawChessBoard(ChessBoard currBoard, String playerColor) {
         this.currBoard = currBoard;
         this.playerColor = playerColor;
-
-        if (playerColor == "BLACK") {
-            currBoard.setToBlack();
-        }
-        currBoard.addStartPieces();
-
     }
 
     public void drawBoard(PrintStream out) {
@@ -53,6 +47,10 @@ public class DrawChessBoard {
         }
     }
 
+    public void updateBoard(ChessBoard newBoard) {
+        this.currBoard = newBoard;
+    }
+
     public void drawPossibleMoves(PrintStream out, Collection<ChessMove> moves) {
         drawBoard(out);
         String squareMove = SET_BG_COLOR_YELLOW;
@@ -62,8 +60,7 @@ public class DrawChessBoard {
     }
 
 
-    public static void main(String[] args) {
-        currBoard.addStartPieces();
+    public void main(String[] args) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         if (playerColorTest == "WHITE") {
             drawWhiteHeaders(out);
@@ -95,7 +92,7 @@ public class DrawChessBoard {
 
     }
 
-    private static void drawWhiteRows(PrintStream out) {
+    private void drawWhiteRows(PrintStream out) {
         for (int i=8; i>=1; i--) {
             // Horizantal number
             drawSquare(out, String.valueOf(i), headerColor, textHeaderColor);
@@ -105,7 +102,7 @@ public class DrawChessBoard {
         }
     }
 
-    private static void drawBlackRows(PrintStream out) {
+    private void drawBlackRows(PrintStream out) {
         out.println("\n");
         for (int i=1; i<=8; i++) {
             // Horizantal number
@@ -116,7 +113,7 @@ public class DrawChessBoard {
         }
     }
 
-    private static void drawWithChessBoard(PrintStream out, int row) {
+    private void drawWithChessBoard(PrintStream out, int row) {
         for (int j=1; j<=8; j++){
             ChessPiece currPiece = currBoard.getPiece(new ChessPosition(row, j));
             if (currBoard.getPiece(new ChessPosition(row, j)) != null) {
