@@ -47,17 +47,17 @@ public class MemoryGameDAO implements GameDAO {
         return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
     }
 
-    public GameData getGame(int gameID)  {
+    public AlternativeGameData getGame(int gameID)  {
         GameData game = gameDatabase.get(gameID);
         if (game == null) {
             throw new BadRequestResponse();
         }
-        return game;
+        return new AlternativeGameData(0, null, null, null);
     }
 
     public void updateGame(String username, String playerColor, int gameID) {
-        GameData game = getGame(gameID);
-
+//        GameData game = getGame(gameID);
+        GameData game = new GameData(0, null, null, null, null);
         switch (playerColor) {
             case "WHITE":
                 if (game.whiteUsername() != null) {
@@ -83,5 +83,6 @@ public class MemoryGameDAO implements GameDAO {
     public void updateChessGame(ChessGame game, int gameID) throws DataAccessException, InvalidMoveException{
     }
     public void removeUser(String playerColor, int gameID) throws DataAccessException{}
+
 
 }

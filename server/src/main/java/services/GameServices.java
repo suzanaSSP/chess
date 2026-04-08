@@ -57,6 +57,10 @@ public class GameServices {
         return game.getChessGame(gameId);
     }
 
+    public AlternativeGameData getGameData (int gameId) throws DataAccessException {
+        return game.getGame(gameId);
+    }
+
     public void updateChessGame(ChessGame newGame, int gameId) throws DataAccessException, InvalidMoveException {
         game.updateChessGame(newGame, gameId);
     }

@@ -30,8 +30,6 @@ public class UserGameCommand {
         MAKE_MOVE,
         LEAVE,
         RESIGN,
-        REDRAW,
-        HIGHLIGHT
     }
 
     public CommandType getCommandType() {
@@ -64,7 +62,7 @@ public class UserGameCommand {
         return Objects.hash(getCommandType(), getAuthToken(), getGameID());
     }
 
-    public class MakeMoveCommand extends UserGameCommand {
+    public static class MakeMoveCommand extends UserGameCommand {
         private ChessMove move;
 
         public MakeMoveCommand(CommandType commandType, String authToken, Integer gameId, ChessMove move) {
@@ -75,14 +73,4 @@ public class UserGameCommand {
         public ChessMove getMove() {return move;}
     }
 
-    public class HighLightCommand extends UserGameCommand {
-        private ChessPosition position;
-
-        public HighLightCommand(CommandType commandType, String authToken, Integer gameId, ChessPosition pos) {
-            super(commandType, authToken, gameId);
-            this.position = pos;
-        }
-
-        public ChessPosition getPosition(){return position;}
-    }
 }

@@ -1,8 +1,10 @@
 package client;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import jakarta.websocket.*;
+import ui.Client;
 import ui.DrawChessBoard;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
@@ -16,7 +18,7 @@ public class WebSocketCommunicator extends Endpoint {
     Session session;
     Gson gson = new Gson();
 
-    public void connectSession(String host, int port, String playerColor)
+    public void connectSession(String host, int port, Client currClient)
             throws URISyntaxException, DeploymentException, IOException {
         // CONNECT ->
         // LOAD GAME/ NOTIFIACTION <-
@@ -33,25 +35,28 @@ public class WebSocketCommunicator extends Endpoint {
             public void onMessage(String message){
                 ServerMessage msg = gson.fromJson(message, ServerMessage.class);
                 if (msg.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
-                    loadGameResponse(message, playerColor);
+                    ServerMessage.LoadGameMessage loadGameMessage = gson.fromJson(message, ServerMessage.LoadGameMessage.class);
+                    ChessGame currGame = loadGameMessage.getChessGame();
+                    if (currGame.wasMoved == false) {
+                        if (currClient.currPlayerColor == "WHITE") {
+                            currGame.currentBoard.addWhiteStartPieces();
+                        } else {
+                            currGame.currentBoard.addBlackStartPieces();
+                        }
+                    }
+                    currClient.drawChessboard(currGame);
                 }
                 else if (msg.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
                     ServerMessage.NotificationMessage nMessagae = gson.fromJson(message,
                             ServerMessage.NotificationMessage.class);
                     System.out.println(nMessagae.getMessage());
                 }
-
-                else if (msg.getServerMessageType() == ServerMessage.ServerMessageType.HIGHLIGHT) {
-                    ServerMessage.HighLightMovesMessage highlightMessage = gson.fromJson(message, ServerMessage.HighLightMovesMessage.class);
+                else if (msg.getServerMessageType() == ServerMessage.ServerMessageType.ERROR) {
+                    ServerMessage.ErrorMessage eMessage = gson.fromJson(message, ServerMessage.ErrorMessage.class);
+                    System.out.println(eMessage.getErrorMessage());
                 }
             }
         });
-    }
-
-    public void redrawSession(String authToken, int gameID, String playerColor) throws IOException {
-        UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.REDRAW, authToken, gameID);
-        this.session.getBasicRemote().sendText(gson.toJson(command));
-
     }
 
     public void connectCommand(String authToken, int gameID) throws IOException {
@@ -70,6 +75,12 @@ public class WebSocketCommunicator extends Endpoint {
         this.session.getBasicRemote().sendText(gson.toJson(command));
     }
 
+    public void makeMoveCommand(String authToken, int gameID, ChessMove move) throws IOException {
+        UserGameCommand.MakeMoveCommand command = new UserGameCommand.MakeMoveCommand
+                (UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID, move);
+        this.session.getBasicRemote().sendText(gson.toJson(command));
+    }
+
     public void loadGameResponse(String message, String playerColor) {
         ServerMessage.LoadGameMessage loadGameMessage = gson.fromJson(message, ServerMessage.LoadGameMessage.class);
         ChessGame currGame = loadGameMessage.getChessGame();
@@ -80,8 +91,9 @@ public class WebSocketCommunicator extends Endpoint {
                 currGame.currentBoard.addBlackStartPieces();
             }
         }
-        new DrawChessBoard(currGame.currentBoard, playerColor).drawBoard(System.out);
+
     }
+
 
     //Endpoint requires this method, but you don't have to do anything
     @Override

@@ -1,5 +1,6 @@
 package chess;
 
+import java.nio.channels.AlreadyBoundException;
 import java.util.*;
 
 /**
@@ -17,8 +18,12 @@ public class ChessGame {
     ChessPosition blackKing = new ChessPosition(8, 5);
 
     public boolean wasMoved = false;
+    public boolean resigned = false;
 
     public ChessGame() {
+        if (teamPlaying == TeamColor.WHITE) {
+            currentBoard.addWhiteStartPieces();
+            } else {currentBoard.addBlackStartPieces();}
     }
     int gameOver = 0;
 
@@ -56,23 +61,37 @@ public class ChessGame {
     }
 
     public void setGameOver() {
-        if (gameOver == 0) {
-            gameOver = 1;
-        }
+        gameOver = 1;
+        currentBoard.resetBoard();
+        if (teamPlaying == TeamColor.WHITE) {
+            currentBoard.addWhiteStartPieces();
+        } else {currentBoard.addBlackStartPieces();}
     }
 
+    public void setResign() {
+        if (resigned) {
+            throw new AlreadyBoundException();
+        } resigned = true;}
+
     public boolean isGameOver() {
-        System.out.println("I'm in gameover checker");
-//        ChessGame.TeamColor otherTeam;
-////        if (teamPlaying == TeamColor.WHITE) {
-////            otherTeam = TeamColor.BLACK;
-////        } else {otherTeam = TeamColor.WHITE;}
         if (isInCheckmate(teamPlaying) || isInStalemate(teamPlaying) || gameOver == 1) {
             setGameOver();
             return true;
         }
-        System.out.println("I'm return false");
         return  false;
+    }
+
+    public void isOpponentInCheckMate() {
+        ChessGame.TeamColor otherTeam;
+        if (teamPlaying == TeamColor.WHITE) {
+            otherTeam = TeamColor.BLACK;
+        } else {
+            otherTeam = TeamColor.WHITE;
+        }
+
+        if (isInCheckmate(otherTeam)){
+            throw new OpponentCheckMateException("My enemy is in checkmate hahaha");
+        }
     }
 
     /**
@@ -111,11 +130,12 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        System.out.println("I'm in make move");
         if (isGameOver()) {
-            System.out.println("I passed the game over thing");
             throw new GameOverException(teamPlaying);
         }
+         if (resigned) {
+             throw new ResignedException("You resigned and can't make move right now");
+         }
 
         if (validMoves(move.startPosition) == null || !validMoves(move.startPosition).contains(move) ||
         validMoves(move.startPosition).isEmpty()

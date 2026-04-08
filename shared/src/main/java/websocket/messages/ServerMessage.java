@@ -80,6 +80,8 @@ public class ServerMessage {
             super(ServerMessageType.ERROR);
             this.errorMessage = message;
         }
+
+        public String getErrorMessage(){return errorMessage;}
     }
 
     public static class HighLightMovesMessage extends ServerMessage {

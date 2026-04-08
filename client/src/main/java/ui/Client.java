@@ -2,6 +2,8 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import client.ClientExceptions;
 import client.ServerFacade;
 import client.WebSocketCommunicator;
@@ -22,6 +24,19 @@ public class Client {
     WebSocketCommunicator wsComunicator = new WebSocketCommunicator();
     private int gameplay = 0;
     private int currGamePLaying = 0;
+
+    String role = "";
+    ChessGame currGame;
+
+    private Map<String, Integer> indexMap =
+            Map.of("a", 0,
+                    "b", 1,
+                    "c", 2,
+                    "d", 3,
+                    "e", 4,
+                    "f", 5,
+                    "g", 6,
+                    "h", 7);
 
     public void runMenu() throws URISyntaxException, IOException, InterruptedException {
         System.out.println("Lets play some Chess! Sign in to start:");
@@ -181,7 +196,10 @@ public class Client {
                 int gameAnswer = Integer.parseInt(scanner.nextLine());
                 if (gamesInClient.containsKey(gameAnswer)) {
                     currPlayerColor = "WHITE";
-                    drawChessboard(new ChessBoard());
+                    role = "observer";
+                    wsComunicator.connectSession("localhost", 8080, this);
+                    wsComunicator.connectCommand(tokenUsing, gamesInClient.get(gameAnswer).gameID());
+                    gameplay = 1;
                 } else {
                     System.out.println("Please type valid number");
                 }
@@ -256,7 +274,8 @@ public class Client {
                     throw new ClientExceptions("Invalid input");
                 }
                 sf.joinGameServerFacade(currPlayerColor, gameResult.gameID(), tokenUsing);
-                wsComunicator.connectSession("localhost", 8080, currPlayerColor);
+                role = "player";
+                wsComunicator.connectSession("localhost", 8080, this);
                 wsComunicator.connectCommand( tokenUsing, gameResult.gameID());
                 gameplay = 1;
                 currGamePLaying = gameResult.gameID();
@@ -272,9 +291,10 @@ public class Client {
 
     }
 
-    public void drawChessboard(ChessBoard board) {
+    public void drawChessboard(ChessGame currGame) {
         System.out.println("\n");
-        new DrawChessBoard(board, currPlayerColor).drawBoard(System.out);
+        this.currGame = currGame;
+        new DrawChessBoard(currGame.currentBoard, currPlayerColor).drawBoard(System.out);
     }
 
     public void gamePlayLoop() {
@@ -301,16 +321,31 @@ public class Client {
     }
 
     public void evalThirdLoop(int answer) throws IOException {
+
         switch (answer){
             case 2:
-                wsComunicator.redrawSession(tokenUsing, currGamePLaying, currPlayerColor);
                 break;
             case 3:
                 gameplay = 0;
                 wsComunicator.leaveCommand(tokenUsing, currGamePLaying);
                 break;
+            case 4:
+                System.out.println("Input current position: (example: e5)");
+                String currentPosition = scanner.nextLine();
+                char fromColumn = currentPosition.charAt(0);
+                int fromRow = Character.getNumericValue(currentPosition.charAt(1));
+
+                System.out.println("Input next move: (example e6)");
+                String nextPosition = scanner.nextLine();
+                char nextColumn = currentPosition.charAt(0);
+                int nextRow = Character.getNumericValue(currentPosition.charAt(1));
+                ChessMove move = new ChessMove(new ChessPosition(indexMap.get(fromColumn), fromRow),
+                        new ChessPosition(indexMap.get(nextColumn), nextRow), null);
+                wsComunicator.makeMoveCommand(tokenUsing, currGamePLaying, move);
+                break;
             case 5:
                 wsComunicator.resignCommand(tokenUsing, currGamePLaying);
+
         }
     }
 
