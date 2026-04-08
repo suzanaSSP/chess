@@ -21,7 +21,9 @@ public class ChessGame {
     public boolean resigned = false;
     public int gameOver = 0;
 
-    public ChessGame() {}
+    public ChessGame() {
+        currentBoard.resetBoard();
+    }
 
     //DEEP COPY
     public ChessGame(ChessGame original) {
@@ -56,26 +58,11 @@ public class ChessGame {
         BLACK
     }
 
-    public void setGameOver() {
-        gameOver = 1;
-        currentBoard.resetBoard();
-        if (teamPlaying == TeamColor.WHITE) {
-            currentBoard.addWhiteStartPieces();
-        } else {currentBoard.addBlackStartPieces();}
-    }
-
     public void setResign() {
         if (resigned) {
             throw new AlreadyBoundException();
         } resigned = true;}
 
-    public boolean isGameOver() {
-        if (isInCheckmate(teamPlaying) || isInStalemate(teamPlaying) || gameOver == 1) {
-            setGameOver();
-            return true;
-        }
-        return  false;
-    }
     /**
      * Gets a valid moves for a piece at the given location
      *
@@ -112,9 +99,6 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if (isGameOver()) {
-            throw new GameOverException(teamPlaying);
-        }
          if (resigned) {
              throw new ResignedException("You resigned and can't make move right now");
          }

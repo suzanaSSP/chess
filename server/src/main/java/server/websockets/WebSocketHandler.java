@@ -16,7 +16,6 @@ import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.nio.channels.AlreadyBoundException;
-import java.util.Collection;
 
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
     Gson gson = new Gson();
@@ -108,7 +107,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     public void makeMove(Session session, String username, UserGameCommand.MakeMoveCommand command)
-            throws DataAccessException, InvalidMoveException, IOException {
+            throws DataAccessException, IOException {
         // get game
         try {
             if (isObserver(username, command.getGameID())){
@@ -136,9 +135,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             if (currGame.isInCheckmate(currGame.teamPlaying)) {
                 throw new OpponentCheckMateException("You're in checkmate");
             }
-        } catch (GameOverException e) {
-            String winner = e.getWinner();
-            String message = "GAME OVER, Winner: " + winner;
+        } catch (InvalidMoveException e) {
+            String message = "you can't do that";
             ServerMessage notification = new ServerMessage.ErrorMessage(message);
             connectionManager.sendNotification(session, notification);
         } catch (ResignedException e) {
