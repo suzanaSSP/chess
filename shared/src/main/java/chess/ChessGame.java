@@ -19,7 +19,6 @@ public class ChessGame {
 
     public boolean wasMoved = false;
     public boolean resigned = false;
-    public int gameOver = 0;
 
     public ChessGame() {
         currentBoard.resetBoard();

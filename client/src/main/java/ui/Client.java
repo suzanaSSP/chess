@@ -1,6 +1,5 @@
 package ui;
 
-import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
@@ -10,6 +9,7 @@ import client.WebSocketCommunicator;
 import requestsandresults.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -28,17 +28,27 @@ public class Client {
     String role = "";
     ChessGame currGame;
 
-    private Map<String, Integer> indexMap =
-            Map.of("a", 0,
-                    "b", 1,
-                    "c", 2,
-                    "d", 3,
-                    "e", 4,
-                    "f", 5,
-                    "g", 6,
-                    "h", 7);
+    private final Map<String, Integer> whiteIndexMap =
+            Map.of("a", 1,
+                    "b", 2,
+                    "c", 3,
+                    "d", 4,
+                    "e", 5,
+                    "f", 6,
+                    "g", 7,
+                    "h", 8);
 
-    public void runMenu() throws URISyntaxException, IOException, InterruptedException {
+    private final Map<String, Integer> blackIndexMap =
+            Map.of("h", 1,
+                    "g", 2,
+                    "f", 3,
+                    "e", 4,
+                    "d", 5,
+                    "c", 6,
+                    "b", 7,
+                    "a", 8);
+
+    public void runMenu() {
         System.out.println("Lets play some Chess! Sign in to start:");
 
         //user input
@@ -52,7 +62,7 @@ public class Client {
             try {
                 int answer = Integer.parseInt(scanner.nextLine());
                 result = evalFirstLoop(answer);
-                if (answer == 3 || answer > 4 || answer < 4) {
+                if (answer != 4) {
                     System.out.println(result);
                 }
 
@@ -210,7 +220,7 @@ public class Client {
         }
     }
 
-    public void listGamesClient() throws URISyntaxException, IOException, InterruptedException {
+    public void listGamesClient() {
         if (!gamesInClient.isEmpty()) {
             printGames();
         }
@@ -255,12 +265,11 @@ public class Client {
         System.out.println("What name do you want to give your new game: ");
         String answer = scanner.nextLine();
         int gameID = sf.createGameServerFacade(tokenUsing, answer);
-
         return String.valueOf(gameID);
     }
 
 
-    public void joinGameClient() throws URISyntaxException, IOException, InterruptedException {
+    public void joinGameClient() {
         if (!gamesInClient.isEmpty()) {
             printGames();
             System.out.println("Game you want to join:  ");
@@ -279,11 +288,12 @@ public class Client {
                 wsComunicator.connectCommand( tokenUsing, gameResult.gameID());
                 gameplay = 1;
                 currGamePLaying = gameResult.gameID();
+                System.out.println(currPlayerColor);
 
             } catch (ClientExceptions e) {
                 System.out.println("I'm in the client exception");
                 System.out.println(e.getMessage());
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("Please Type a valid answer");
             }
@@ -294,7 +304,10 @@ public class Client {
     public void drawChessboard(ChessGame currGame) {
         System.out.println("\n");
         this.currGame = currGame;
-        new DrawChessBoard(currGame.currentBoard, currPlayerColor).drawBoard(System.out);
+        if (!currGame.wasMoved && currPlayerColor.equals("BLACK")){
+            currGame.currentBoard.flipNewBoard();
+        }
+        new DrawChessBoard(currGame.currentBoard, currPlayerColor).drawBoard(System.out, null, null);
     }
 
     public void gamePlayLoop() {
@@ -324,29 +337,69 @@ public class Client {
 
         switch (answer){
             case 2:
+                drawChessboard(currGame);
                 break;
             case 3:
                 gameplay = 0;
                 wsComunicator.leaveCommand(tokenUsing, currGamePLaying);
                 break;
             case 4:
-                System.out.println("Input current position: (example: e5)");
-                String currentPosition = scanner.nextLine();
-                char fromColumn = currentPosition.charAt(0);
-                int fromRow = Character.getNumericValue(currentPosition.charAt(1));
-
-                System.out.println("Input next move: (example e6)");
-                String nextPosition = scanner.nextLine();
-                char nextColumn = currentPosition.charAt(0);
-                int nextRow = Character.getNumericValue(currentPosition.charAt(1));
-                ChessMove move = new ChessMove(new ChessPosition(indexMap.get(fromColumn), fromRow),
-                        new ChessPosition(indexMap.get(nextColumn), nextRow), null);
-                wsComunicator.makeMoveCommand(tokenUsing, currGamePLaying, move);
+                makeMoveEval();
                 break;
             case 5:
                 wsComunicator.resignCommand(tokenUsing, currGamePLaying);
-
+                break;
+            case 6:
+                highlightValidMoves();
+                break;
+            default:
+                System.out.println("Type valid answer");
         }
     }
 
+    public void makeMoveEval() throws IOException {
+        System.out.println("Input current position: (example: e5)");
+        String currentPosition = scanner.nextLine();
+        char fromColumn = currentPosition.charAt(0);
+        int fromRow = Character.getNumericValue(currentPosition.charAt(1));
+
+        System.out.println(whiteIndexMap.get(fromColumn));
+
+        System.out.println("Input next move: (example e6)");
+        String nextPosition = scanner.nextLine();
+        char nextColumn = nextPosition.charAt(0);
+        int nextRow = Character.getNumericValue(nextPosition.charAt(1));
+
+        ChessPosition startPos = null;
+        ChessPosition nextPos = null;
+        if (currPlayerColor == "WHITE"){
+            startPos = new ChessPosition(fromRow, whiteIndexMap.get(String.valueOf(fromColumn)));
+            nextPos = new ChessPosition(nextRow, whiteIndexMap.get(String.valueOf(nextColumn)));
+        } else {
+            startPos = new ChessPosition(fromRow, blackIndexMap.get(String.valueOf(fromColumn)));
+            nextPos = new ChessPosition(nextRow, blackIndexMap.get(String.valueOf(nextColumn)));
+        }
+        System.out.println(currGamePLaying);
+        ChessMove move = new ChessMove(startPos, nextPos, null);
+        System.out.println(move);
+        wsComunicator.makeMoveCommand(tokenUsing, currGamePLaying, move);
+    }
+
+    public void highlightValidMoves() {
+        System.out.println("What piece do you want to highlight its moves: (example input: e5)");
+        String currentPosition = scanner.nextLine();
+        char Column = currentPosition.charAt(0);
+        System.out.println(Column);
+        int Row = Character.getNumericValue(currentPosition.charAt(1));
+        System.out.println(blackIndexMap.get(String.valueOf(Column)));
+        ChessPosition currPosition = null;
+        if (currPlayerColor.equals("WHITE")) {
+            currPosition = new ChessPosition(Row, whiteIndexMap.get(String.valueOf(Column)));
+        } else {
+            currPosition = new ChessPosition(Row, blackIndexMap.get(String.valueOf(Column)));
+        }
+        Collection<ChessMove> moves =  currGame.validMoves(currPosition);
+
+        new DrawChessBoard(currGame.currentBoard, currPlayerColor).drawBoard(System.out, moves, currPosition);
+    }
 }

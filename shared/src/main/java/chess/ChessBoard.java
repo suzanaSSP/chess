@@ -12,7 +12,6 @@ import java.util.Objects;
 public class ChessBoard  {
 
     ChessPiece[][] board = new ChessPiece[8][8];
-    boolean isBlack = false;
 
     public ChessBoard() {
         
@@ -61,8 +60,9 @@ public class ChessBoard  {
         addWhiteStartPieces();
     }
 
-    public void setToBlack() {
-        isBlack = true;
+    public void flipNewBoard() {
+        board = new ChessPiece[8][8];
+        addBlackStartPieces();
     }
 
     public void addWhiteStartPieces() {
