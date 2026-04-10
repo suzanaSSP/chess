@@ -416,15 +416,15 @@ public class Client {
     public void highlightValidMoves() {
         System.out.println("What piece do you want to highlight its moves: (example input: e5)");
         String currentPosition = scanner.nextLine();
-        char Column = currentPosition.charAt(0);
-        System.out.println(Column);
-        int Row = Character.getNumericValue(currentPosition.charAt(1));
-        System.out.println(blackIndexMap.get(String.valueOf(Column)));
+        char column = currentPosition.charAt(0);
+        System.out.println(column);
+        int row = Character.getNumericValue(currentPosition.charAt(1));
+        System.out.println(blackIndexMap.get(String.valueOf(column)));
         ChessPosition currPosition = null;
         if (currPlayerColor.equals("WHITE")) {
-            currPosition = new ChessPosition(Row, whiteIndexMap.get(String.valueOf(Column)));
+            currPosition = new ChessPosition(row, whiteIndexMap.get(String.valueOf(column)));
         } else {
-            currPosition = new ChessPosition(Row, blackIndexMap.get(String.valueOf(Column)));
+            currPosition = new ChessPosition(row, blackIndexMap.get(String.valueOf(column)));
         }
         Collection<ChessMove> moves = currGame.validMoves(currPosition);
 

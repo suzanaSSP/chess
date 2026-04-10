@@ -12,7 +12,7 @@ public class DrawChessBoard {
     // Board dimensions.
     private static final int SQUARE_SIZE_IN_PADDED_CHARS = 3;
     private final static String HEADER_COLOR = SET_BG_COLOR_WHITE;
-    private static String CURRENT_SQUARE_COLOR = SET_BG_COLOR_MAGENTA;
+    private static String currentSquareColor = SET_BG_COLOR_MAGENTA;
     private final static String TEXT_HEADER_COLOR = SET_TEXT_COLOR_BLACK;
 
     private final static Map<ChessPiece.PieceType, String> PIECES_MAP =
@@ -23,24 +23,24 @@ public class DrawChessBoard {
                     ChessPiece.PieceType.ROOK, "R",
                     ChessPiece.PieceType.PAWN, "P");
     private static final String EMPTY = " ";
-    private final ChessBoard CURR_BOARD;
-    String PLAYER_COLOR;
-    String CURR_POSITION_COLOR = SET_BG_COLOR_YELLOW;
-    String HIGHLIGHT_LIGHT_COLOR = SET_BG_COLOR_GREEN;
-    String HIGHLIGHT_BLACK_COLOR = SET_BG_COLOR_DARK_GREEN;
+    private final ChessBoard currBoard;
+    String playerColor;
+    String currPositionColor = SET_BG_COLOR_YELLOW;
+    String highlightLightColor = SET_BG_COLOR_GREEN;
+    String highlightBlackColor = SET_BG_COLOR_DARK_GREEN;
 
     public DrawChessBoard(ChessBoard currBoard, String playerColor) {
-        this.CURR_BOARD = currBoard;
-        this.PLAYER_COLOR = playerColor;
+        this.currBoard = currBoard;
+        this.playerColor = playerColor;
     }
 
     public void drawBoard(PrintStream out, Collection<ChessMove> moves, ChessPosition currPost) {
         System.out.println("\n");
-        if (PLAYER_COLOR.equals("WHITE")) {
+        if (playerColor.equals("WHITE")) {
             drawWhiteHeaders(out);
             drawRows(out, moves, currPost);
             drawWhiteHeaders(out);
-        } else if (PLAYER_COLOR.equals("BLACK")){
+        } else if (playerColor.equals("BLACK")){
             drawBlackHeaders(out);
             drawRows(out, moves,currPost);
             drawBlackHeaders(out);
@@ -70,7 +70,7 @@ public class DrawChessBoard {
         int start;
         int end;
         int step;
-        if (PLAYER_COLOR.equals("WHITE")) {
+        if (playerColor.equals("WHITE")) {
             start = 8;
             end = 1;
             step = -1;
@@ -96,23 +96,23 @@ public class DrawChessBoard {
         }
 
         for (int j=1; j<=8; j++){
-            String squareColor = CURRENT_SQUARE_COLOR;
+            String squareColor = currentSquareColor;
             ChessPosition posToCheck = new ChessPosition(row, j);
-            ChessPiece currPiece = CURR_BOARD.getPiece(posToCheck);
+            ChessPiece currPiece = currBoard.getPiece(posToCheck);
 
             //Check for highlights
             if (currPost != null && move != null) {
                 if (posToCheck.equals(currPost)){
-                    squareColor = CURR_POSITION_COLOR;
+                    squareColor = currPositionColor;
                 } else if (positions.contains(posToCheck)) {
-                    if (CURRENT_SQUARE_COLOR.equals(SET_BG_COLOR_MAGENTA)){
-                        squareColor = HIGHLIGHT_LIGHT_COLOR;
-                    } else {squareColor = HIGHLIGHT_BLACK_COLOR;}
+                    if (currentSquareColor.equals(SET_BG_COLOR_MAGENTA)){
+                        squareColor = highlightLightColor;
+                    } else {squareColor = highlightBlackColor;}
                 }
             }
 
 
-            if (CURR_BOARD.getPiece(posToCheck) != null) {
+            if (currBoard.getPiece(posToCheck) != null) {
                 if (currPiece.pieceColor == ChessGame.TeamColor.BLACK) {
                     drawSquareWithText(out, PIECES_MAP.get(currPiece.type), squareColor, SET_TEXT_COLOR_BLACK);
                 }
@@ -143,11 +143,11 @@ public class DrawChessBoard {
     }
 
     private static void changeColors() {
-        if (CURRENT_SQUARE_COLOR.equals(SET_BG_COLOR_LIGHT_GREY)) {
-            CURRENT_SQUARE_COLOR = SET_BG_COLOR_MAGENTA;
+        if (currentSquareColor.equals(SET_BG_COLOR_LIGHT_GREY)) {
+            currentSquareColor = SET_BG_COLOR_MAGENTA;
         }
         else {
-            CURRENT_SQUARE_COLOR = SET_BG_COLOR_LIGHT_GREY;
+            currentSquareColor = SET_BG_COLOR_LIGHT_GREY;
         }
     }
 
