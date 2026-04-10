@@ -113,7 +113,6 @@ public class ChessGame {
             if (move.promotionPiece != null) {
                 piece.type = move.promotionPiece;
             }
-            wasMoved = true;
             if (getTeamTurn() == TeamColor.WHITE) {
                 setTeamTurn(TeamColor.BLACK);
             } else {

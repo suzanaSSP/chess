@@ -132,9 +132,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             ServerMessage notification = new ServerMessage.NotificationMessage(message);
             connectionManager.sendNotificationsToALL(command.getGameID(), session, notification);
             // Team playing switched after making a move
-            if (currGame.isInCheckmate(currGame.teamPlaying)) {
-                throw new OpponentCheckMateException("You're in checkmate");
-            }
+            checkExceptions(currGame, username, command);
+
         } catch (InvalidMoveException e) {
             String message = "Invalid move";
             ServerMessage notification = new ServerMessage.ErrorMessage(message);
@@ -148,11 +147,24 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         } catch (OponnentException e) {
             ServerMessage error = new ServerMessage.ErrorMessage("Error: Not your turn");
             connectionManager.sendNotification(session, error);
-        } catch (OpponentCheckMateException e) {
-            String message = String.format("%s is in checkmate", getOpponentUsername(username, command.getGameID()));
+        }
+    }
+
+    public void checkExceptions(ChessGame currGame, String username, UserGameCommand command)
+            throws DataAccessException, IOException {
+        String message = "";
+        if (currGame.isInCheckmate(currGame.teamPlaying)){
+            message = String.format("%s is in checkmate", getOpponentUsername(username, command.getGameID()));
             ServerMessage notification = new ServerMessage.NotificationMessage(message);
             connectionManager.sendNotificationsToALL(command.getGameID(), null, notification);
-
+        } else if (currGame.isInCheck(currGame.teamPlaying)) {
+            message = String.format("%s is in check", getOpponentUsername(username, command.getGameID()));
+            ServerMessage notification = new ServerMessage.NotificationMessage(message);
+            connectionManager.sendNotificationsToALL(command.getGameID(), null, notification);
+        } else if (currGame.isInStalemate(currGame.teamPlaying)) {
+            message = String.format("%s is in stalemate", getOpponentUsername(username, command.getGameID()));
+            ServerMessage notification = new ServerMessage.NotificationMessage(message);
+            connectionManager.sendNotificationsToALL(command.getGameID(), null, notification);
         }
     }
 

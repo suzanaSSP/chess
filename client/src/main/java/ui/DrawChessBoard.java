@@ -95,7 +95,16 @@ public class DrawChessBoard {
             positions = highlightMoves(move);
         }
 
-        for (int j=1; j<=8; j++){
+        int start = 1;
+        int end = 8;
+        int step = 1;
+        if (playerColor.equals("BLACK")) {
+            start = 8;
+            end = 1;
+            step = -1;
+        }
+
+        for (int j=start; j!=end+step; j+=step){
             String squareColor = currentSquareColor;
             ChessPosition posToCheck = new ChessPosition(row, j);
             ChessPiece currPiece = currBoard.getPiece(posToCheck);

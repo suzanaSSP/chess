@@ -36,13 +36,13 @@ public class WebSocketCommunicator extends Endpoint {
                 if (msg.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
                     ServerMessage.LoadGameMessage loadGameMessage = gson.fromJson(message, ServerMessage.LoadGameMessage.class);
                     ChessGame currGame = loadGameMessage.getChessGame();
-                    if (!currGame.wasMoved) {
-                        if (currClient.currPlayerColor.equals("WHITE")) {
-                            currGame.currentBoard.addWhiteStartPieces();
-                        } else {
-                            currGame.currentBoard.addBlackStartPieces();
-                        }
-                    }
+//                    if (currGame.wasMoved == false) {
+//                        if (currClient.currPlayerColor.equals("WHITE")) {
+//                            currGame.currentBoard.addWhiteStartPieces();
+//                        } else {
+//                            currGame.currentBoard.addBlackStartPieces();
+//                        }
+//                    }
                     currClient.drawChessboard(currGame);
                 }
                 else if (msg.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {

@@ -29,7 +29,7 @@ public class Client {
     String role = "";
     ChessGame currGame;
 
-    public Map<String, Integer> whiteIndexMap =
+    public Map<String, Integer> indexMap =
             Map.of("a", 1,
                     "b", 2,
                     "c", 3,
@@ -135,8 +135,8 @@ public class Client {
             if (gameplay == 1) {
                 gamePlayLoop();
             }
+            signedInPrompt();
             try {
-                signedInPrompt();
                 int answer = Integer.parseInt(scanner.nextLine());
                 evalSecondLoop(answer);
             } catch (ClientExceptions | URISyntaxException | IOException | InterruptedException
@@ -209,6 +209,7 @@ public class Client {
                 if (gamesInClient.containsKey(gameAnswer)) {
                     currPlayerColor = "WHITE";
                     role = "observer";
+                    currGamePLaying = gamesInClient.get(gameAnswer).gameID();
                     wsComunicator.connectSession("localhost", 8080, this);
                     wsComunicator.connectCommand(tokenUsing, gamesInClient.get(gameAnswer).gameID());
                     gameplay = 1;
@@ -306,9 +307,9 @@ public class Client {
     public void drawChessboard(ChessGame currGame) {
         System.out.println("\n");
         this.currGame = currGame;
-        if (!currGame.wasMoved && currPlayerColor.equals("BLACK")) {
-            currGame.currentBoard.flipNewBoard();
-        }
+//        if (!currGame.wasMoved && currPlayerColor.equals("BLACK")) {
+//            currGame.currentBoard.flipNewBoard();
+//        }
         new DrawChessBoard(currGame.currentBoard, currPlayerColor).drawBoard(System.out, null, null);
     }
 
@@ -351,6 +352,7 @@ public class Client {
                 gameplay = 0;
                 currGame = new ChessGame();
                 wsComunicator.leaveCommand(tokenUsing, currGamePLaying);
+                System.out.println("You left the game");
                 break;
             case 4:
                 makeMoveEval();
@@ -385,14 +387,14 @@ public class Client {
             ChessPosition nextPos = null;
             if (currPlayerColor.equals("WHITE")) {
                 System.out.println(currPlayerColor);
-                int column = whiteIndexMap.get(String.valueOf(fromColumn));
+                int column = indexMap.get(String.valueOf(fromColumn));
                 startPos = new ChessPosition(fromRow, column);
-                int nextCol = whiteIndexMap.get(String.valueOf(nextColumn));
+                int nextCol = indexMap.get(String.valueOf(nextColumn));
                 nextPos = new ChessPosition(nextRow, nextCol);
             } else {
-                startPos = new ChessPosition(fromRow, blackIndexMap.get(String.valueOf(fromColumn)));
-                System.out.println(blackIndexMap.get(String.valueOf(fromColumn)));
-                nextPos = new ChessPosition(nextRow, blackIndexMap.get(String.valueOf(nextColumn)));
+                startPos = new ChessPosition(fromRow, indexMap.get(String.valueOf(fromColumn)));
+                System.out.println(indexMap.get(String.valueOf(fromColumn)));
+                nextPos = new ChessPosition(nextRow, indexMap.get(String.valueOf(nextColumn)));
             }
 
             System.out.println(startPos);
@@ -419,12 +421,12 @@ public class Client {
         char column = currentPosition.charAt(0);
         System.out.println(column);
         int row = Character.getNumericValue(currentPosition.charAt(1));
-        System.out.println(blackIndexMap.get(String.valueOf(column)));
+        System.out.println(indexMap.get(String.valueOf(column)));
         ChessPosition currPosition = null;
         if (currPlayerColor.equals("WHITE")) {
-            currPosition = new ChessPosition(row, whiteIndexMap.get(String.valueOf(column)));
+            currPosition = new ChessPosition(row, indexMap.get(String.valueOf(column)));
         } else {
-            currPosition = new ChessPosition(row, blackIndexMap.get(String.valueOf(column)));
+            currPosition = new ChessPosition(row, indexMap.get(String.valueOf(column)));
         }
         Collection<ChessMove> moves = currGame.validMoves(currPosition);
 

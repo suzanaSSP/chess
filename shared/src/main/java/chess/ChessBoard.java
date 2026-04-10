@@ -14,7 +14,6 @@ public class ChessBoard  {
     ChessPiece[][] board = new ChessPiece[8][8];
 
     public ChessBoard() {
-        
     }
 
      public ChessBoard(ChessBoard other){
@@ -58,11 +57,6 @@ public class ChessBoard  {
     public void resetBoard() {
         board = new ChessPiece[8][8];
         addWhiteStartPieces();
-    }
-
-    public void flipNewBoard() {
-        board = new ChessPiece[8][8];
-        addBlackStartPieces();
     }
 
     public void addWhiteStartPieces() {
