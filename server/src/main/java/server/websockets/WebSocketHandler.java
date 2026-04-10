@@ -136,7 +136,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 throw new OpponentCheckMateException("You're in checkmate");
             }
         } catch (InvalidMoveException e) {
-            String message = "you can't do that";
+            String message = "Invalid move";
             ServerMessage notification = new ServerMessage.ErrorMessage(message);
             connectionManager.sendNotification(session, notification);
         } catch (ResignedException e) {

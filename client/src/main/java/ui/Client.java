@@ -2,6 +2,7 @@ package ui;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
 import client.ClientExceptions;
 import client.ServerFacade;
@@ -28,7 +29,7 @@ public class Client {
     String role = "";
     ChessGame currGame;
 
-    private final Map<String, Integer> whiteIndexMap =
+    public Map<String, Integer> whiteIndexMap =
             Map.of("a", 1,
                     "b", 2,
                     "c", 3,
@@ -54,8 +55,8 @@ public class Client {
         //user input
         var result = "";
 
-        while(!result.equals("quit")){
-            if (signedIn == 1){
+        while (!result.equals("quit")) {
+            if (signedIn == 1) {
                 signedInLoop();
             }
             printPrompt();
@@ -74,7 +75,7 @@ public class Client {
         }
     }
 
-    public void printPrompt(){
+    public void printPrompt() {
         System.out.println("1. Register");
         System.out.println("2. Login");
         System.out.println("3. Help");
@@ -84,7 +85,7 @@ public class Client {
 
     public String evalFirstLoop(int answer) throws URISyntaxException,
             IOException, InterruptedException {
-        switch (answer){
+        switch (answer) {
             case 1:
                 return registerClient();
             case 2:
@@ -130,21 +131,22 @@ public class Client {
     }
 
     public void signedInLoop() {
-        while (signedIn == 1){
+        while (signedIn == 1) {
             if (gameplay == 1) {
                 gamePlayLoop();
             }
-            signedInPrompt();
-            int answer = Integer.parseInt(scanner.nextLine());
             try {
+                signedInPrompt();
+                int answer = Integer.parseInt(scanner.nextLine());
                 evalSecondLoop(answer);
-            } catch (ClientExceptions | URISyntaxException | IOException | InterruptedException e) {
-                System.out.println("Please type a valid answer");
+            } catch (ClientExceptions | URISyntaxException | IOException | InterruptedException
+            | NumberFormatException e) {
+                System.out.println("Please type a valid answer1");
             }
         }
     }
 
-    public void signedInPrompt(){
+    public void signedInPrompt() {
         System.out.println("\n");
         System.out.println("1. List Games");
         System.out.println("2. Join game");
@@ -230,11 +232,11 @@ public class Client {
 
     public void setUpGamesClient(int answer) throws URISyntaxException, IOException, InterruptedException {
         ListGamesResult result = sf.listGamesServerFacade(tokenUsing);
-        if (result.games().isEmpty() && answer != 3 && answer != 5 && answer !=6){
+        if (result.games().isEmpty() && answer != 3 && answer != 5 && answer != 6) {
             System.out.println("No games, create game");
         } else {
             int counter = 1;
-            for (AlternativeGameData game : result.games()){
+            for (AlternativeGameData game : result.games()) {
                 if (!gamesInClient.containsValue(game)) {
                     gamesInClient.put(counter, game);
                 }
@@ -244,7 +246,7 @@ public class Client {
     }
 
     public void printGames() {
-        for (Map.Entry<Integer, AlternativeGameData> game : gamesInClient.entrySet()){
+        for (Map.Entry<Integer, AlternativeGameData> game : gamesInClient.entrySet()) {
             // Show players
             String whiteUser = game.getValue().whiteUsername();
             String blackUser = game.getValue().blackUsername();
@@ -285,7 +287,7 @@ public class Client {
                 sf.joinGameServerFacade(currPlayerColor, gameResult.gameID(), tokenUsing);
                 role = "player";
                 wsComunicator.connectSession("localhost", 8080, this);
-                wsComunicator.connectCommand( tokenUsing, gameResult.gameID());
+                wsComunicator.connectCommand(tokenUsing, gameResult.gameID());
                 gameplay = 1;
                 currGamePLaying = gameResult.gameID();
                 System.out.println(currPlayerColor);
@@ -293,9 +295,9 @@ public class Client {
             } catch (ClientExceptions e) {
                 System.out.println("I'm in the client exception");
                 System.out.println(e.getMessage());
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Throwable e) {
                 System.out.println("Please Type a valid answer");
+                this.gameplay = 0;
             }
         }
 
@@ -304,7 +306,7 @@ public class Client {
     public void drawChessboard(ChessGame currGame) {
         System.out.println("\n");
         this.currGame = currGame;
-        if (!currGame.wasMoved && currPlayerColor.equals("BLACK")){
+        if (!currGame.wasMoved && currPlayerColor.equals("BLACK")) {
             currGame.currentBoard.flipNewBoard();
         }
         new DrawChessBoard(currGame.currentBoard, currPlayerColor).drawBoard(System.out, null, null);
@@ -312,11 +314,13 @@ public class Client {
 
     public void gamePlayLoop() {
         while (gameplay == 1) {
-            gamePlayPrompt();
-            int answer = Integer.parseInt(scanner.nextLine());
             try {
+                gamePlayPrompt();
+                int answer = Integer.parseInt(scanner.nextLine());
                 evalThirdLoop(answer);
             } catch (ClientExceptions | IOException e) {
+                System.out.println("Please type a valid answer");
+            } catch (Exception e) {
                 System.out.println("Please type a valid answer");
             }
         }
@@ -335,19 +339,28 @@ public class Client {
 
     public void evalThirdLoop(int answer) throws IOException {
 
-        switch (answer){
+        switch (answer) {
+            case 1:
+                System.out.println("Redraw board to get board again, leave game if you're done, make move when ready, " +
+                        "call resign to say you lose, and highlight the valid moves of a piece");
+                break;
             case 2:
                 drawChessboard(currGame);
                 break;
             case 3:
                 gameplay = 0;
+                currGame = new ChessGame();
                 wsComunicator.leaveCommand(tokenUsing, currGamePLaying);
                 break;
             case 4:
                 makeMoveEval();
                 break;
             case 5:
-                wsComunicator.resignCommand(tokenUsing, currGamePLaying);
+                System.out.println("Are you sure you want to call game over? Type Y or N");
+                String confirmation = scanner.nextLine();
+                if (confirmation.equals("Y")){
+                    wsComunicator.resignCommand(tokenUsing, currGamePLaying);
+                }
                 break;
             case 6:
                 highlightValidMoves();
@@ -357,32 +370,47 @@ public class Client {
         }
     }
 
-    public void makeMoveEval() throws IOException {
-        System.out.println("Input current position: (example: e5)");
-        String currentPosition = scanner.nextLine();
-        char fromColumn = currentPosition.charAt(0);
-        int fromRow = Character.getNumericValue(currentPosition.charAt(1));
+    public void makeMoveEval() {
+        try {
+            System.out.println("Input current position: (example: e5)");
+            String currentPosition = scanner.nextLine();
+            char fromColumn = currentPosition.charAt(0);
+            int fromRow = Character.getNumericValue(currentPosition.charAt(1));
+            System.out.println("Input next move: (example e6)");
+            String nextPosition = scanner.nextLine();
+            char nextColumn = nextPosition.charAt(0);
+            int nextRow = Character.getNumericValue(nextPosition.charAt(1));
 
-        System.out.println(whiteIndexMap.get(fromColumn));
+            ChessPosition startPos = null;
+            ChessPosition nextPos = null;
+            if (currPlayerColor.equals("WHITE")) {
+                System.out.println(currPlayerColor);
+                int column = whiteIndexMap.get(String.valueOf(fromColumn));
+                startPos = new ChessPosition(fromRow, column);
+                int nextCol = whiteIndexMap.get(String.valueOf(nextColumn));
+                nextPos = new ChessPosition(nextRow, nextCol);
+            } else {
+                startPos = new ChessPosition(fromRow, blackIndexMap.get(String.valueOf(fromColumn)));
+                System.out.println(blackIndexMap.get(String.valueOf(fromColumn)));
+                nextPos = new ChessPosition(nextRow, blackIndexMap.get(String.valueOf(nextColumn)));
+            }
 
-        System.out.println("Input next move: (example e6)");
-        String nextPosition = scanner.nextLine();
-        char nextColumn = nextPosition.charAt(0);
-        int nextRow = Character.getNumericValue(nextPosition.charAt(1));
+            System.out.println(startPos);
+            System.out.println(nextPos);
 
-        ChessPosition startPos = null;
-        ChessPosition nextPos = null;
-        if (currPlayerColor == "WHITE"){
-            startPos = new ChessPosition(fromRow, whiteIndexMap.get(String.valueOf(fromColumn)));
-            nextPos = new ChessPosition(nextRow, whiteIndexMap.get(String.valueOf(nextColumn)));
-        } else {
-            startPos = new ChessPosition(fromRow, blackIndexMap.get(String.valueOf(fromColumn)));
-            nextPos = new ChessPosition(nextRow, blackIndexMap.get(String.valueOf(nextColumn)));
+            ChessMove move;
+            // Check promotion pieces
+            if (readyForPromotion(startPos, nextPos)) {
+                move = doPromotion(startPos, nextPos);
+            } else {
+                move = new ChessMove(startPos, nextPos, null);
+            }
+            wsComunicator.makeMoveCommand(tokenUsing, currGamePLaying, move);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Invalid input try again");
         }
-        System.out.println(currGamePLaying);
-        ChessMove move = new ChessMove(startPos, nextPos, null);
-        System.out.println(move);
-        wsComunicator.makeMoveCommand(tokenUsing, currGamePLaying, move);
+
     }
 
     public void highlightValidMoves() {
@@ -398,8 +426,33 @@ public class Client {
         } else {
             currPosition = new ChessPosition(Row, blackIndexMap.get(String.valueOf(Column)));
         }
-        Collection<ChessMove> moves =  currGame.validMoves(currPosition);
+        Collection<ChessMove> moves = currGame.validMoves(currPosition);
 
         new DrawChessBoard(currGame.currentBoard, currPlayerColor).drawBoard(System.out, moves, currPosition);
     }
+
+    public ChessMove doPromotion(ChessPosition startPos, ChessPosition nextPos) {
+        System.out.println("You're promoted! Which piece do you want? Type one of these (Q or N)");
+        String promotedPiece = scanner.nextLine();
+
+        if (promotedPiece.equals("Q")) {
+            return new ChessMove(startPos, nextPos, ChessPiece.PieceType.QUEEN);
+        } else {
+            return new ChessMove(startPos, nextPos, ChessPiece.PieceType.KNIGHT);
+        }
+    }
+
+    public boolean readyForPromotion(ChessPosition startPos, ChessPosition nextPos) {
+        ChessPiece currPiece = currGame.currentBoard.getPiece(startPos);
+        if (currPiece.type.equals(ChessPiece.PieceType.PAWN) &&
+                currPlayerColor.equals("WHITE") && nextPos.getRow() == 8) {
+            return true;
+        } else if (currPiece.type.equals(ChessPiece.PieceType.PAWN) &&
+                currPlayerColor.equals("BLACK") && nextPos.getRow() == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

@@ -8,14 +8,14 @@ import java.util.*;
 import static ui.EscapeSequences.*;
 
 public class DrawChessBoard {
-    private final static List<String> whiteLetters = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h");
+    private final static List<String> WHITE_LETTERS = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h");
     // Board dimensions.
     private static final int SQUARE_SIZE_IN_PADDED_CHARS = 3;
-    private final static String headerColor = SET_BG_COLOR_WHITE;
-    private static String currentSquareColor = SET_BG_COLOR_MAGENTA;
-    private final static String textHeaderColor = SET_TEXT_COLOR_BLACK;
+    private final static String HEADER_COLOR = SET_BG_COLOR_WHITE;
+    private static String CURRENT_SQUARE_COLOR = SET_BG_COLOR_MAGENTA;
+    private final static String TEXT_HEADER_COLOR = SET_TEXT_COLOR_BLACK;
 
-    private final static Map<ChessPiece.PieceType, String> piecesMap =
+    private final static Map<ChessPiece.PieceType, String> PIECES_MAP =
             Map.of(ChessPiece.PieceType.KING, "K",
                     ChessPiece.PieceType.QUEEN, "Q",
                     ChessPiece.PieceType.BISHOP, "B",
@@ -23,24 +23,24 @@ public class DrawChessBoard {
                     ChessPiece.PieceType.ROOK, "R",
                     ChessPiece.PieceType.PAWN, "P");
     private static final String EMPTY = " ";
-    private final ChessBoard currBoard;
-    String playerColor;
-    String currPosColor = SET_BG_COLOR_YELLOW;
-    String moveWhiteColor = SET_BG_COLOR_GREEN;
-    String moveBlackColor = SET_BG_COLOR_DARK_GREEN;
+    private final ChessBoard CURR_BOARD;
+    String PLAYER_COLOR;
+    String CURR_POSITION_COLOR = SET_BG_COLOR_YELLOW;
+    String HIGHLIGHT_LIGHT_COLOR = SET_BG_COLOR_GREEN;
+    String HIGHLIGHT_BLACK_COLOR = SET_BG_COLOR_DARK_GREEN;
 
     public DrawChessBoard(ChessBoard currBoard, String playerColor) {
-        this.currBoard = currBoard;
-        this.playerColor = playerColor;
+        this.CURR_BOARD = currBoard;
+        this.PLAYER_COLOR = playerColor;
     }
 
     public void drawBoard(PrintStream out, Collection<ChessMove> moves, ChessPosition currPost) {
         System.out.println("\n");
-        if (playerColor.equals("WHITE")) {
+        if (PLAYER_COLOR.equals("WHITE")) {
             drawWhiteHeaders(out);
             drawRows(out, moves, currPost);
             drawWhiteHeaders(out);
-        } else if (playerColor.equals("BLACK")){
+        } else if (PLAYER_COLOR.equals("BLACK")){
             drawBlackHeaders(out);
             drawRows(out, moves,currPost);
             drawBlackHeaders(out);
@@ -48,20 +48,20 @@ public class DrawChessBoard {
     }
 
     private static void drawWhiteHeaders(PrintStream out){
-        drawSquareWithText(out, EMPTY, headerColor, textHeaderColor);
+        drawSquareWithText(out, EMPTY, HEADER_COLOR, TEXT_HEADER_COLOR);
         for (int i=0; i<8; i++) {
-            drawSquareWithText(out, whiteLetters.get(i), headerColor, textHeaderColor);
+            drawSquareWithText(out, WHITE_LETTERS.get(i), HEADER_COLOR, TEXT_HEADER_COLOR);
         }
-        drawSquareWithText(out, EMPTY, headerColor, textHeaderColor);
+        drawSquareWithText(out, EMPTY, HEADER_COLOR, TEXT_HEADER_COLOR);
         out.println("\n");
     }
 
     private static void drawBlackHeaders(PrintStream out) {
-        drawSquareWithText(out, EMPTY, headerColor, textHeaderColor);
+        drawSquareWithText(out, EMPTY, HEADER_COLOR, TEXT_HEADER_COLOR);
         for (int i=7; i>=0; i--) {
-            drawSquareWithText(out, whiteLetters.get(i), headerColor, textHeaderColor);
+            drawSquareWithText(out, WHITE_LETTERS.get(i), HEADER_COLOR, TEXT_HEADER_COLOR);
         }
-        drawSquareWithText(out, EMPTY, headerColor, textHeaderColor);
+        drawSquareWithText(out, EMPTY, HEADER_COLOR, TEXT_HEADER_COLOR);
         out.println("\n");
 
     }
@@ -70,7 +70,7 @@ public class DrawChessBoard {
         int start;
         int end;
         int step;
-        if (playerColor.equals("WHITE")) {
+        if (PLAYER_COLOR.equals("WHITE")) {
             start = 8;
             end = 1;
             step = -1;
@@ -82,9 +82,9 @@ public class DrawChessBoard {
 
         for (int i=start; i!=end+step; i+=step) {
             // Horizontal number
-            drawSquareWithText(out, String.valueOf(i), headerColor, textHeaderColor);
+            drawSquareWithText(out, String.valueOf(i), HEADER_COLOR, TEXT_HEADER_COLOR);
             drawWithChessBoard(out, i, moves, currPos);
-            drawSquareWithText(out, String.valueOf(i), headerColor, textHeaderColor);
+            drawSquareWithText(out, String.valueOf(i), HEADER_COLOR, TEXT_HEADER_COLOR);
             out.print("\n");
         }
     }
@@ -96,28 +96,28 @@ public class DrawChessBoard {
         }
 
         for (int j=1; j<=8; j++){
-            String squareColor = currentSquareColor;
+            String squareColor = CURRENT_SQUARE_COLOR;
             ChessPosition posToCheck = new ChessPosition(row, j);
-            ChessPiece currPiece = currBoard.getPiece(posToCheck);
+            ChessPiece currPiece = CURR_BOARD.getPiece(posToCheck);
 
             //Check for highlights
             if (currPost != null && move != null) {
                 if (posToCheck.equals(currPost)){
-                    squareColor = currPosColor;
+                    squareColor = CURR_POSITION_COLOR;
                 } else if (positions.contains(posToCheck)) {
-                    if (currentSquareColor.equals(SET_BG_COLOR_MAGENTA)){
-                        squareColor = moveWhiteColor;
-                    } else {squareColor = moveBlackColor;}
+                    if (CURRENT_SQUARE_COLOR.equals(SET_BG_COLOR_MAGENTA)){
+                        squareColor = HIGHLIGHT_LIGHT_COLOR;
+                    } else {squareColor = HIGHLIGHT_BLACK_COLOR;}
                 }
             }
 
 
-            if (currBoard.getPiece(posToCheck) != null) {
+            if (CURR_BOARD.getPiece(posToCheck) != null) {
                 if (currPiece.pieceColor == ChessGame.TeamColor.BLACK) {
-                    drawSquareWithText(out, piecesMap.get(currPiece.type), squareColor, SET_TEXT_COLOR_BLACK);
+                    drawSquareWithText(out, PIECES_MAP.get(currPiece.type), squareColor, SET_TEXT_COLOR_BLACK);
                 }
                 else if (currPiece.pieceColor == ChessGame.TeamColor.WHITE) {
-                    drawSquareWithText(out, piecesMap.get(currPiece.type), squareColor, SET_TEXT_COLOR_WHITE);
+                    drawSquareWithText(out, PIECES_MAP.get(currPiece.type), squareColor, SET_TEXT_COLOR_WHITE);
                 }
             } else {
                 drawSquareWithText(out, EMPTY, squareColor, squareColor);
@@ -143,11 +143,11 @@ public class DrawChessBoard {
     }
 
     private static void changeColors() {
-        if (currentSquareColor.equals(SET_BG_COLOR_LIGHT_GREY)) {
-            currentSquareColor = SET_BG_COLOR_MAGENTA;
+        if (CURRENT_SQUARE_COLOR.equals(SET_BG_COLOR_LIGHT_GREY)) {
+            CURRENT_SQUARE_COLOR = SET_BG_COLOR_MAGENTA;
         }
         else {
-            currentSquareColor = SET_BG_COLOR_LIGHT_GREY;
+            CURRENT_SQUARE_COLOR = SET_BG_COLOR_LIGHT_GREY;
         }
     }
 
